@@ -1,2 +1,16 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+	interface Country {
+		name: string;
+	}
+
+	export let data: { countries: Country[] };
+</script>
+
+<ul>
+	<h1>oleee Countries!!!</h1>
+	<p>helooooo</p>
+	<p>help</p>
+	{#each data.countries as country}
+		<li>{country.name}</li>
+	{/each}
+</ul>

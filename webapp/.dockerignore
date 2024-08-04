@@ -7,6 +7,8 @@ node_modules
 .git
 .gitattributes
 
+.env
+
 .eslintignore
 .eslintrc.cjs
 

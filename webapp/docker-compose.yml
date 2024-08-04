@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+      args:
+        SUPABASE_URL: ${SUPABASE_URL}
+        SUPABASE_KEY: ${SUPABASE_KEY}
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_KEY: ${SUPABASE_KEY}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app  # Mount the current directory to /app in the container
+    working_dir: /app
+    command: ["node", "build"]
+    
