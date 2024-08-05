@@ -19,6 +19,11 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Print environment variables
+        run: |
+          echo "Printing environment variables:"
+          env
+
       - name: Start SSH agent and add key
         run: |
           # Start ssh-agent
