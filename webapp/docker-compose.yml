@@ -4,7 +4,7 @@ services:
   app:
     image: node:20-alpine
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
       - .:/app
       - node_modules:/app/node_modules
