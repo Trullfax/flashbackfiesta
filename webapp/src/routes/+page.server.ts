@@ -1,7 +1,6 @@
 import { supabase } from "$lib/supabaseClient";
 
 export async function load() {
-  console.log(supabase);
 
   const { data, error } = await supabase.from("countries").select();
 
