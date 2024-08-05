@@ -13,3 +13,5 @@ Thumbs.db
 # IDEs
 .vscode
 .idea
+
+.github/workflows
