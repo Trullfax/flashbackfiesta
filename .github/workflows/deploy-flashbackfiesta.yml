@@ -19,11 +19,11 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Escape passphrase and add key
+      - name: Start SSH agent and add key
         run: |
-          # Escape special characters in passphrase
-          ESCAPED_PASSPHRASE=$(echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[`~!@#$%^&*()-_=+{}\|;:",<.>/?]/\\&/g')
-          echo "$ESCAPED_PASSPHRASE" | ssh-add ~/.ssh/id_ed25519
+          # Start ssh-agent and add the key with passphrase
+          eval "$(ssh-agent -s)"
+          echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[`~!@#$%^&*()\-_=+{}\[\]|;:",<.>/?]/\\&/g' | ssh-add ~/.ssh/id_ed25519
 
       - name: Deploy Supabase functions
         run: |
