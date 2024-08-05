@@ -19,9 +19,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Set up SSH agent
+      - name: Start SSH agent and add key
         run: |
-          ssh-agent bash -c 'ssh-add ~/.ssh/id_ed25519'
+          eval $(ssh-agent -s)
+          printf "${{ secrets.SSH_KEY_PASSPHRASE }}" | ssh-add ~/.ssh/id_ed25519
 
       - name: Deploy Supabase functions
         run: |
