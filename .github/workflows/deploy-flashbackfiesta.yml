@@ -11,7 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Explicitly use Node.js 20
+
       - name: Set up SSH key
+
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.FLASHBACKFIESTA_SSH_KEY }}" > ~/.ssh/id_ed25519
