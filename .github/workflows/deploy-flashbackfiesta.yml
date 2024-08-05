@@ -37,4 +37,4 @@ jobs:
 
       - name: Restart Supabase services
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker-compose up -d ~/supabase/docker/docker-compose.yml restart functions'
+          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker compose up -d ~/supabase/docker/docker-compose.yml restart functions'
