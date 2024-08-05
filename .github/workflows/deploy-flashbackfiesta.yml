@@ -26,6 +26,11 @@ jobs:
           # Use the passphrase directly
           echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | ssh-add ~/.ssh/id_ed25519
 
+      - name: Debug SSH Authentication
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'echo "SSH Authentication successful"'
+
+
       - name: Deploy Supabase functions
         run: |
           rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./supabase/functions/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:~/supabase/docker/volumes/functions --verbose
