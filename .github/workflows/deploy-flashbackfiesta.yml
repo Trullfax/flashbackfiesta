@@ -18,6 +18,14 @@ jobs:
           echo "${{ secrets.FLASHBACKFIESTA_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Check GitHub Secrets
+        run: |
+          echo "FLASHBACKFIESTA_SSH_KEY: ${!secrets.FLASHBACKFIESTA_SSH_KEY:0:20}... (truncated)"
+          echo "SSH_KEY_PASSPHRASE: ${!secrets.SSH_KEY_PASSPHRASE:0:20}... (truncated)"
+          echo "FLASHBACKFIESTA_USERNAME: ${{ secrets.FLASHBACKFIESTA_USERNAME }}"
+          echo "FLASHBACKFIESTA_HOST: ${{ secrets.FLASHBACKFIESTA_HOST }}"
+
 
       - name: Start SSH agent and add key
         run: |
