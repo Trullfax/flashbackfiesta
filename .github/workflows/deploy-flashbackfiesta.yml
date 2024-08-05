@@ -22,7 +22,7 @@ jobs:
       - name: Escape passphrase and add key
         run: |
           # Escape special characters in passphrase
-          ESCAPED_PASSPHRASE=$(echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[&/()\]/\\&/g')
+          ESCAPED_PASSPHRASE=$(echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[`~!@#$%^&*()-_=+{}\|;:",<.>/?]/\\&/g')
           echo "$ESCAPED_PASSPHRASE" | ssh-add ~/.ssh/id_ed25519
 
       - name: Deploy Supabase functions
