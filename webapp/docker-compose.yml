@@ -2,7 +2,6 @@ services:
   app:
     build:
       context: .
-      target: runtime
       args:
         SUPABASE_URL: ${SUPABASE_URL}
         SUPABASE_KEY: ${SUPABASE_KEY}
