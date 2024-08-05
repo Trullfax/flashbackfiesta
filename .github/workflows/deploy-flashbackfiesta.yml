@@ -28,8 +28,8 @@ jobs:
 
       - name: Deploy Supabase functions
         run: |
-          rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./supabase/functions/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:/path/to/supabase/functions --verbose
+          rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./supabase/functions/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:~/supabase/docker/volumes/functions --verbose
 
       - name: Restart Supabase services
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker-compose -f /path/to/docker-compose.yml restart functions'
+          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker-compose -f ~/supabase/docker/docker-compose.yml restart functions'
