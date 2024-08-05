@@ -21,8 +21,8 @@ jobs:
 
       - name: Start SSH agent and add key
         run: |
-          eval $(ssh-agent -s)
-          printf '%s' "$PASSPHRASE" | ssh-add ~/.ssh/id_ed25519
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${{ secrets.SSH_KEY_PASSPHRASE }}"
 
       - name: Deploy Supabase functions
         run: |
