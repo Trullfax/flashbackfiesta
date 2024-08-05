@@ -23,7 +23,8 @@ jobs:
         run: |
           # Start ssh-agent and add the key with passphrase
           eval "$(ssh-agent -s)"
-          echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[`~!@#$%^&*()\-_=+{}\[\]|;:",<.>/?]/\\&/g' | ssh-add ~/.ssh/id_ed25519
+          ESCAPED_PASSPHRASE=$(echo "${{ secrets.SSH_KEY_PASSPHRASE }}" | sed 's/[^^]/[&]/g; s/\^/\\^/g')
+          echo "$ESCAPED_PASSPHRASE" | ssh-add ~/.ssh/id_ed25519
 
       - name: Deploy Supabase functions
         run: |
