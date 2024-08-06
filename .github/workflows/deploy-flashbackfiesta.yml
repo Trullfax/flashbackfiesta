@@ -28,9 +28,9 @@ jobs:
       - name: Deploy Webapp
         run: |
           set -e
-          rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./webapp ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:${{ secrets.FLASHBACKFIESTA_APP_PATH }}
+          rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./webapp/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:${{ secrets.FLASHBACKFIESTA_APP_PATH }}
 
 #      - name: Restart Webapp services
 #        run: |
 #          set -e
-#          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.yml up -d'
+#          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.deploy.yml up -d'
