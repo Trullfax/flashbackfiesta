@@ -3,6 +3,7 @@
 .vscode
 
 node_modules
+build
 
 .git
 .gitattributes
@@ -18,3 +19,4 @@ node_modules
 README.md
 
 Dockerfile
+.dockerignore
