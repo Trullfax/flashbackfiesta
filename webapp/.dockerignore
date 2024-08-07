@@ -15,5 +15,7 @@
 
 README.md
 
-Dockerfile
 .dockerignore
+node_modules
+build
+Dockerfile
