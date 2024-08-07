@@ -21,4 +21,4 @@ COPY --from=build /app/package.json ./package.json
 RUN npm install --only=production
 
 EXPOSE 3000
-ENTRYPOINT [ "npm", "run", "start" ]
+CMD [ "node", "run", "start" ]
