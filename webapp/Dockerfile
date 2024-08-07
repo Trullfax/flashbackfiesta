@@ -4,6 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY . .
+
+ARG SUPABASE_URL
+ARG SUPABASE_KEY
+ENV SUPABASE_URL=${SUPABASE_URL}
+ENV SUPABASE_KEY=${SUPABASE_KEY}
+
 RUN npm install
 RUN npm run build
 
