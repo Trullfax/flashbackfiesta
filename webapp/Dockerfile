@@ -10,6 +10,8 @@ ARG SUPABASE_KEY
 ENV SUPABASE_URL=${SUPABASE_URL}
 ENV SUPABASE_KEY=${SUPABASE_KEY}
 
+RUN rm -rf node_modules
+RUN rm -rf build
 RUN npm install
 RUN npm run build
 
