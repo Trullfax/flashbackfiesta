@@ -23,4 +23,4 @@ COPY --from=build /app/build ./build
 RUN npm install --production
 
 EXPOSE 3000
-ENTRYPOINT [ "npm", "run", "preview" ]
+ENTRYPOINT [ "npm", "run", "start" ]
