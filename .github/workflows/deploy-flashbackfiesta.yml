@@ -33,4 +33,4 @@ jobs:
 #      - name: Restart Webapp services
 #        run: |
 #          set -e
-#          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.deploy.yml up -d'
+#          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.deploy.yml -f ${{ secrets.FLASHBACKFIESTA_SUPABASE_PATH}}/docker/docker-compose.yml up --build'
