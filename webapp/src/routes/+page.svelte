@@ -10,7 +10,6 @@
 	<p>Error: {data.error}</p>
 {:else}
 	<ul>
-		<p>Super big changes</p>
 		<h1>Countries</h1>
 		{#each data.countries as country}
 			<li>{country.name}</li>
