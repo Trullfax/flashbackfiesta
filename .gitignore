@@ -13,6 +13,7 @@ Thumbs.db
 # IDEs
 .vscode
 .idea
+*.code-workspace
 
 deploy.sh
 workflow_examples
