@@ -8,6 +8,14 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	type movie = {
+        title: string;
+        release_date: string | number | Date;
+        poster_path: string;
+		id: number;
+		year: string;
+	};
 }
 
 export {};
