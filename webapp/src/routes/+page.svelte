@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
+	import Title from '$lib/components/Title.svelte';
 
 	// Glob import all SVG files from the avatars directory
 	const avatars = import.meta.glob('$lib/assets/avatars/*.svg', { eager: true });
@@ -13,7 +14,7 @@
 	const avatarArray: string[] = Object.values(avatars).map((mod) => (mod as SvgModule).default);
 </script>
 
-<body class="flex flex-col items-center gap-10">
+<body class="flex flex-col items-center gap-10 bg-green">
 	<h1>Welcome to Flashbackfiesta!</h1>
 
 	<ul>
@@ -23,6 +24,9 @@
 	</ul>
 
 	<ButtonSmall text="LET'S PLAY" accent_color="#54e5c4" />
+
+	<Title title="VIDEOGAMES" subtitle="create your player" />
+	<Title title="CATEGORY" subtitle="choose a category" flip={true} />
 
 	<header class="text-center mb-8">
 		<h1 class="text-4xl font-bold font-contrail mb-4 text-black">Color Palette Showcase</h1>
