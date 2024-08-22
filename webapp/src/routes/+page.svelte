@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ButtonSmall from '$lib/components/button_small.svelte';
+	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 
 	// Glob import all SVG files from the avatars directory
 	const avatars = import.meta.glob('$lib/assets/avatars/*.svg', { eager: true });
@@ -22,7 +22,7 @@
 		{/each}
 	</ul>
 
-	<ButtonSmall text="LET'S PLAY" />
+	<ButtonSmall text="LET'S PLAY" accent_color="#54e5c4" />
 
 	<header class="text-center mb-8">
 		<h1 class="text-4xl font-bold font-contrail mb-4 text-black">Color Palette Showcase</h1>
