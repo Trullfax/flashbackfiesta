@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ButtonBig from '$lib/components/ButtonBig.svelte';
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 
 	// Glob import all SVG files from the avatars directory
@@ -23,6 +24,7 @@
 	</ul>
 
 	<ButtonSmall text="LET'S PLAY" accent_color="#54e5c4" />
+	<ButtonBig text="LET'S PLAY" accent_color="#54e5c4" />
 
 	<header class="text-center mb-8">
 		<h1 class="text-4xl font-bold font-contrail mb-4 text-black">Color Palette Showcase</h1>
