@@ -1,5 +1,24 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
+  @font-face {
+    font-family: "Contrail One";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url($lib/assets/fonts/ContrailOne-Regular.ttf) format('truetype');
+  }
+  
+  @font-face {
+    font-family: "Vampiro One";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url($lib/assets/fonts/VampiroOne-Regular.ttf) format('truetype');
+  }
+
     h1 {
       @apply text-2xl;
     }
@@ -10,5 +29,3 @@
       @apply text-lg;
     }
   };
-@tailwind components;
-@tailwind utilities;
