@@ -30,8 +30,8 @@
 		{/each}
 	</ul>
 
-	<ButtonSmall text="LET'S PLAY" accent_color="#54e5c4" />
-	<ButtonBig text="LET'S PLAY" accent_color="#54e5c4" />
+	<ButtonSmall text="LET'S PLAY" accent_color="#ff847c" />
+	<ButtonBig text="LET'S PLAY" accent_color="#ff847c" />
 
 	<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 		<div class="bg-white p-6 rounded-lg shadow-lg">
