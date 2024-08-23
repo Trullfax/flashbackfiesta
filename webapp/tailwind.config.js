@@ -16,7 +16,12 @@ export default {
       vampiro: ["Vampiro One", "system-ui"],
       contrail: ["Contrail One", "sans-serif"],
     },
-    extend: {},
+    extend: {
+      dropShadow: {
+        'text': '6px 4px 0 #1d1e1d',
+        'bold': '10px 10px 0 #1d1e1d',
+      }
+    },
   },
   plugins: [],
 }
