@@ -1,0 +1,96 @@
+<script lang="ts">
+	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
+	import Title from '$lib/components/Title.svelte';
+	import ButtonArrow from '$lib/components/ButtonArrow.svelte';
+	import Dice from '$lib/components/Dice.svelte';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import { createEventDispatcher } from 'svelte';
+	import { addToast } from '$lib/stores/toastStore';
+
+
+	let avatarArray: string[] = [];
+	let currentAvatar = '';
+	let currentIndex = 0;
+
+	export let selectedAvatar = '';
+
+	async function loadAvatars() {
+		const avatarPaths = [
+			'/assets/avatars/pou_1.svg',
+			'/assets/avatars/pou_2.svg',
+			'/assets/avatars/pou_3.svg',
+			'/assets/avatars/pou_4.svg'
+		];
+
+		avatarArray = avatarPaths;
+		currentAvatar = avatarArray[currentIndex];
+		selectedAvatar = currentAvatar;
+	}
+
+	function shuffleAvatars() {
+		avatarArray = avatarArray.sort(() => Math.random() - 0.5);
+		currentAvatar = avatarArray[0];
+		currentIndex = 0;
+		selectedAvatar = currentAvatar;
+	}
+
+	function nextAvatar() {
+		currentIndex = (currentIndex + 1) % avatarArray.length;
+		currentAvatar = avatarArray[currentIndex];
+		selectedAvatar = currentAvatar;
+	}
+
+	function prevAvatar() {
+		currentIndex = (currentIndex - 1 + avatarArray.length) % avatarArray.length;
+		currentAvatar = avatarArray[currentIndex];
+		selectedAvatar = currentAvatar;
+	}
+
+	loadAvatars();
+
+	let username = '';
+	const dispatch = createEventDispatcher();
+
+	// Handle form submission
+	function handleSubmit() {
+		// TODO: Add validation logic, like checking if the username already exists
+		if (username.trim() === '') {
+			addToast({ message: 'please enter a username!', type: 'error' });
+			return;
+		}
+		dispatch('submit', { username, selectedAvatar });
+	}
+</script>
+
+<Toasts />
+
+<div class="grid grid-cols-2">
+	<div class="justify-self-center self-center grid grid-cols-3 items-center">
+		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
+		<div class="relative">
+			<img src={currentAvatar} alt="Avatar" class="w-50 h-50 drop-shadow-bold pr-5" />
+			<button on:click={shuffleAvatars} class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center">
+                <Dice height={30} width={30} />
+            </button>
+		</div>
+		<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
+	</div>
+	<div class="justify-self-center">
+		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
+		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
+
+		<form method="POST" class="mb-5" on:submit|preventDefault={handleSubmit}>
+			<label>
+				<input
+					type="text"
+					bind:value={username}
+					name="username"
+					autocomplete="off"
+					placeholder="how should we call you?"
+					class="font-contrail w-[100%] p-2 mt-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
+				/>
+			</label>
+		</form>
+		<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
+	</div>
+</div>
