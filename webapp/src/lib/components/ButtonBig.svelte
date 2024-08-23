@@ -10,10 +10,10 @@
 		<p class="font-contrail text-3xl group-hover:text-white transition-all">{text}</p>
 	</button>
 	<div
-		class="w-[15rem] h-[4rem] right-10 top-8 border-[0.5rem] z-10 -rotate-[4deg] absolute"
+		class="w-[15rem] h-[4rem] right-10 top-8 border-[0.5rem] z-10 -rotate-[3.8deg] group-hover:-rotate-[7deg] transition-all absolute"
 		style="border-color: {accent_color}"
 	/>
 	<div
-		class="w-[15rem] h-[4rem] left-12 top-8 border-[0.5rem] z-0 rotate-[2deg] group-hover:rotate-[6deg] transition-all absolute"
+		class="w-[15rem] h-[4rem] left-12 top-8 border-[0.5rem] z-0 rotate-[2deg] group-hover:rotate-[5deg] transition-all absolute"
 	/>
 </div>
