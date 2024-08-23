@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ButtonBig from '$lib/components/ButtonBig.svelte';
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Title from '$lib/components/Title.svelte';
 
@@ -24,6 +25,7 @@
 	</ul>
 
 	<ButtonSmall text="LET'S PLAY" accent_color="#54e5c4" />
+	<ButtonBig text="LET'S PLAY" accent_color="#54e5c4" />
 
 	<Title title="VIDEOGAMES" subtitle="create your player" />
 	<Title title="CATEGORY" subtitle="choose a category" flip={true} />
