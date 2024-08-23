@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Title from '$lib/components/Title.svelte';
+	import CategorySelection from '$lib/components/CategorySelection.svelte';
 
 	// Glob import all SVG files from the avatars directory
 	const avatars = import.meta.glob('$lib/assets/avatars/*.svg', { eager: true });
@@ -36,46 +37,48 @@
 	</header>
 
 	<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">White</h2>
 			<div class="mt-4 h-24 w-full bg-white border-2 border-black rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Black</h2>
 			<div class="mt-4 h-24 w-full bg-black rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Grey</h2>
 			<div class="mt-4 h-24 w-full bg-grey rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Green</h2>
 			<div class="mt-4 h-24 w-full bg-green rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Red</h2>
 			<div class="mt-4 h-24 w-full bg-red rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Purple</h2>
 			<div class="mt-4 h-24 w-full bg-purple rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Yellow</h2>
 			<div class="mt-4 h-24 w-full bg-yellow rounded"></div>
 		</div>
 
-		<div class="bg-white p-6 rounded-lg shadow-lg">
+		<div class="bg-white p-6 rounded-lg drop-shadow-bold">
 			<h2 class="text-2xl font-semibold text-black">Blue</h2>
 			<div class="mt-4 h-24 w-full bg-blue rounded"></div>
 		</div>
 	</div>
+
+	<CategorySelection />
 </body>
 
 <style>
