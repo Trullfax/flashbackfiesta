@@ -1,9 +1,11 @@
 <script lang="ts">
 	import ButtonBig from '$lib/components/ButtonBig.svelte';
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
+	import CategorySelection from '$lib/components/CategorySelection.svelte';
+	import Title from '$lib/components/Title.svelte';
 
 	// Glob import all SVG files from the avatars directory
-	const avatars = import.meta.glob('$lib/assets/avatars/*.svg', { eager: true });
+	const avatars = import.meta.glob('/assets/categories/*.svg', { eager: true });
 
 	// Type definitions for the module imports
 	interface SvgModule {
@@ -12,17 +14,19 @@
 
 	// Extract the default export (the path) of each module
 	const avatarArray: string[] = Object.values(avatars).map((mod) => (mod as SvgModule).default);
+
+	let categories: { name: string; picture_path: string }[] = [
+		{ name: 'Movies', picture_path: 'assets/categories/movie-card.svg' },
+		{ name: 'Videogames', picture_path: 'assets/categories/game-card.svg' },
+		{ name: 'Music', picture_path: 'assets/categories/music-card.svg' },
+		{ name: 'TV Shows', picture_path: 'assets/categories/tv-card.svg' }
+	];
 </script>
 
-<header class="text-center mb-8">
-	<h1 class="text-4xl font-bold font-contrail mb-4 text-black">Color Palette Showcase</h1>
-	<p class="text-lg text-black font-vampiro">
-		This page demonstrates the color palette defined in Tailwind CSS.
-	</p>
-</header>
-
 <main class="flex flex-col items-center gap-10">
-	<h1>Welcome to Flashbackfiesta!</h1>
+	<h1 class="text-[5rem] font-contrail text-yellow drop-shadow-title">
+		Welcome to Flashbackfiesta!
+	</h1>
 
 	<ul>
 		{#each avatarArray as avatar}
@@ -74,6 +78,13 @@
 			<div class="mt-4 h-24 w-full bg-blue rounded"></div>
 		</div>
 	</div>
+
+	<div class="flex flex-row">
+		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
+		<Title title="VIDEOGAMES" subtitle="create your player" />
+	</div>
+
+	<CategorySelection {categories} />
 </main>
 
 <style>
