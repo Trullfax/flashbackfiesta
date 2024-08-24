@@ -1,31 +1,46 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  /* COLORS */
+  :root {
+    --ff-white: #ffffff;
+    --ff-black: #1d1e1d;
+    --ff-grey: #f2f2f2;
+    --ff-green: #54e5c4;
+    --ff-red: #ff847c;
+    --ff-purple: #c0a7d1;
+    --ff-yellow: #fff8a0;
+    --ff-blue: #3fc2e0;
+  }
 
-@layer base {
-  @font-face {
-    font-family: "Contrail One";
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-    src: url($lib/assets/fonts/ContrailOne-Regular.ttf) format('truetype');
-  }
-  
-  @font-face {
-    font-family: "Vampiro One";
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-    src: url($lib/assets/fonts/VampiroOne-Regular.ttf) format('truetype');
-  }
+
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  @layer base {
+    @font-face {
+      font-family: "Contrail One";
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+      src: url($lib/assets/fonts/ContrailOne-Regular.ttf) format('truetype');
+    }
+
+    @font-face {
+      font-family: "Vampiro One";
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+      src: url($lib/assets/fonts/VampiroOne-Regular.ttf) format('truetype');
+    }
 
     h1 {
       @apply text-2xl;
     }
+
     h2 {
       @apply text-xl;
     }
+
     h3 {
       @apply text-lg;
     }
-  };
+  }

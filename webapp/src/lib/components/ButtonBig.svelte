@@ -4,7 +4,7 @@
 </script>
 
 <div class="w-[19rem] h-[7rem] relative flex items-center justify-center group">
-	<button
+	<button on:click
 		class="w-[15rem] h-[4rem] flex justify-center items-center bg-yellow group-hover:bg-purple transition-all z-20 absolute"
 		on:click
 	>
