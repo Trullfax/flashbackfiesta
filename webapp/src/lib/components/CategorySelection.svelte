@@ -1,14 +1,25 @@
 <script lang="ts">
-	import { selectedCategory } from '$lib/stores/gameStore';
-
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Title from '$lib/components/Title.svelte';
+	// import { addToast } from '$lib/stores/toastStore';
+	import { createEventDispatcher } from 'svelte';
 
 	export let categories: Category[] = [];
+	let selectedCategory = '';
 
-	// TODO: Refactor this function to also handle error through toast notification
+	const dispatch = createEventDispatcher();
+
 	function selectCategory(category: string) {
-		selectedCategory.set(category);
+		selectedCategory = category;
+	}
+
+	// Handle form submission
+	function handleCategorySelection() {
+		if (selectedCategory === '') {
+			//addToast({ message: 'please choose a category', type: 'error' });
+			return;
+		}
+		dispatch('submit', { selectedCategory });
 	}
 </script>
 
@@ -24,16 +35,16 @@
 						<img
 							src={category.picture_path}
 							alt="categorycard for {category.name}"
-							class="w-[10rem] {$selectedCategory === category.name
-								? '-translate-y-6 transition-all'
+							class="w-[10rem] transition-all {selectedCategory === category.name
+								? '-translate-y-6'
 								: ''}"
 						/>
 					</button>
 					<p
-						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] {$selectedCategory ===
+						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] transition-all {selectedCategory ===
 						category.name
-							? 'text-3xl transition-all'
-							: 'text-2xl '}"
+							? 'text-3xl'
+							: 'text-2xl'}"
 					>
 						{category.name}
 					</p>
@@ -44,6 +55,6 @@
 		{/if}
 	</div>
 	<div class="mt-8">
-		<ButtonSmall text="LET'S PLAY" accent_color="#ff847c" on:click />
+		<ButtonSmall text="LET'S PLAY" accent_color="#ff847c" on:click={handleCategorySelection} />
 	</div>
 </div>
