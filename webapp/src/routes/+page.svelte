@@ -2,7 +2,7 @@
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
 
-	import { selectedCategory } from '$lib/stores/gameStore';
+	import { selectedCategory, isCreator } from '$lib/stores/gameStore';
 
 	// Example Array - TODO: Load Categories from Database
 	let categories: { name: string; picture_path: string }[] = [
@@ -15,6 +15,7 @@
 	function handleSelection() {
 		console.log('Category Selected:' + $selectedCategory);
 
+		isCreator.set(true);
 		//Handle futher logic like navigation or API calls
 	}
 </script>
