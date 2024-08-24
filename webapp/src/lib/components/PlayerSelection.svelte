@@ -7,7 +7,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import { addToast } from '$lib/stores/toastStore';
 
-
 	let avatarArray: string[] = [];
 	let currentAvatar = '';
 	let currentIndex = 0;
@@ -48,17 +47,17 @@
 
 	loadAvatars();
 
-	let username = '';
+	let playername = '';
 	const dispatch = createEventDispatcher();
 
 	// Handle form submission
 	function handleSubmit() {
-		// TODO: Add validation logic, like checking if the username already exists
-		if (username.trim() === '') {
-			addToast({ message: 'please enter a username!', type: 'error' });
+		// TODO: Add validation logic, like checking if the playername already exists
+		if (playername.trim() === '') {
+			addToast({ message: 'please enter a playername!', type: 'error' });
 			return;
 		}
-		dispatch('submit', { username, selectedAvatar });
+		dispatch('submit', { playername, selectedAvatar });
 	}
 </script>
 
@@ -69,32 +68,33 @@
 		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
 		<div class="relative">
 			<img src={currentAvatar} alt="Avatar" class="drop-shadow-bold pr-5" />
-			<button on:click={shuffleAvatars} class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center drop-shadow-text">
-                <Dice height={30} width={30} />
-            </button>
+			<button
+				on:click={shuffleAvatars}
+				class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center drop-shadow-text"
+			>
+				<Dice height={30} width={30} />
+			</button>
 		</div>
 		<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
 	</div>
 	<div class="justify-self-center">
 		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
 		<!-- TODO: Add a title of category -->
-		 <div class="-ml-10">
+		<div class="-ml-10">
 			<Title title="CATEGORY" subtitle="create your player" flip={false} />
-		 </div>
-		<form method="POST" on:submit|preventDefault={handleSubmit}>
-			<label>
-				<input
-					type="text"
-					bind:value={username}
-					name="username"
-					autocomplete="off"
-					placeholder="how should we call you?"
-					class="font-contrail w-[100%] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
-				/>
-			</label>
-			<div class="mt-5 -ml-4">
-				<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
-			</div>
-		</form>
+		</div>
+		<label for="playername">
+			<input
+				type="text"
+				bind:value={playername}
+				name="playername"
+				autocomplete="off"
+				placeholder="how should we call you?"
+				class="font-contrail w-[100%] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
+			/>
+		</label>
+		<div class="mt-5 -ml-4">
+			<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
+		</div>
 	</div>
 </div>
