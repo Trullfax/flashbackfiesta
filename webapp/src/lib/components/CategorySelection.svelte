@@ -6,6 +6,7 @@
 
 	export let categories: Category[] = [];
 
+	// TODO: Refactor this function to also handle error through toast notification
 	function selectCategory(category: string) {
 		selectedCategory.set(category);
 	}
