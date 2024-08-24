@@ -50,8 +50,7 @@
 	let playername = '';
 	const dispatch = createEventDispatcher();
 
-	// Handle form submission
-	function handleSubmit() {
+	function handlePlayerSelection() {
 		// TODO: Add validation logic, like checking if the playername already exists
 		if (playername.trim() === '') {
 			addToast({ message: 'please enter a playername!', type: 'error' });
@@ -94,7 +93,7 @@
 			/>
 		</label>
 		<div class="mt-5 -ml-4">
-			<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
+			<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handlePlayerSelection} />
 		</div>
 	</div>
 </div>

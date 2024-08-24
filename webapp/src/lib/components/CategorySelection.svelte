@@ -1,27 +1,28 @@
 <script lang="ts">
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Title from '$lib/components/Title.svelte';
-	// import { addToast } from '$lib/stores/toastStore';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import { addToast } from '$lib/stores/toastStore';
 	import { createEventDispatcher } from 'svelte';
 
 	export let categories: Category[] = [];
-	let selectedCategory = '';
 
-	const dispatch = createEventDispatcher();
-
+	export let selectedCategory = '';
 	function selectCategory(category: string) {
 		selectedCategory = category;
 	}
 
-	// Handle form submission
+	const dispatch = createEventDispatcher();
 	function handleCategorySelection() {
 		if (selectedCategory === '') {
-			//addToast({ message: 'please choose a category', type: 'error' });
+			addToast({ message: 'please choose a category', type: 'error' });
 			return;
 		}
 		dispatch('submit', { selectedCategory });
 	}
 </script>
+
+<Toasts />
 
 <div class="flex flex-col items-center">
 	<div class="w-[62rem] flex justify-start">
