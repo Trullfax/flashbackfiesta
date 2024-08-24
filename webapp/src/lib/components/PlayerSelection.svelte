@@ -53,7 +53,7 @@
 	function handlePlayerSelection() {
 		// TODO: Add validation logic, like checking if the playername already exists
 		if (playername.trim() === '') {
-			addToast({ message: 'please enter a playername!', type: 'error' });
+			addToast({ message: 'please enter a player name!', type: 'error' });
 			return;
 		}
 		dispatch('submit', { playername, selectedAvatar });
@@ -66,7 +66,7 @@
 	<div class="justify-self-center self-center grid grid-cols-3 items-center justify-items-center">
 		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
 		<div class="relative">
-			<img src={currentAvatar} alt="Avatar" class="drop-shadow-bold pr-5" />
+			<img src={currentAvatar} alt="Avatar" class="ml-5 drop-shadow-bold pr-5" />
 			<button
 				on:click={shuffleAvatars}
 				class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center drop-shadow-text"
