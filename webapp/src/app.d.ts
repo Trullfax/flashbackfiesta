@@ -16,6 +16,14 @@ declare global {
 		api_route: string;
 		hex_color: string;
 	}
+
+	interface Movie {
+        title: string;
+        release_date: string | number | Date;
+        poster_path: string;
+		id: number;
+		year: string;
+	};
 }
 
 export {};
