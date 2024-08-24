@@ -1,0 +1,60 @@
+<script lang="ts">
+	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
+	import Title from '$lib/components/Title.svelte';
+	// import { addToast } from '$lib/stores/toastStore';
+	import { createEventDispatcher } from 'svelte';
+
+	export let categories: Category[] = [];
+	let selectedCategory = '';
+
+	const dispatch = createEventDispatcher();
+
+	function selectCategory(category: string) {
+		selectedCategory = category;
+	}
+
+	// Handle form submission
+	function handleCategorySelection() {
+		if (selectedCategory === '') {
+			//addToast({ message: 'please choose a category', type: 'error' });
+			return;
+		}
+		dispatch('submit', { selectedCategory });
+	}
+</script>
+
+<div class="flex flex-col items-center">
+	<div class="w-[62rem] flex justify-start">
+		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
+	</div>
+	<div class="h-[17rem] flex flex-row gap-7">
+		{#if categories && categories.length > 0}
+			{#each categories as category}
+				<div class="flex flex-col items-center gap-6">
+					<button on:click={() => selectCategory(category.name)} class="w-[10rem] drop-shadow-bold">
+						<img
+							src={category.picture_path}
+							alt="categorycard for {category.name}"
+							class="w-[10rem] transition-all {selectedCategory === category.name
+								? '-translate-y-6'
+								: ''}"
+						/>
+					</button>
+					<p
+						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] transition-all {selectedCategory ===
+						category.name
+							? 'text-3xl'
+							: 'text-2xl'}"
+					>
+						{category.name}
+					</p>
+				</div>
+			{/each}
+		{:else}
+			<p>No Categories found!</p>
+		{/if}
+	</div>
+	<div class="mt-8">
+		<ButtonSmall text="LET'S PLAY" accent_color="#ff847c" on:click={handleCategorySelection} />
+	</div>
+</div>

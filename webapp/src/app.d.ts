@@ -8,6 +8,14 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Category {
+		id: string;
+		name: string;
+		picture_path: string;
+		api_route: string;
+		hex_color: string;
+	}
 }
 
 export {};
