@@ -8,6 +8,6 @@
     }
 </script>
 
-<main class="min-h-screen max-h-screen max-w-[1000px] flex items-center self-center">
+<main class="min-h-screen max-h-screen max-w-[1280px] flex items-center self-center">
     <PlayerSelection on:submit={handlePlayerSelection} />
 </main>

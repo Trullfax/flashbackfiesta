@@ -65,11 +65,11 @@
 <Toasts />
 
 <div class="grid grid-cols-2">
-	<div class="justify-self-center self-center grid grid-cols-3 items-center">
+	<div class="justify-self-center self-center grid grid-cols-3 items-center justify-items-center">
 		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
 		<div class="relative">
-			<img src={currentAvatar} alt="Avatar" class="w-50 h-50 drop-shadow-bold pr-5" />
-			<button on:click={shuffleAvatars} class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center">
+			<img src={currentAvatar} alt="Avatar" class="drop-shadow-bold pr-5" />
+			<button on:click={shuffleAvatars} class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center drop-shadow-text">
                 <Dice height={30} width={30} />
             </button>
 		</div>
@@ -77,9 +77,11 @@
 	</div>
 	<div class="justify-self-center">
 		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
-		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
-
-		<form method="POST" class="mb-5" on:submit|preventDefault={handleSubmit}>
+		<!-- TODO: Add a title of category -->
+		 <div class="-ml-10">
+			<Title title="CATEGORY" subtitle="create your player" flip={false} />
+		 </div>
+		<form method="POST" on:submit|preventDefault={handleSubmit}>
 			<label>
 				<input
 					type="text"
@@ -87,10 +89,12 @@
 					name="username"
 					autocomplete="off"
 					placeholder="how should we call you?"
-					class="font-contrail w-[100%] p-2 mt-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
+					class="font-contrail w-[100%] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
 				/>
 			</label>
+			<div class="mt-5 -ml-4">
+				<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
+			</div>
 		</form>
-		<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handleSubmit} />
 	</div>
 </div>
