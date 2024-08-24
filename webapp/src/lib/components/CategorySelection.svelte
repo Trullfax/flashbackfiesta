@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
-	import { onMount } from 'svelte';
+	import { selectedCategory } from '$lib/stores/gameStore';
 
 	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Title from '$lib/components/Title.svelte';
 
 	export let categories: Category[] = [];
-
-	let selectedCategory = writable<string | null>(null);
 
 	function selectCategory(category: string) {
 		selectedCategory.set(category);
