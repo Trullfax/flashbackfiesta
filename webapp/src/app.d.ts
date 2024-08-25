@@ -25,6 +25,15 @@ declare global {
 		cards_count: number;
 		game_id: string;
 	}
+
+	interface Game {
+		id: string;
+		status: string;
+		max_card_count: number;
+		difficulty: number;
+		category_id: string;
+		whose_turn_id: string;
+	}
 }
 
 export {};
