@@ -8,7 +8,7 @@
 	<img class="max-w-md" src={logo} alt="Flashback Fiesta" />
 	<div class="grid grid-cols-3">
 		<div class="col-start-2 col-end-2 justify-self-center">
-			<ButtonBig text="START GAME" accent_color="#ff847c" />
+			<ButtonBig text="START GAME" accent_color="#ff847c" on:click />
 		</div>
 		<div class="justify-self-center">
 			<TextBlock
