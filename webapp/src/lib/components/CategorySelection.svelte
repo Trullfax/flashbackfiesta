@@ -5,7 +5,7 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { createEventDispatcher } from 'svelte';
 
-	export let categories: Category[] = [];
+	export let categories: Partial<Category>[] = [];
 
 	export let selectedCategory = '';
 	function selectCategory(category: string) {
@@ -32,7 +32,10 @@
 		{#if categories && categories.length > 0}
 			{#each categories as category}
 				<div class="flex flex-col items-center gap-6">
-					<button on:click={() => selectCategory(category.name)} class="w-[10rem] drop-shadow-bold">
+					<button
+						on:click={() => selectCategory(category.name ?? '')}
+						class="w-[10rem] drop-shadow-bold"
+					>
 						<img
 							src={category.picture_path}
 							alt="categorycard for {category.name}"
