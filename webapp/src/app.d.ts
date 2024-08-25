@@ -16,6 +16,15 @@ declare global {
 		api_route: string;
 		hex_color: string;
 	}
+
+	interface Player {
+		id: string;
+		name: string;
+		avatar_path: string;
+		is_ready: boolean;
+		cards_count: number;
+		game_id: string;
+	}
 }
 
 export {};
