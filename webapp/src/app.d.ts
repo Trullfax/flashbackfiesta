@@ -34,6 +34,15 @@ declare global {
 		category_id: string;
 		whose_turn_id: string;
 	}
+
+	interface Player {
+		id: string;
+		name: string;
+		is_ready: boolean;
+		cards_count: number;
+		avatar_path: string;
+		game_id: string;
+	}
 }
 
 export {};
