@@ -6,15 +6,15 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let categories: Partial<Category>[] = [];
+	export let selectedCategory: Partial<Category> = {};
 
-	export let selectedCategory = '';
-	function selectCategory(category: string) {
+	function selectCategory(category: Partial<Category>) {
 		selectedCategory = category;
 	}
 
 	const dispatch = createEventDispatcher();
 	function handleCategorySelection() {
-		if (selectedCategory === '') {
+		if (!selectedCategory || !selectedCategory.name) {
 			addToast({ message: 'please choose a category', type: 'error' });
 			return;
 		}
@@ -32,20 +32,17 @@
 		{#if categories && categories.length > 0}
 			{#each categories as category}
 				<div class="flex flex-col items-center gap-6">
-					<button
-						on:click={() => selectCategory(category.name ?? '')}
-						class="w-[10rem] drop-shadow-bold"
-					>
+					<button on:click={() => selectCategory(category)} class="w-[10rem] drop-shadow-bold">
 						<img
 							src={category.picture_path}
 							alt="categorycard for {category.name}"
-							class="w-[10rem] transition-all {selectedCategory === category.name
+							class="w-[10rem] transition-all {selectedCategory.name === category.name
 								? '-translate-y-6'
 								: ''}"
 						/>
 					</button>
 					<p
-						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] transition-all {selectedCategory ===
+						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] transition-all {selectedCategory.name ===
 						category.name
 							? 'text-3xl'
 							: 'text-2xl'}"
