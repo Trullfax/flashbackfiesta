@@ -12,6 +12,7 @@
 	let currentIndex = 0;
 
 	export let selectedAvatar = '';
+	export let category: Partial<Category> = {};
 
 	async function loadAvatars() {
 		const avatarPaths = [
@@ -78,9 +79,8 @@
 	</div>
 	<div class="justify-self-center">
 		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
-		<!-- TODO: Add a title of category -->
 		<div class="-ml-10">
-			<Title title="CATEGORY" subtitle="create your player" flip={false} />
+			<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
 		</div>
 		<label for="playername">
 			<input

@@ -1,42 +1,10 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
-	// Example Array - TODO: Load Categories from Database
-	let playerArray: Player[] = [
-		{
-			id: '1',
-			name: 'Trullfax11',
-			avatar_path: '/assets/avatars/pou_1.svg',
-			is_ready: false,
-			cards_count: 0,
-			game_id: '1'
-		},
-		{
-			id: '2',
-			name: 'Trullfax22',
-			avatar_path: '/assets/avatars/pou_2.svg',
-			is_ready: false,
-			cards_count: 0,
-			game_id: '1'
-		},
-		{
-			id: '3',
-			name: 'Trullfax33fsdfsdfsdf',
-			avatar_path: '/assets/avatars/pou_3.svg',
-			is_ready: false,
-			cards_count: 0,
-			game_id: '1'
-		},
-		{
-			id: '4',
-			name: 'Trullfax44',
-			avatar_path: '/assets/avatars/pou_4.svg',
-			is_ready: false,
-			cards_count: 0,
-			game_id: '1'
-		}
-	];
+	export let data: PageData;
 
 	function handlePlayerSubmit(event: Event) {
 		const { username, selectedAvatar } = (
@@ -47,7 +15,11 @@
 	}
 </script>
 
-<main class="max-w-[1280px] flex flex-col items-center self-center">
-	<PlayerSelection on:submit={handlePlayerSubmit} />
-	<PlayerLobby {playerArray} />
+<main class="overflow-hidden">
+	<section class="h-screen flex items-center justify-center">
+		<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
+	</section>
+	<section id="category-section" class="h-screen flex items-center justify-center">
+		<PlayerLobby />
+	</section>
 </main>
