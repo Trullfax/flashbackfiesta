@@ -1,7 +1,7 @@
 // TODO: in this, find a way to filter out really weird or trash movies
 
-export async function getMovies(count: number): Promise<movie[]> {
-    let movies: movie[] = [];
+export async function getMovies(count: number): Promise<Movie[]> {
+    let movies: Movie[] = [];
     const resultsPerPage = 20;
     const pagesNeeded = Math.ceil(count / resultsPerPage);
 
