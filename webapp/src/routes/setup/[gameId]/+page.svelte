@@ -7,6 +7,7 @@
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
 	export let data: PageData;
+	console.log(data);
 
 	const { gameId } = $page.params;
 
@@ -50,6 +51,6 @@
 		<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 	</section>
 	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
-		<PlayerLobby />
+		<PlayerLobby playerArray={data.players} />
 	</section>
 </main>

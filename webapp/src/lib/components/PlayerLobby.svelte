@@ -4,7 +4,7 @@
 	import { Copy } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
-	export let playerArray: Player[] = [];
+	export let playerArray: Partial<Player>[] = [];
 
 	let currentUrl = '';
 
