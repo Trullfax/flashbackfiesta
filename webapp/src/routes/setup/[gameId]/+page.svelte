@@ -2,14 +2,23 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toastStore';
+	import { supabase } from '$lib/supabaseClient';
 
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
 	export let data: PageData;
-	console.log(data);
 
 	const { gameId } = $page.params;
+
+	const channels = supabase
+		.channel(gameId)
+		.on('postgres_changes', { event: '*', schema: 'public', table: 'Player' }, (payload) => {
+			console.log('payload', payload);
+			// fetch new data
+			// $: data = fetch(`/api/game/${gameId}`);
+		})
+		.subscribe();
 
 	function handlePlayerSubmit(event: Event) {
 		const { playerName, selectedAvatar } = (
