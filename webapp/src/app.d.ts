@@ -9,6 +9,15 @@ declare global {
 		// interface Platform {}
 	}
 
+	interface Game {
+		id: string;
+		status: string;
+		max_card_count: number;
+		difficulty: string;
+		category_id: string;
+		whose_turn_id: string;
+	}
+
 	interface Category {
 		id: string;
 		name: string;
@@ -17,12 +26,16 @@ declare global {
 		hex_color: string;
 	}
 
-	interface Movie {
-        title: string;
-        release_date: string | number | Date;
-        poster_path: string;
-		id: number;
-		year: string;
+	// TODO: Add category_id to the Card table in supabase
+	interface Card {
+		id: string;
+        name: string;
+        year: number;
+		creator: string;
+		picture_path: string;
+		category_id: string;
+		game_id: string;
+		player_id: string;
 	};
 
 	interface Player {

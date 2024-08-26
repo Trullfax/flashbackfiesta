@@ -1,59 +1,150 @@
 import type { PageServerLoad } from './$types';
+import { supabase } from "$lib/supabaseClient.js";
 
-export const load: PageServerLoad = async () => {
-    // Define the shape of the query result
-    interface QueryResult {
-        item: {
-            type: string;
-            value: string;
-        };
-        itemLabel: {
-            type: string;
-            value: string;
-        };
-        creator: {
-            type: string;
-            value: string;
-        };
-        year: {
-            type: string;
-            value: string;
-        };
-        imageUrl?: string; // Add a field for the image URL
+export const load: PageServerLoad = async ({ params, fetch }) => {
+    const gameId = params.game_id; // Get game_id from the URL
+    const gameData = await fetchGame(gameId);
+
+    if (!gameData) {
+        console.error('Game not found');
+        return { filteredQueryData: [] };
     }
 
-    let queryData: QueryResult[] | null = null;
-    let filteredQueryData: QueryResult[] = [];
+    const categoryData = await fetchCategory(gameData.category_id);
 
-    const TMDB_API_KEY = 'process.env.PUBLIC_TMDB_URL';
+    if (!categoryData) {
+        console.error('Category not found');
+        return { filteredQueryData: [] };
+    }
 
-    const musicQuery = `
-        SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creator) ?itemLabel ?random
-        WHERE {
-        ?item wdt:P31 wd:Q7366;
-                wdt:P577 ?year;
-                wdt:P175 ?creator;
-                wikibase:sitelinks ?sitelinks.
+    // TODO: Add logic here to fetch the right amount of cards based on what is already there.
+    // Also the cards need to be "handed" to the players equally in the beginning.
+    const numberOfCards = 5;
 
-        FILTER(?sitelinks > 10)
+    const cards = await generateCards(gameId, categoryData.name, gameData.category_id, numberOfCards, gameData.difficulty, fetch);
 
-        # Fetch the creator's label
-        ?creator rdfs:label ?creatorLabel.
-        FILTER (lang(?creatorLabel) = "en")
+    return { filteredQueryData: cards };
+};
 
-        # Generate a hashed random value
-        BIND(SHA512(CONCAT(STR(RAND()), STR(?item))) AS ?random)
+// Function to fetch game data based on game_id
+async function fetchGame(gameId: string): Promise<Game | null | undefined> {
+    const { data, error } = await supabase
+        .from('Game') // Use the correct table name
+        .select(`
+            id,
+            status,
+            max_card_count,
+            difficulty,
+            category_id,
+            whose_turn_id
+        `)
+        .eq('id', gameId)
+        .single(); // Ensure you get a single record
 
-        SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+    if (error || !data) {
+        console.error('Error fetching game:', error);
+        return null;
+    }
+
+    return data as Game;
+}
+
+// Function to fetch category based on category_id
+async function fetchCategory(categoryId: string): Promise<Category | null> {
+    const { data, error } = await supabase
+        .from('Category') // Use the correct table name
+        .select(`
+            id,
+            name,
+            picture_path,
+            api_route,
+            hex_color
+        `)
+        .eq('id', categoryId)
+        .single(); // Ensure you get a single record
+
+    if (error || !data) {
+        console.error('Error fetching category:', error);
+        return null;
+    }
+
+    return data as Category;
+}
+
+
+// Function to generate cards based on the category
+async function generateCards(gameId: string, categoryName: string | null, categoryId: string, limit: number, difficulty: string, fetch: typeof globalThis.fetch): Promise<Card[]> {
+    let sparqlQuery = '';
+
+    // Select the SPARQL query based on the category
+    switch (categoryName) {
+        case 'Movies':
+            sparqlQuery = getMoviesQuery(limit, difficulty);
+            break;
+        case 'TV-Shows':
+            sparqlQuery = getTVShowsQuery(limit, difficulty);
+            break;
+        // Add more cases for other categories like 'Video Games', 'Music'
+        default:
+            console.error('Unknown category');
+            return [];
+    }
+
+    const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
+
+    try {
+        const wikidataRes = await fetch(wikidataUrl, {
+            headers: {
+                'User-Agent': 'flashbackfiesta.app (https://flashbackfiesta.app)',
+            }
+        });
+        const responseText = await wikidataRes.text();
+        const wikidata = JSON.parse(responseText).results.bindings;
+
+        const cards: Card[] = [];
+
+        for (const result of wikidata) {
+            const imageUrl = (categoryName === 'Movies' || categoryName === 'TV-Shows')
+                ? await fetchTMDBImage(result.itemLabel.value, result.year.value, fetch)
+                : null;
+
+            // TODO: Add further conditions for generating cards, that are no duplicates or have same year etc.
+            if (imageUrl) {
+                const card: Card = {
+                    id: result.item.value.split('/').pop(),
+                    name: result.itemLabel.value,
+                    year: result.year.value,
+                    creator: result.creator.value,
+                    picture_path: imageUrl,
+                    category_id: categoryId,
+                    game_id: gameId,
+                    player_id: 'example_player_id'
+                };
+                cards.push(card);
+            }
         }
-        GROUP BY ?item ?itemLabel ?random
-        ORDER BY ?random
-        LIMIT 30
 
-        # comment, change this before each run to bypass WDQS cache: ${Math.random()}
-        `;
+        return cards;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
+    }
+}
 
-    const filmQuery = `
+// SPARQL queries for generating movies
+function getMoviesQuery(limit: number, difficulty: string): string {
+    let sitelinksFilter = '?sitelinks > 50';
+    if (difficulty === 'easy') {
+        sitelinksFilter = '?sitelinks > 50';
+    } else if (difficulty === 'medium') {
+        sitelinksFilter = '?sitelinks > 30';
+    } else if (difficulty === 'hard') {
+        sitelinksFilter = '?sitelinks > 20';
+    } else if (difficulty === 'extreme') {
+        sitelinksFilter = '?sitelinks > 10';
+    }
+
+    return `
         SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creator) ?itemLabel ?random
         WHERE {
         ?item wdt:P31 wd:Q11424;
@@ -66,7 +157,7 @@ export const load: PageServerLoad = async () => {
         FILTER (lang(?creatorLabel) = "en")
         
         # Filter out unpopular films
-        FILTER(?sitelinks > 50)
+        FILTER(${sitelinksFilter})
 
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 
@@ -75,77 +166,76 @@ export const load: PageServerLoad = async () => {
         }
         GROUP BY ?item ?itemLabel ?random
         ORDER BY ?random
-        LIMIT 5
+        LIMIT ${limit}
 
         # comment, change this before each run to bypass WDQS cache: ${Math.random()}
         `;
+}
 
-    const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(filmQuery)}&format=json`;
+// SPARQL queries for generating tv shows
+function getTVShowsQuery(limit: number, difficulty: string): string {
+    let sitelinksFilter = '?sitelinks > 30';
+    if (difficulty === 'easy') {
+        sitelinksFilter = '?sitelinks > 30';
+    } else if (difficulty === 'medium') {
+        sitelinksFilter = '?sitelinks > 20';
+    } else if (difficulty === 'hard') {
+        sitelinksFilter = '?sitelinks > 10';
+    } else if (difficulty === 'extreme') {
+        sitelinksFilter = '?sitelinks > 5';
+    }
+
+    return `
+        SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creator) ?itemLabel ?random
+        WHERE {
+        ?item wdt:P31 wd:Q5398426;
+                wikibase:sitelinks ?sitelinks;
+                wdt:P577 ?year;
+                wdt:P57 ?creator.
+        
+        # Fetch the creator's label
+        ?creator rdfs:label ?creatorLabel.
+        FILTER (lang(?creatorLabel) = "en")
+        
+        # Filter out unpopular films
+        FILTER(${sitelinksFilter})
+
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+
+        # Generate a hashed random value
+        BIND(SHA512(CONCAT(STR(RAND()), STR(?item))) AS ?random)
+        }
+        GROUP BY ?item ?itemLabel ?random
+        ORDER BY ?random
+        LIMIT ${limit}
+
+        # comment, change this before each run to bypass WDQS cache: ${Math.random()}
+        `;
+}
+
+// Function to fetch images from TMDB for Movies and TV Shows
+async function fetchTMDBImage(title: string, year: string, fetch: typeof globalThis.fetch): Promise<string | null> {
+    const searchUrl = `/api/tmdb?title=${encodeURIComponent(title)}&year=${year}`;
 
     try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'flashbackfiesta.app (https://flashbackfiesta.app)',
-            }
-        });
-        const responseText = await response.text();
-        console.log('Response:', responseText); // Inspect the raw response
+        const response = await fetch(searchUrl);
+        const data = await response.json();
 
-        // Attempt to parse the response only if it's valid JSON
-        const data = JSON.parse(responseText);
-        queryData = data.results.bindings as QueryResult[];
+        if (Array.isArray(data.results)) {
+            const item = data.results.find(
+                // disclaimer: release_date and poster_path are the names of the properties in the TMDB API response
+                (item: { release_date: string; poster_path: string | null }) =>
+                    item.release_date.startsWith(year)
+            );
 
-        for (const result of queryData) {
-            const movieTitle = result.itemLabel.value;
-            const movieYear = result.year.value;
-
-            const movieImage = await fetchMovieImage(movieTitle, movieYear);
-
-            if (movieImage) {
-                result.imageUrl = movieImage;
-                filteredQueryData.push(result);
+            if (item && item.poster_path) {
+                return `https://image.tmdb.org/t/p/w500${item.poster_path}`;
             }
         }
 
-        // Force reassignment to trigger Svelte's reactivity
-        filteredQueryData = [...filteredQueryData];
-
-        console.log('Filtered query data:', filteredQueryData);
-
-        return { filteredQueryData };
-
+        return null;
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching item image of TMDB:', error);
+        return null;
     }
-
-    async function fetchMovieImage(title: string, year: string): Promise<string | null> {
-        const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
-    
-        try {
-            const response = await fetch(searchUrl);
-            const data = await response.json();
-    
-            console.log('TMDB API response:', data); // Log the full response for debugging
-    
-            // Ensure that `data.results` is an array before trying to find a movie
-            if (Array.isArray(data.results)) {
-                const movie = data.results.find(
-                    (movie: { release_date: string; poster_path: string | null }) =>
-                        movie.release_date.startsWith(year)
-                );
-    
-                if (movie && movie.poster_path) {
-                    return `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-                }
-            } else {
-                console.error('No results array found in TMDB response.');
-            }
-            
-            return null; // No image found or no results
-        } catch (error) {
-            console.error('Error fetching movie image:', error);
-            return null;
-        }
-    }
-    
 }
