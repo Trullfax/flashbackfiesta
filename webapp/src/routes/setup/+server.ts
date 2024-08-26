@@ -4,22 +4,22 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { game_id, player_name, avatar_path } = await request.json();
+        const { gameId, playerName, selectedAvatar } = await request.json();
     
-        if (!game_id || game_id.trim() === '') {
-            throw new Error('game_id is invalid');
-        } else if (!player_name || player_name.trim() === '') {
-            throw new Error('player_name is invalid');
-        } else if (!avatar_path || avatar_path.trim() === '') {
-            throw new Error('avatar_path is invalid');
+        if (!gameId || gameId.trim() === '') {
+            throw new Error('gameId is invalid');
+        } else if (!playerName || playerName.trim() === '') {
+            throw new Error('playerName is invalid');
+        } else if (!selectedAvatar || selectedAvatar.trim() === '') {
+            throw new Error('selectedAvatar is invalid');
         }
     
-        const playerExists = await checkIfPlayerExists(player_name, game_id);
+        const playerExists = await checkIfPlayerExists(playerName, gameId);
         if (playerExists) {
             throw new Error('player already exists');
         }
     
-        const player: Player = await createPlayer(player_name, avatar_path, game_id);
+        const player: Player = await createPlayer(playerName, selectedAvatar, gameId);
         if (!player) {
             throw new Error('created player is invalid');
         }
@@ -31,12 +31,12 @@ export const POST: RequestHandler = async ({ request }) => {
 
 };
 
-async function checkIfPlayerExists(player_name: string, game_id: string) {
+async function checkIfPlayerExists(playerName: string, gameId: string) {
         const { data, error } = await supabase
             .from('Player')
             .select('name')
-            .eq('game_id', game_id)
-            .eq('name', player_name);
+            .eq('game_id', gameId)
+            .eq('name', playerName);
     
         if (error) {
             throw new Error('Error checking if player exists:' + error.message);
@@ -49,11 +49,11 @@ async function checkIfPlayerExists(player_name: string, game_id: string) {
         return false;
 }
 
-async function createPlayer(player_name: string, avatar_path: string, game_id: string) {
+async function createPlayer(playerName: string, selectedAvatar: string, gameId: string) {
 
         const { data, error } = await supabase
             .from('Player')
-            .insert([{ name: player_name, avatar_path: avatar_path, game_id: game_id }])
+            .insert([{ name: playerName, avatar_path: selectedAvatar, game_id: gameId }])
             .select();
     
         if (error) {

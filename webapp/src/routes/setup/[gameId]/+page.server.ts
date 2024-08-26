@@ -2,16 +2,16 @@ import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (request) => {
-    const { game_id } = request.params;
+    const { gameId } = request.params;
 
-    if (!game_id) {
+    if (!gameId) {
         return {
             game: null,
             error: 'Game ID is invalid'
         };
     }
 
-    const { data, error } = await supabase.from("Game").select('Category (id, name, picture_path)').eq('id', game_id);
+    const { data, error } = await supabase.from("Game").select('Category (id, name, picture_path)').eq('id', gameId);
 
     if (error) {
         console.error('Error fetching game:', error);

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
+	import { addToast } from '$lib/stores/toastStore';
 
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
@@ -18,15 +19,26 @@
 		createGameAndNavigate(selectedCategory.id ?? '');
 	}
 
-	async function createGameAndNavigate(category_id: string) {
+	async function createGameAndNavigate(categoryId: string) {
 		const response = await fetch('/', {
 			method: 'POST',
-			body: JSON.stringify({ category_id }),
+			body: JSON.stringify({ categoryId }),
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		});
-		goto('/setup/' + (await response.json()).game_id);
+
+		const { gameId, error } = await response.json();
+
+		if (error) {
+			addToast({ message: error, type: 'error' });
+			return;
+		} else if (!gameId) {
+			addToast({ message: 'game could not created', type: 'error' });
+			return;
+		}
+
+		goto('/setup/' + gameId);
 	}
 </script>
 

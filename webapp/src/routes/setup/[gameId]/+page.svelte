@@ -8,20 +8,20 @@
 
 	export let data: PageData;
 
-	const { game_id } = $page.params;
+	const { gameId } = $page.params;
 
 	function handlePlayerSubmit(event: Event) {
-		const { playername, selectedAvatar } = (
-			event as CustomEvent<{ playername: string; selectedAvatar: string }>
+		const { playerName, selectedAvatar } = (
+			event as CustomEvent<{ playerName: string; selectedAvatar: string }>
 		).detail;
 
-		createPlayerAndScrollToPlayerLobby(playername, selectedAvatar);
+		createPlayerAndScrollToPlayerLobby(playerName, selectedAvatar);
 	}
 
-	async function createPlayerAndScrollToPlayerLobby(player_name: string, avatar_path: string) {
+	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
 		const response = await fetch('/setup', {
 			method: 'POST',
-			body: JSON.stringify({ game_id, player_name, avatar_path }),
+			body: JSON.stringify({ gameId, playerName, selectedAvatar }),
 			headers: {
 				'Content-Type': 'application/json'
 			}

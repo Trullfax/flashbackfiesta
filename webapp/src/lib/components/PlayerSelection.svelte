@@ -48,16 +48,16 @@
 
 	loadAvatars();
 
-	let playername = '';
+	let playerName = '';
 	const dispatch = createEventDispatcher();
 
 	function handlePlayerSelection() {
-		// TODO: Add validation logic, like checking if the playername already exists
-		if (playername.trim() === '') {
+		// TODO: Add validation logic, like checking if the playerName already exists
+		if (playerName.trim() === '') {
 			addToast({ message: 'please enter a player name!', type: 'error' });
 			return;
 		}
-		dispatch('submit', { playername, selectedAvatar });
+		dispatch('submit', { playerName, selectedAvatar });
 	}
 </script>
 
@@ -85,7 +85,7 @@
 		<label for="playername">
 			<input
 				type="text"
-				bind:value={playername}
+				bind:value={playerName}
 				name="playername"
 				autocomplete="off"
 				placeholder="how should we call you?"
