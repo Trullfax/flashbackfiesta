@@ -85,7 +85,7 @@ export const load: PageServerLoad = async () => {
     try {
         const response = await fetch(url, {
             headers: {
-                'User-Agent': 'YourAppName/1.0 (your-email@example.com)'
+                'User-Agent': 'flashbackfiesta.app (https://flashbackfiesta.app)',
             }
         });
         const responseText = await response.text();
