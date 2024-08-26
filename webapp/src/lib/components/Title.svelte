@@ -7,10 +7,10 @@
 </script>
 
 <div class="w-[30rem] h-[15rem] relative">
-	<div class="font-contrail top-[3rem] left-[2.25rem] absolute">
+	<div class="w-[25rem] font-contrail top-[3rem] left-[2.25rem] absolute">
 		<p class="text-[5rem] text-yellow z-30 -rotate-[5deg] drop-shadow-title absolute">{title}</p>
 	</div>
-	<div class="w-[25rem] top-[7.25rem] left-[7.5rem] font-vampiro absolute">
+	<div class="w-[30rem] top-[7.25rem] left-[7.5rem] font-vampiro absolute">
 		<p class="text-white text-[2.2rem] z-50 -rotate-[5deg] drop-shadow-subtitle absolute">
 			{subtitle}
 		</p>

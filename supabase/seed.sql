@@ -118,7 +118,7 @@ SET row_security = off;
 -- Data for Name: Category; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_colour", "api_route") VALUES
+INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api_route") VALUES
 	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', NULL, '#000000', NULL),
 	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', NULL, '#000000', NULL);
 
@@ -157,6 +157,8 @@ INSERT INTO "public"."countries" ("id", "name") OVERRIDING SYSTEM VALUE VALUES
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
 
+INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
+	('Assets', 'Assets', NULL, '2024-08-23 15:35:45.201165+00', '2024-08-23 15:35:45.201165+00', false, false, NULL, NULL, NULL);
 
 
 --

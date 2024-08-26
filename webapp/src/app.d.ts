@@ -24,6 +24,15 @@ declare global {
 		id: number;
 		year: string;
 	};
+
+	interface Player {
+		id: string;
+		name: string;
+		avatar_path: string;
+		is_ready: boolean;
+		cards_count: number;
+		game_id: string;
+	}
 }
 
 export {};
