@@ -6,8 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        SUPABASE_URL: ${SUPABASE_URL}
-        SUPABASE_KEY: ${SUPABASE_KEY}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_KEY: ${VITE_SUPABASE_KEY}
+        SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
     ports:
       - "3000:3000"
     env_file:
