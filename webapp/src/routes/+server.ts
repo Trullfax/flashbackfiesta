@@ -1,31 +1,34 @@
-import { supabase } from "$lib/supabaseClient.js";
+import { supabase } from "$lib/server/supabaseBackendClient";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
-    const { category_id } = await request.json();
+    try {
+        const { categoryId } = await request.json();
 
-    if (!category_id) {
-        return json({status: 'error', error: 'category_id is invalid'});
-    }
+        if (!categoryId) {
+            throw new Error('categoryId is invalid');
+        }
 
-    const { data, error } = await supabase
-    .from('Game')
-    .insert([
-      { category_id: category_id },
-    ])
-    .select()        
+        const { data, error } = await supabase
+        .from('Game')
+        .insert([
+        { category_id: categoryId },
+        ])
+        .select()        
 
-    if (error) {
-        console.error('Error creating game:', error);
-        return json({status: 'error', error: error.message});
-    }
+        if (error) {
+            throw new Error('Error creating game:' + error.message);
+        }
 
-    const { id } = data[0] ?? '';
+        const { id } = data[0] ?? '';
 
-    if (!id) {
-        return json({status: 'error', error: 'id is invalid'});
-    }
-    
-    return json({status: 'success', game_id: id, error: null});
+        if (!id) {
+            throw new Error('created game is invalid');
+        }
+        
+        return json({status: 'success', gameId: id, error: null});
+    } catch (error) {
+        return json({ status: 'error', gameId: '', error: error.message });
+    } 
 };
