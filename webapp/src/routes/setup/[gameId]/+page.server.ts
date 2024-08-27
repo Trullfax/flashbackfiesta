@@ -1,9 +1,9 @@
 import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async (request) => {
+export const load: PageServerLoad = async ({ params }) => {
     try {
-        const { gameId } = request.params;
+        const { gameId } = params;
     
         if (!gameId) {
             throw new Error("gameIs is invalid");
