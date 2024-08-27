@@ -8,16 +8,17 @@
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
 	export let data: PageData;
+	console.log(data);
 
 	const { gameId } = $page.params;
 
+	const handleInserts = (payload) => {
+		console.log('Change received!', payload);
+	};
+
 	const channels = supabase
 		.channel(gameId)
-		.on('postgres_changes', { event: '*', schema: 'public', table: 'Player' }, (payload) => {
-			console.log('payload', payload);
-			// fetch new data
-			// $: data = fetch(`/api/game/${gameId}`);
-		})
+		.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Player' }, handleInserts)
 		.subscribe();
 
 	function handlePlayerSubmit(event: Event) {
