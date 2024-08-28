@@ -2,15 +2,14 @@
     import type { PageData } from './$types';
     import Card from '$lib/components/CardFront.svelte';
 
-    export let data: PageData;
-
-    const { filteredQueryData } = data;
+    export let data: PageData & { cards: Card[] };
+    console.log(data);
 </script>
 
 <main class="flex flex-col items-center gap-10">
-    {#if filteredQueryData && filteredQueryData.length > 0}
+    {#if data.cards && data.cards.length > 0}
         <ul class="grid grid-cols-3 gap-5">
-            {#each filteredQueryData as result}
+            {#each data.cards as result}
                 <li>
                     <Card
                         title={result.name}
