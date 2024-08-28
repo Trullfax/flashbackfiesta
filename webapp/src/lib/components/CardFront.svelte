@@ -20,7 +20,7 @@
 		<p class="text-[10px] mb-1">{subtitle}</p>
 		<h1 class="text-lg/[20px]">{title}</h1>
 		{#if revealed}
-			<p class="mt-1">{year}</p>
+			<p class="mt-1 font-vampiro text-3xl text-yellow drop-shadow-bold">{year}</p>
 		{/if}
 	</div>
 </div>
