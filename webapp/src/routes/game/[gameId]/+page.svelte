@@ -3,7 +3,6 @@
     import Card from '$lib/components/CardFront.svelte';
 
     export let data: PageData & { cards: Card[] };
-    console.log(data);
 </script>
 
 <main class="flex flex-col items-center gap-10">
@@ -14,7 +13,7 @@
                     <Card
                         title={result.name}
                         subtitle={result.creator}
-                        imagePath={result.picture_path ?? ''}
+                        imagePath={result.picture_url}
                         accent_color="var(--ff-red)"
                         year={Number(result.year)}
                         revealed={true}

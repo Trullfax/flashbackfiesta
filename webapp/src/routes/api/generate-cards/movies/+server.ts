@@ -34,7 +34,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
                     category_id: categoryId,
                     game_id: gameId,
                 };
-
                 createCard(card);
             }
         }

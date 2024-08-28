@@ -5,6 +5,7 @@ import { supabase } from '$lib/supabaseClient';
 export const load: PageServerLoad = async ({ params, fetch }) => {
     const { gameId } = params; // Get game_id from the URL
     const gameData = await fetchGame(gameId);
+    const categoryData = gameData ? await fetchCategory(gameData.category_id) : null;
 
     if (!gameData) {
         console.error('Game not found');
@@ -18,7 +19,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
     // Also the cards need to be "handed" to the players equally in the beginning.
     const numberOfCards = 10;
 
-    const response = await fetch('/api/generate-cards/movies', {
+    const response = await fetch('/api/generate-cards/tv-shows', {
         method: 'POST',
         body: JSON.stringify({ gameId, categoryId, difficulty, numberOfCards }),
         headers: {
@@ -32,11 +33,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         .eq('game_id', gameId);
 
     if (error) {
-        throw new Error('Error checking if player exists:' + error.message);
-    }
-
-    if (data && data.length > 0) {
-        return true;
+        throw new Error('Error fetching the:' + error.message);
     }
 
     return { cards: data as Card[] };

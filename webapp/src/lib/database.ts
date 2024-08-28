@@ -24,7 +24,6 @@ export async function fetchCategory(categoryId: string): Promise<Category | null
 
 // Function to fetch game data based on the game id
 export async function fetchGame(gameId: string): Promise<Game | null> {
-    console.log('fetchGame', gameId);
     const { data, error } = await supabase
         .from('Game')
         .select(`
@@ -37,7 +36,6 @@ export async function fetchGame(gameId: string): Promise<Game | null> {
         `)
         .eq('id', gameId)
         .single();
-    console.log('fetchGame', data);
     if (error || !data) {
         console.error('Error fetching game:', error);
         return null;

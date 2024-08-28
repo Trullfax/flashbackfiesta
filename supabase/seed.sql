@@ -119,8 +119,8 @@ SET row_security = off;
 --
 
 INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api_route") VALUES
-	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', 'assets/categories/tv-card.svg', '#54e5c4', NULL),
-	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', 'assets/categories/movie-card.svg', '#ff847c', NULL);
+	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', 'assets/categories/movie-card.svg', '#ff847c', '/api/generate-cards/movies'),
+	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', 'assets/categories/tv-card.svg', '#54e5c4', '/api/generate-cards/tv-shows');
 
 
 --
