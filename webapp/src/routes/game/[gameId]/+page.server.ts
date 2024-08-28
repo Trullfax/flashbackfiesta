@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { supabase } from "$lib/supabaseClient.js";
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
-    const gameId = params.game_id; // Get game_id from the URL
+    const { gameId } = params; // Get game_id from the URL
     const gameData = await fetchGame(gameId);
 
     if (!gameData) {
