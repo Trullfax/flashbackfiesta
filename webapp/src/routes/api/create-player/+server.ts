@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
     
         return json({ status: 'success', player: player, error: null });
     } catch (error) {
-        return json({ status: 'error', player: {}, error: error.message });
+        return json({ status: 'error', player: {}, error: (error as Error).message });
     }
 
 };
@@ -54,11 +54,11 @@ async function createPlayer(playerName: string, selectedAvatar: string, gameId: 
         const { data, error } = await supabase
             .from('Player')
             .insert([{ name: playerName, avatar_path: selectedAvatar, game_id: gameId }])
-            .select();
+            .select().single();
     
         if (error) {
             throw new Error('Error creating player:' + error.message);
         }
     
-        return data[0];
+        return data as Player;
 }

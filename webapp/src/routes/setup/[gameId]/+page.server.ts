@@ -9,16 +9,20 @@ export const load: PageServerLoad = async ({ params }) => {
             throw new Error("gameId is invalid");
         }
     
-        const { data, error } = await supabase.from("Game").select('status, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)').eq('id', gameId);
+        const { data, error } = await supabase
+            .from("Game")
+            .select('status, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)')
+            .eq('id', gameId)
+            .single();
     
         if (error) {
             throw new Error('Error fetching game:' + error.message);
         }
     
         return {
-            game: {status: data[0].status} as Partial<Game>,
-            category: data[0].Category as Partial<Category>,
-            players: data[0].Player as Partial<Player>[],
+            game: {status: data.status} as Partial<Game>,
+            category: data.Category as Partial<Category>,
+            players: data.Player as Partial<Player>[],
             error: null
         };
     } catch (error) {

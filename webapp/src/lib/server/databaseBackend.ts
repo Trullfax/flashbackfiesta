@@ -1,7 +1,6 @@
 import { supabase } from "$lib/server/supabaseBackendClient";
 
 export async function createCard(card: Card) {
-    console.log(card);
     try {
         const { data, error } = await supabase
             .from('Card')
@@ -15,17 +14,13 @@ export async function createCard(card: Card) {
             }])
             .select();
     
-        if (error) {
-            throw new Error(`Failed to insert card: ${error.message}`);
-        }
-
-        if (data) {
-            return true;
+        if (error || !data) {
+            throw new Error('Failed to insert card: ' + (error?.message || 'No data found'));
         }
     
+        return {success: true, error: null};
+
     } catch (error) {
-        return {
-            error: (error as Error).message
-        };
+        return {success: false, error: (error as Error).message};
     }
 }
