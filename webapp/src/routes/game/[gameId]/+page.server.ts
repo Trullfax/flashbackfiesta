@@ -1,41 +1,64 @@
 import type { PageServerLoad } from './$types';
-import { fetchGame, fetchCategory } from '$lib/database';
 import { supabase } from '$lib/supabaseClient';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
-    const { gameId } = params; // Get game_id from the URL
-    const gameData = await fetchGame(gameId);
-    const categoryData = gameData ? await fetchCategory(gameData.category_id) : null;
-
-    if (!gameData) {
-        console.error('Game not found');
-        return { cards: [] };
-    }
-
-    const categoryId = gameData.category_id;
-    const difficulty = gameData.difficulty;
-
-    // TODO: Add logic here to fetch the right amount of cards based on what is already there.
-    // Also the cards need to be "handed" to the players equally in the beginning.
-    const numberOfCards = 10;
-
-    const response = await fetch('/api/generate-cards/tv-shows', {
-        method: 'POST',
-        body: JSON.stringify({ gameId, categoryId, difficulty, numberOfCards }),
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const { gameId } = params;
+    
+        if (!gameId) {
+            throw new Error("gameId is invalid");
         }
-    });
+    
+        const { data, error } = await supabase
+            .from("Game")
+            .select('difficulty, Category (api_route, hex_color, name, picture_path, id)')
+            .eq('id', gameId);
 
-    const { data, error } = await supabase
-        .from('Card')
-        .select('*')
-        .eq('game_id', gameId);
+        console.log(data)
 
-    if (error) {
-        throw new Error('Error fetching the:' + error.message);
+        if (error || !data) {
+            throw new Error('Error fetching game in gameId: ' + (error?.message || 'No data found'));
+        }
+
+        const category = data[0].Category as Category;
+
+        if (!category) {
+            throw new Error('No category found for this game.');
+        }
+
+        const numberOfCards = 10;
+        const categoryId = category.id;
+        const difficulty = data[0].difficulty;
+        const apiRoute = category.api_route;
+
+        if(!apiRoute) {
+            throw new Error('No api route found for this game.');   
+        }
+        console.log(category);
+        console.log(apiRoute);
+
+        const response = await fetch(apiRoute, {
+            method: 'POST',
+            body: JSON.stringify({ gameId, categoryId, difficulty, numberOfCards }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error('Error from fetching card api: ' + errorResponse.message);
+        }
+
+        const successResponse = await response.json();
+
+        return {
+            error: null,
+            message: successResponse.message,
+        };
+    } catch (error) {
+        return {
+            error: (error as Error).message
+        };
     }
-
-    return { cards: data as Card[] };
 };
-

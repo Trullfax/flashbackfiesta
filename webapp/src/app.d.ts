@@ -11,17 +11,21 @@ declare global {
 
 	interface Game {
 		id: string;
-		status: string;
+		status?: string;
 		max_card_count: number;
 		difficulty: string;
 		category_id: string;
-		whose_turn_id: string;
+		whose_turn_id?: string;
+	}
+
+	interface GameWithCategory extends Game {
+		Category: Category[];
 	}
 
 	interface Category {
 		id: string;
 		name: string;
-		picture_path: string;
+		picture_path?: string;
 		api_route: string;
 		hex_color: string;
 	}
@@ -47,5 +51,4 @@ declare global {
 		game_id: string;
 	}
 }
-
 export {};

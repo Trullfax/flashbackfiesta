@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params }) => {
         const { gameId } = params;
     
         if (!gameId) {
-            throw new Error("gameIs is invalid");
+            throw new Error("gameId is invalid");
         }
     
         const { data, error } = await supabase.from("Game").select('status, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)').eq('id', gameId);
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ params }) => {
             gameStatus: {},
             players: [],
             category: {},
-            error: error.message
+            error: (error as Error).message
         };
     }
 }
