@@ -18,7 +18,6 @@
 	};
 
 	const handleGameUpdates = (payload) => {
-		console.log(payload);
 		const updatedGame = payload.new;
 		data.game = updatedGame;
 	};
@@ -32,7 +31,7 @@
 		)
 		.on(
 			'postgres_changes',
-			{ event: 'UPDATE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Game' },
+			{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
 			handleGameUpdates
 		)
 		.subscribe();
