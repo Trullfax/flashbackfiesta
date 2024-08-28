@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { addToast } from '$lib/stores/toastStore';
+	import { fly } from 'svelte/transition';
 
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
@@ -42,7 +43,7 @@
 	}
 </script>
 
-<main class="overflow-hidden">
+<main out:fly={{ y: -10, duration: 10000, opacity: 1 }} class="overflow-hidden bg-white">
 	<section class="h-screen flex items-center justify-center">
 		<Start on:click={scrollToCategorySelection} />
 	</section>

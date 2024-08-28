@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toastStore';
 	import { supabase } from '$lib/supabaseClient';
+	import { fly } from 'svelte/transition';
 
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -57,7 +58,10 @@
 </script>
 
 <main class="overflow-hidden">
-	<section class="h-screen flex items-center justify-center">
+	<section
+		in:fly={{ y: 10, duration: 10000, opacity: 1 }}
+		class="h-screen flex items-center justify-center"
+	>
 		<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 	</section>
 	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
