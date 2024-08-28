@@ -20,7 +20,7 @@
 	}
 
 	async function createGameAndNavigate(categoryId: string) {
-		const response = await fetch('/', {
+		const response = await fetch('/api/create-game/', {
 			method: 'POST',
 			body: JSON.stringify({ categoryId }),
 			headers: {

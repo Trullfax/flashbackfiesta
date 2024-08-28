@@ -30,7 +30,7 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
-		const response = await fetch('/setup', {
+		const response = await fetch('/api/create-player/', {
 			method: 'POST',
 			body: JSON.stringify({ gameId, playerName, selectedAvatar }),
 			headers: {
