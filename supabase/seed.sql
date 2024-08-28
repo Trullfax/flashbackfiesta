@@ -119,8 +119,8 @@ SET row_security = off;
 --
 
 INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api_route") VALUES
-	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', NULL, '#000000', NULL),
-	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', NULL, '#000000', NULL);
+	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', 'assets/categories/tv-card.svg', '#54e5c4', NULL),
+	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', 'assets/categories/movie-card.svg', '#ff847c', NULL);
 
 
 --
@@ -133,7 +133,7 @@ INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api
 -- Data for Name: Game; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-INSERT INTO "public"."Game" ("id", "status", "whose_turn", "category", "max_card_count", "difficulty") VALUES
+INSERT INTO "public"."Game" ("id", "status", "whose_turn_id", "category_id", "max_card_count", "difficulty") VALUES
 	('9389b157-4391-44a3-b896-54d387ba2e23', 'not_started', NULL, '67a122be-1207-4105-bf13-e4b7fd33ab71', 200, 'easy');
 
 
@@ -141,16 +141,6 @@ INSERT INTO "public"."Game" ("id", "status", "whose_turn", "category", "max_card
 -- Data for Name: Card; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-
-
---
--- Data for Name: countries; Type: TABLE DATA; Schema: public; Owner: supabase_admin
---
-
-INSERT INTO "public"."countries" ("id", "name") OVERRIDING SYSTEM VALUE VALUES
-	(1, 'Canada'),
-	(2, 'United States'),
-	(3, 'Mexico');
 
 
 --
@@ -203,13 +193,6 @@ SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 1, false);
 --
 
 SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
-
-
---
--- Name: countries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: supabase_admin
---
-
-SELECT pg_catalog.setval('"public"."countries_id_seq"', 3, true);
 
 
 --

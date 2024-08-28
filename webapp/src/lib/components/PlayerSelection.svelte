@@ -12,6 +12,7 @@
 	let currentIndex = 0;
 
 	export let selectedAvatar = '';
+	export let category: Partial<Category> = {};
 
 	async function loadAvatars() {
 		const avatarPaths = [
@@ -47,16 +48,16 @@
 
 	loadAvatars();
 
-	let playername = '';
+	let playerName = '';
 	const dispatch = createEventDispatcher();
 
 	function handlePlayerSelection() {
-		// TODO: Add validation logic, like checking if the playername already exists
-		if (playername.trim() === '') {
+		// TODO: Add validation logic, like checking if the playerName already exists
+		if (playerName.trim() === '') {
 			addToast({ message: 'please enter a player name!', type: 'error' });
 			return;
 		}
-		dispatch('submit', { playername, selectedAvatar });
+		dispatch('submit', { playerName, selectedAvatar });
 	}
 </script>
 
@@ -78,14 +79,13 @@
 	</div>
 	<div class="justify-self-center">
 		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
-		<!-- TODO: Add a title of category -->
 		<div class="-ml-10">
-			<Title title="CATEGORY" subtitle="create your player" flip={false} />
+			<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
 		</div>
 		<label for="playername">
 			<input
 				type="text"
-				bind:value={playername}
+				bind:value={playerName}
 				name="playername"
 				autocomplete="off"
 				placeholder="how should we call you?"
