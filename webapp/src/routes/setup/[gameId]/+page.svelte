@@ -87,13 +87,10 @@
 			}
 		});
 
-		const { player, error } = await response.json();
+		const { status, player, error } = await response.json();
 
-		if (error) {
+		if (status === 'error') {
 			addToast({ message: error, type: 'error' });
-			return;
-		} else if (!player) {
-			addToast({ message: 'player could not created', type: 'error' });
 			return;
 		}
 
