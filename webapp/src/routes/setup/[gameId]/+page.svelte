@@ -27,6 +27,24 @@
 				}
 			}
 		}
+
+		const channels = supabase
+			.channel(gameId)
+			.on(
+				'postgres_changes',
+				{ event: 'INSERT', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+				handlePlayerInserts
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+				handleGameUpdates
+			)
+			.subscribe();
+
+		return () => {
+			channels.unsubscribe();
+		};
 	});
 
 	function isCreatorCheck() {
@@ -58,20 +76,6 @@
 			}
 		}
 	};
-
-	const channels = supabase
-		.channel(gameId)
-		.on(
-			'postgres_changes',
-			{ event: 'INSERT', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
-			handlePlayerInserts
-		)
-		.on(
-			'postgres_changes',
-			{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
-			handleGameUpdates
-		)
-		.subscribe();
 
 	function handlePlayerSubmit(event: Event) {
 		const { playerName, selectedAvatar } = (
