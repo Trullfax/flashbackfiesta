@@ -50,10 +50,13 @@
 		const updatedGame = payload.new;
 		data.game = updatedGame;
 
-		// TODO: Redirect to game page if game status is running (the following code does NOT work)
-		// if (updatedGame.status === 'running') {
-		// 	goto(`/game/${gameId}`);
-		// }
+		// Redirect to game page if game status is running
+		if (updatedGame.status === 'running') {
+			// Ensure that `goto` is only called on the client (browser)
+			if (typeof window !== 'undefined') {
+				goto(`/game/${gameId}`);
+			}
+		}
 	};
 
 	const channels = supabase
