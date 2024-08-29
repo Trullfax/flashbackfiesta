@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         // Fetch game data from Supabase
         const { data: gameData, error: gameError } = await supabase
             .from("Game")
-            .select('id, difficulty,category_id, Category (*)')
+            .select('id, difficulty, category_id, Category (api_route, hex_color, name, picture_path, id)')
             .eq('id', gameId)
             .single();
 
@@ -40,14 +40,14 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
             throw new Error('Error fetching cards: ' + (cardError?.message || 'No data found'));
         }
 
-        console.log('gameData:', gameData);
-
         return {
-            data: {
-                game: gameData as Partial<Game>,
-                categoryApiRoute: category.api_route,
-                cards: cardData as Card[]
-            }
+            game: {
+                id: gameData.id,
+                category_id: gameData.Category?.id || '',
+                difficulty: gameData.difficulty
+            },
+            cards: cardData as Card[], // Replace with actual card data if needed
+            categoryApiRoute : category.api_route
         };
 
     } catch (error) {

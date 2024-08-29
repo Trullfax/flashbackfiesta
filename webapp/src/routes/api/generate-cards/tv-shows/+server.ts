@@ -11,14 +11,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
         if (!sparqlQuery) {
             throw new Error('Failed to generate SPARQL query');
         }
-        
+
         const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, gameId, categoryId, fetch);
 
         if (!success) {
             throw new Error(error || 'An unknown error occurred while generating cards');
         }
 
-        return json({ status: 'success', addedCards, error: null });
+        return json({ status: 'success', message: `${addedCards} cards have been added to this game.`, error: null });
     } catch (error) {
         return json({ status: 'error', error: (error as Error).message });
     }
