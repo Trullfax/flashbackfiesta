@@ -1,23 +1,21 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ url }) => {
-    const TMDB_API_KEY = process.env.TMDB_SECRET_API_KEY;
-
-    const title = url.searchParams.get('title');
-    const year = url.searchParams.get('year');
-
-    if (!title || !year) {
-        return json({ error: 'Missing title or year parameter' }, { status: 400 });
-    }
-
-    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
-
+export const POST: RequestHandler = async ({ request }) => {
     try {
+        const TMDB_API_KEY = process.env.TMDB_SECRET_API_KEY;
+        const { title, year, queryLink } = await request.json();
+        const searchUrl = `${queryLink}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
+
         const response = await fetch(searchUrl);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data from TMDB');
+        }
+
         const data = await response.json();
 
-        return json(data);
+        return json({ status: 'success', data: data, error: null });
     } catch (error) {
-        return json({ error: 'Failed to fetch data from TMDB' }, { status: 500 });
+        return json({ status: 'error', data: {}, error: error });
     }
 };
