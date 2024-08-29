@@ -46,6 +46,7 @@ declare global {
 		cards_count: number;
 		avatar_path: string;
 		game_id: string;
+		is_creator: boolean;
 	}
 }
 export {};

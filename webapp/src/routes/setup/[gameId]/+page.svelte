@@ -27,6 +27,24 @@
 				}
 			}
 		}
+
+		const channels = supabase
+			.channel(gameId)
+			.on(
+				'postgres_changes',
+				{ event: 'INSERT', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+				handlePlayerInserts
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+				handleGameUpdates
+			)
+			.subscribe();
+
+		return () => {
+			channels.unsubscribe();
+		};
 	});
 
 	function isCreatorCheck() {
@@ -41,34 +59,23 @@
 		return false;
 	}
 
-	const handlePlayerInserts = (payload) => {
+	const handlePlayerInserts = (payload: any) => {
 		const newPlayer = payload.new;
 		data.players = [...data.players, newPlayer];
 	};
 
-	const handleGameUpdates = (payload) => {
+	const handleGameUpdates = (payload: any) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
 
-		// TODO: Redirect to game page if game status is running (the following code does NOT work)
-		// if (updatedGame.status === 'running') {
-		// 	goto(`/game/${gameId}`);
-		// }
+		// Redirect to game page if game status is running
+		if (updatedGame.status === 'running') {
+			// Ensure that `goto` is only called on the client (browser)
+			if (typeof window !== 'undefined') {
+				goto(`/game/${gameId}`);
+			}
+		}
 	};
-
-	const channels = supabase
-		.channel(gameId)
-		.on(
-			'postgres_changes',
-			{ event: 'INSERT', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
-			handlePlayerInserts
-		)
-		.on(
-			'postgres_changes',
-			{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
-			handleGameUpdates
-		)
-		.subscribe();
 
 	function handlePlayerSubmit(event: Event) {
 		const { playerName, selectedAvatar } = (
@@ -79,9 +86,11 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
+		const isCreator: boolean = isCreatorCheck();
+
 		const response = await fetch('/api/create-player/', {
 			method: 'POST',
-			body: JSON.stringify({ gameId, playerName, selectedAvatar }),
+			body: JSON.stringify({ gameId, isCreator, playerName, selectedAvatar }),
 			headers: {
 				'Content-Type': 'application/json'
 			}

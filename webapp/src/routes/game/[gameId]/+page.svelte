@@ -48,10 +48,10 @@
 		}
 	}
 
-	function handleCardInsert(payload: { new: any; }) {
-	    console.log('New card received:', payload.new);
-	    const newCard = payload.new;
-	    cards = [...cards, newCard];
+	function handleCardInsert(payload: { new: any }) {
+		console.log('New card received:', payload.new);
+		const newCard = payload.new;
+		cards = [...cards, newCard];
 	}
 
 	onMount(() => {

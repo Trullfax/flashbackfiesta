@@ -14,6 +14,18 @@
 		currentUrl = $page.url.href;
 	}
 
+	// Ensure that the creator is always the first player in the array
+	$: {
+		if (playerArray && playerArray.length > 0) {
+			const creatorIndex = playerArray.findIndex((player) => player?.is_creator);
+			if (creatorIndex > 0) {
+				// Move the creator to the first position
+				const [creator] = playerArray.splice(creatorIndex, 1);
+				playerArray.unshift(creator);
+			}
+		}
+	}
+
 	// Function to copy the current URL to the clipboard
 	function copyToClipboard() {
 		navigator.clipboard
@@ -36,7 +48,9 @@
 					<div
 						class=" bg-grey drop-shadow-bold {index % 2 === 0
 							? '-rotate-[3.5deg]'
-							: 'rotate-[2.5deg]'} {index === 0 ? 'w-[6.5rem] h-[6.5rem]' : 'w-[5rem] h-[5rem]'}"
+							: 'rotate-[2.5deg]'} {playerArray[index].is_creator
+							? 'w-[6.5rem] h-[6.5rem]'
+							: 'w-[5rem] h-[5rem]'}"
 					>
 						<img
 							src={playerArray[index].avatar_path}
