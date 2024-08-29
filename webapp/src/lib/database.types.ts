@@ -36,33 +36,46 @@ export type Database = {
     Tables: {
       Card: {
         Row: {
+          category_id: string
           creator: string | null
           game_id: string
           id: string
+          in_deck: boolean
           name: string
           picture_url: string
           player_id: string | null
           year: number
         }
         Insert: {
+          category_id: string
           creator?: string | null
           game_id: string
           id?: string
+          in_deck?: boolean
           name: string
           picture_url: string
           player_id?: string | null
           year: number
         }
         Update: {
+          category_id?: string
           creator?: string | null
           game_id?: string
           id?: string
+          in_deck?: boolean
           name?: string
           picture_url?: string
           player_id?: string | null
           year?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "Card_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "Category"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "Card_game_fkey"
             columns: ["game_id"]
@@ -106,6 +119,7 @@ export type Database = {
       Game: {
         Row: {
           category_id: string
+          creator_code: string
           difficulty: Database["public"]["Enums"]["difficulty"]
           id: string
           max_card_count: number
@@ -114,6 +128,7 @@ export type Database = {
         }
         Insert: {
           category_id: string
+          creator_code: string
           difficulty?: Database["public"]["Enums"]["difficulty"]
           id?: string
           max_card_count?: number
@@ -122,6 +137,7 @@ export type Database = {
         }
         Update: {
           category_id?: string
+          creator_code?: string
           difficulty?: Database["public"]["Enums"]["difficulty"]
           id?: string
           max_card_count?: number
@@ -269,6 +285,7 @@ export type Database = {
           owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          user_metadata: Json | null
           version: string | null
         }
         Insert: {
@@ -282,6 +299,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Update: {
@@ -295,6 +313,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Relationships: [
@@ -316,6 +335,7 @@ export type Database = {
           key: string
           owner_id: string | null
           upload_signature: string
+          user_metadata: Json | null
           version: string
         }
         Insert: {
@@ -326,6 +346,7 @@ export type Database = {
           key: string
           owner_id?: string | null
           upload_signature: string
+          user_metadata?: Json | null
           version: string
         }
         Update: {
@@ -336,6 +357,7 @@ export type Database = {
           key?: string
           owner_id?: string | null
           upload_signature?: string
+          user_metadata?: Json | null
           version?: string
         }
         Relationships: [
@@ -471,6 +493,10 @@ export type Database = {
           metadata: Json
           updated_at: string
         }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {
