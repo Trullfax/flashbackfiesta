@@ -1,47 +1,29 @@
 import type { RequestHandler } from './$types';
 import { json } from "@sveltejs/kit";
-import { fetchTMDBImage } from '$lib/server/tmdb';
-import { createCard } from '$lib/server/databaseBackend';
+import { generateCardsFromWikidata } from '$lib/server/cardUtils';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
     try {
         const { gameId, categoryId, difficulty, numberOfCards } = await request.json();
 
-        let sparqlQuery = generateMovieQuery(numberOfCards, difficulty);
+        const sparqlQuery = generateMovieQuery(numberOfCards, difficulty);
 
-        const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
-
-        const wikidataRes = await fetch(wikidataUrl, {
-            headers: {
-                'User-Agent': 'flashbackfiesta.app (https://flashbackfiesta.app)',
-            }
-        });
-        const responseText = await wikidataRes.text();
-        const wikidata = JSON.parse(responseText).results.bindings;
-
-        for (const result of wikidata) {
-            const imageUrl = await fetchTMDBImage(result.itemLabel.value, result.year.value, fetch)
-
-            // TODO: Add further conditions for generating cards, that are no duplicates or have same year etc.
-            // TODO: Add a check for the image URL, if it is null, then skip this card but it needs to be replaced with another one.
-            if (imageUrl) {
-                const card: Card = {
-                    id: result.item.value.split('/').pop(),
-                    name: result.itemLabel.value,
-                    year: result.year.value,
-                    creator: result.creator.value,
-                    picture_url: imageUrl,
-                    category_id: categoryId,
-                    game_id: gameId,
-                };
-                createCard(card);
-            }
+        if (!sparqlQuery) {
+            throw new Error('Failed to generate SPARQL query');
         }
-        return json({ status: 'success', error: null });
+
+        const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, gameId, categoryId, fetch);
+
+        if (!success) {
+            throw new Error(error || 'An unknown error occurred while generating cards');
+        }
+
+        return json({ status: 'success', message: `${addedCards} cards have been added to this game.`, error: null });
     } catch (error) {
-        return json({ status: 'error', error: (error as Error).message });
+        return json({ status: 'error', message: '', error: (error as Error).message });
     }
 };
+
 
 function generateMovieQuery(numberOfCards: number, difficulty: string): string {
     let sitelinksFilter = '?sitelinks > 50';

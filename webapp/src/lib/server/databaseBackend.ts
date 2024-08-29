@@ -1,6 +1,6 @@
 import { supabase } from "$lib/server/supabaseBackendClient";
 
-export async function createCard(card: Card) {
+export async function createCard(card: Card): Promise<{ success: boolean; error?: string | null }> {
     try {
         const { data, error } = await supabase
             .from('Card')

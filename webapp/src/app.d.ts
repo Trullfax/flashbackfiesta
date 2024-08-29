@@ -19,10 +19,6 @@ declare global {
 		creator_code: string;
 	}
 
-	interface GameWithCategory extends Game {
-		Category: Category[];
-	}
-
 	interface Category {
 		id: string;
 		name: string;
