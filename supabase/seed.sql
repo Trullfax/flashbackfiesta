@@ -127,16 +127,12 @@ INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api
 -- Data for Name: Player; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-INSERT INTO "public"."Player" ("id", "name", "avatar_path", "is_ready", "cards_count", "game_id") VALUES
-	('5b3ed872-6cdf-4b33-a57f-efcedaa545c2', 'Sören', '/assets/avatars/pou_4.svg', false, NULL, '0bf9de99-bad2-41eb-8f31-67361dafc3bb');
 
 
 --
 -- Data for Name: Game; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
-INSERT INTO "public"."Game" ("id", "status", "whose_turn_id", "category_id", "max_card_count", "difficulty") VALUES
-	('0bf9de99-bad2-41eb-8f31-67361dafc3bb', 'not_started', NULL, 'f45ab00a-e923-4e68-a43e-4c5dddea8d45', 200, 'easy');
 
 
 --
