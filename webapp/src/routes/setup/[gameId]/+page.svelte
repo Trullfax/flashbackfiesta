@@ -59,12 +59,12 @@
 		return false;
 	}
 
-	const handlePlayerInserts = (payload) => {
+	const handlePlayerInserts = (payload: any) => {
 		const newPlayer = payload.new;
 		data.players = [...data.players, newPlayer];
 	};
 
-	const handleGameUpdates = (payload) => {
+	const handleGameUpdates = (payload: any) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
 
@@ -86,9 +86,11 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
+		const isCreator: boolean = isCreatorCheck();
+
 		const response = await fetch('/api/create-player/', {
 			method: 'POST',
-			body: JSON.stringify({ gameId, playerName, selectedAvatar }),
+			body: JSON.stringify({ gameId, isCreator, playerName, selectedAvatar }),
 			headers: {
 				'Content-Type': 'application/json'
 			}

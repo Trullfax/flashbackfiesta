@@ -4,7 +4,7 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { gameId, playerName, selectedAvatar } = await request.json();
+        const { gameId, isCreator, playerName, selectedAvatar } = await request.json();
     
         if (!gameId || gameId.trim() === '') {
             throw new Error('gameId is invalid');
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('player limit reached');
         }
 
-        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, selectedAvatar, gameId);
+        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, isCreator, selectedAvatar, gameId);
 
         if (!createSuccess) {
             throw createError;
@@ -65,11 +65,11 @@ async function checkIfPlayerExists(playerName: string, gameId: string) {
     }
 }
 
-async function createPlayer(playerName: string, selectedAvatar: string, gameId: string) {
+async function createPlayer(playerName: string, isCreator: boolean, selectedAvatar: string, gameId: string) {
     try {
         const { data, error } = await supabase
             .from('Player')
-            .insert([{ name: playerName, avatar_path: selectedAvatar, game_id: gameId }])
+            .insert([{ name: playerName, is_creator: isCreator, avatar_path: selectedAvatar, game_id: gameId }])
             .select().single();
     
         if (error) {
