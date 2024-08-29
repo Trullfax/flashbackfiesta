@@ -167,6 +167,7 @@ export type Database = {
           cards_count: number | null
           game_id: string
           id: string
+          is_creator: boolean
           is_ready: boolean
           name: string
         }
@@ -175,6 +176,7 @@ export type Database = {
           cards_count?: number | null
           game_id: string
           id?: string
+          is_creator?: boolean
           is_ready?: boolean
           name: string
         }
@@ -183,6 +185,7 @@ export type Database = {
           cards_count?: number | null
           game_id?: string
           id?: string
+          is_creator?: boolean
           is_ready?: boolean
           name?: string
         }
