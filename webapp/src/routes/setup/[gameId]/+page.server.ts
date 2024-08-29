@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params }) => {
     
         const { data, error } = await supabase
             .from("Game")
-            .select('status, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)')
+            .select('status, creator_code, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)')
             .eq('id', gameId)
             .single();
     
@@ -20,14 +20,14 @@ export const load: PageServerLoad = async ({ params }) => {
         }
     
         return {
-            game: {status: data.status} as Partial<Game>,
+            game: {status: data.status, creator_code: data.creator_code} as Partial<Game>,
             category: data.Category as Partial<Category>,
             players: data.Player as Partial<Player>[],
             error: null
         };
     } catch (error) {
         return {
-            gameStatus: {},
+            game: {},
             players: [],
             category: {},
             error: (error as Error).message
