@@ -26,7 +26,9 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
             throw new Error(cardResult.error || 'Failed to retrieve existing cards');
         }
 
-        const existingCards = cardResult.data || [];
+        const existingCards = new Set(
+            cardResult.data?.map(card => `${card.name}-${card.year}-${card.creator}`) || []
+        );
         let addedCards = 0;
 
         for (const wikidataItem of wikidata) {
@@ -34,12 +36,6 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
 
             if (!imageUrl.success) {
                 console.error(`Error fetching image: ${imageUrl.error}`);
-                continue;
-            }
-
-            // Check for duplicate year within the same game
-            if (existingCards.some(card => card.year === wikidataItem.year.value)) {
-                console.warn(`Duplicate year found for ${wikidataItem.itemLabel.value} (${wikidataItem.year.value}). Skipping this card.`);
                 continue;
             }
 
@@ -53,19 +49,26 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
                 game_id: gameId,
             };
 
+            const cardKey = `${card.name}-${card.year}-${card.creator}`;
+
+            // Check for duplicates
+            if (existingCards.has(cardKey)) {
+                console.warn(`Duplicate card found: ${card.name} (${card.year}). Skipping this card.`);
+                continue;
+            }
+
             const { success, error: createCardError } = await createCard(card);
 
             if (!success) {
                 throw new Error(createCardError || `Failed to create card for ${card.name}`);
             }
 
-            // Add this card to the existing cards to track the years used
-            existingCards.push(card);
+            // Add this card to the existing cards set
+            existingCards.add(cardKey);
             addedCards++;
         }
 
         return { success: true, addedCards };
-
     } catch (err) {
         return { success: false, addedCards: 0, error: `Failed to generate cards: ${(err as Error).message}` };
     }

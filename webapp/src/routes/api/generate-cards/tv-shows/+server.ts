@@ -25,15 +25,15 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 };
 
 function generateTVQuery(numberOfCards: number, difficulty: string): string {
-    let sitelinksFilter = '?sitelinks > 30';
+    let sitelinksFilter = '?sitelinks > 20';
     if (difficulty === 'easy') {
-        sitelinksFilter = '?sitelinks > 30';
-    } else if (difficulty === 'medium') {
         sitelinksFilter = '?sitelinks > 20';
-    } else if (difficulty === 'hard') {
+    } else if (difficulty === 'medium') {
         sitelinksFilter = '?sitelinks > 10';
-    } else if (difficulty === 'extreme') {
+    } else if (difficulty === 'hard') {
         sitelinksFilter = '?sitelinks > 5';
+    } else if (difficulty === 'extreme') {
+        sitelinksFilter = '?sitelinks > 2';
     }
 
     return `
