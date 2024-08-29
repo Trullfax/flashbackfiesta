@@ -12,7 +12,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             throw new Error('Failed to generate SPARQL query');
         }
 
-        const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, gameId, categoryId, fetch);
+        const tvLink = 'https://api.themoviedb.org/3/search/tv';
+
+        const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, tvLink, gameId, categoryId, fetch);
 
         if (!success) {
             throw new Error(error || 'An unknown error occurred while generating cards');
@@ -29,25 +31,25 @@ function generateTVQuery(numberOfCards: number, difficulty: string): string {
     if (difficulty === 'easy') {
         sitelinksFilter = '?sitelinks > 20';
     } else if (difficulty === 'medium') {
-        sitelinksFilter = '?sitelinks > 10';
+        sitelinksFilter = '?sitelinks > 15';
     } else if (difficulty === 'hard') {
-        sitelinksFilter = '?sitelinks > 5';
+        sitelinksFilter = '?sitelinks > 10';
     } else if (difficulty === 'extreme') {
-        sitelinksFilter = '?sitelinks > 2';
+        sitelinksFilter = '?sitelinks > 5';
     }
 
     return `
         SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creator) ?itemLabel ?random
         WHERE {
         ?item wdt:P31 wd:Q5398426;
-                wikibase:sitelinks ?sitelinks;
-                wdt:P577 ?year;
-                wdt:P57 ?creator.
+            wdt:P580 ?year;
+            wdt:P170 ?creator;
+            wikibase:sitelinks ?sitelinks.
         
-        # Fetch the creator's label
+        # Fetch the director's label
         ?creator rdfs:label ?creatorLabel.
         FILTER (lang(?creatorLabel) = "en")
-        
+    
         # Filter out unpopular films
         FILTER(${sitelinksFilter})
 
@@ -61,5 +63,5 @@ function generateTVQuery(numberOfCards: number, difficulty: string): string {
         LIMIT ${numberOfCards}
 
         # comment, change this before each run to bypass WDQS cache: ${Math.random()}
-        `;
+    `;
 }

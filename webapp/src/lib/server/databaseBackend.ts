@@ -1,6 +1,6 @@
 import { supabase } from "$lib/server/supabaseBackendClient";
 
-export async function createCard(card: Card): Promise<{ success: boolean; error?: string | null }> {
+export async function createCard(card: Card): Promise<{ success: boolean; card: Card | {}, error?: string | null }> {
     try {
         const { data, error } = await supabase
             .from('Card')
@@ -12,15 +12,16 @@ export async function createCard(card: Card): Promise<{ success: boolean; error?
                 category_id: card.category_id,
                 game_id: card.game_id,
             }])
-            .select();
+            .select()
+            .single();
     
         if (error || !data) {
             throw new Error('Failed to insert card: ' + (error?.message || 'No data found'));
         }
     
-        return {success: true, error: null};
+        return {success: true, card: data, error: null};
 
     } catch (error) {
-        return {success: false, error: (error as Error).message};
+        return {success: false, card: {}, error: (error as Error).message};
     }
 }

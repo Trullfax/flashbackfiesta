@@ -37,7 +37,6 @@
 			}
 
 			const result = await response.json();
-			console.log('Result:', result);
 
 			if (!result.success) {
 				throw new Error(result.error || 'Failed to generate cards');
@@ -56,23 +55,27 @@
 	}
 
 	onMount(() => {
-		const subscription = supabase
-			.channel(gameId)
-			.on(
-				'postgres_changes',
-				{ event: 'INSERT', schema: 'public', table: 'Card', filter: `game_id=eq.${gameId}` },
-				handleCardInsert
-			)
-			.subscribe();
-
-		return () => {
-			subscription.unsubscribe();
-		};
+	    const subscription = supabase
+	        .channel(gameId)
+	        .on(
+	            'postgres_changes',
+	            { event: 'INSERT', schema: 'public', table: 'Card', filter: `game_id=eq.${gameId}` },
+	            handleCardInsert
+	        )
+	        .subscribe();
+			
+	    return () => {
+	        subscription.unsubscribe();
+	    };
 	});
+
+	// sort cards by year
+	$: {cards.sort((a, b) => Number(a.year) - Number(b.year));}
 </script>
 
 <main class="flex flex-col items-center gap-10">
 	<h1>Game Cards</h1>
+	<h2>Category: {data.category.name}</h2>
 
 	<div>
 		<input type="number" min="1" max="100" bind:value={numberOfCards} class="p-2 border rounded" />
@@ -86,7 +89,7 @@
 	{/if}
 
 	{#if cards.length > 0}
-		<ul class="grid grid-cols-3 gap-5 mt-5">
+		<ul class="flex flex-row flex-wrap gap-5 mt-5">
 			{#each cards as card}
 				<li>
 					<CardComponent

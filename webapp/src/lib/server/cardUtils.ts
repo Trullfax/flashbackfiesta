@@ -2,7 +2,7 @@ import { createCard } from '$lib/server/databaseBackend';
 import { error } from '@sveltejs/kit';
 import { getCardsByGameId } from '$lib/database';
 
-export async function generateCardsFromWikidata(sparqlQuery: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
+export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
     try {
         const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
 
@@ -20,52 +20,62 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
         }
 
         // Fetch the existing cards from your database
-        const cardResult = await getCardsByGameId(gameId);
+        const { success: cardsRetrievedSuccess, data: cardsRetrievedData, error: cardsRetrievedError } = await getCardsByGameId(gameId);
 
-        if (!cardResult.success) {
-            throw new Error(cardResult.error || 'Failed to retrieve existing cards');
+        if (!cardsRetrievedSuccess) {
+            throw new Error(cardsRetrievedError || 'Failed to retrieve existing cards');
         }
 
-        const existingCards = new Set(
-            cardResult.data?.map(card => `${card.name}-${card.year}-${card.creator}`) || []
-        );
         let addedCards = 0;
+        let existingCards: Card[] = cardsRetrievedData || [];
 
         for (const wikidataItem of wikidata) {
-            const imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, fetch);
-
-            if (!imageUrl.success) {
-                console.error(`Error fetching image: ${imageUrl.error}`);
-                continue;
-            }
+            let duplicateYear = false;
+            let duplicateName = false;
 
             const card: Card = {
-                id: wikidataItem.item.value.split('/').pop(),
+                id: '',
                 name: wikidataItem.itemLabel.value,
                 year: wikidataItem.year.value,
                 creator: wikidataItem.creator.value,
-                picture_url: imageUrl.url || '',
+                picture_url: '',
                 category_id: categoryId,
                 game_id: gameId,
             };
 
-            const cardKey = `${card.name}-${card.year}-${card.creator}`;
+            if (existingCards && existingCards.length != 0) {
+                for (const existingCard of existingCards) {
+                    if (Number(existingCard.year) === Number(card.year)) {
+                        duplicateYear = true;
+                    }
+                    if (String(existingCard.name) === String(card.name)) {
+                        duplicateName = true;
+                    }
+                }
+            }
 
-            // Check for duplicates
-            if (existingCards.has(cardKey)) {
-                console.warn(`Duplicate card found: ${card.name} (${card.year}). Skipping this card.`);
+            if (!duplicateYear && !duplicateName) {
+                const imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, queryLink, fetch);
+
+                if (!imageUrl.success) {
+                    console.error(`Error fetching image: ${imageUrl.error}`);
+                    continue;
+                } 
+
+                card.picture_url = imageUrl.url ?? '';
+
+                const { success, card: cardInDb, error: createCardError } = await createCard(card);
+
+                if (!success || !cardInDb) {
+                    throw new Error(createCardError || `Failed to create card for ${card.name}`);
+                }
+
+                existingCards.push(cardInDb as Card);
+                addedCards++;
+            } else {
+                console.log(`Card for ${card.name} already exists in the database`);
                 continue;
             }
-
-            const { success, error: createCardError } = await createCard(card);
-
-            if (!success) {
-                throw new Error(createCardError || `Failed to create card for ${card.name}`);
-            }
-
-            // Add this card to the existing cards set
-            existingCards.add(cardKey);
-            addedCards++;
         }
 
         return { success: true, addedCards, error: null };
@@ -74,26 +84,40 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
     }
 }
 
-async function fetchTMDBImage(title: string, year: string, fetch: typeof globalThis.fetch) {
-    const searchUrl = `/api/tmdb?title=${encodeURIComponent(title)}&year=${year}`;
-
+async function fetchTMDBImage(title: string, year: string, queryLink: string, fetch: typeof globalThis.fetch) {
     try {
-        const response = await fetch(searchUrl);
-        const data = await response.json();
-
-        if (Array.isArray(data.results)) {
-            const item = data.results.find(
-                (item: { release_date: string; poster_path: string | null }) =>
-                    item.release_date.startsWith(year)
-            );
-
-            if (!item || !item.poster_path) {
-                throw new Error(`Failed to load image from TMDB for ${title} (${year})`);
+        const response = await fetch('/api/tmdb', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                year: year,
+                queryLink: queryLink
+            }),
+            headers: {
+                'Content-Type': 'application/json'
             }
-            return { success: true, url: `https://image.tmdb.org/t/p/w500${item.poster_path}`, error: null };
-        } else {
-            throw new Error(`Unexpected response format from TMDB for ${title} (${year})`);
+        });
+        const {status, data, error} = await response.json();
+
+        if (status === 'error') {
+            throw new Error(error || 'Failed to fetch data from TMDB');
         }
+
+        if (data.results && data.results.length > 0) {
+            for (const item of data.results) {
+                if (item.release_date && item.release_date.startsWith(year)) {
+                    if (item.poster_path) {
+                        return { success: true, url: `https://image.tmdb.org/t/p/w500${item.poster_path}`, error: null };
+                    }
+                }
+                if (item.first_air_date && item.first_air_date.startsWith(year)) {
+                    if (item.poster_path) {
+                        return { success: true, url: `https://image.tmdb.org/t/p/w500${item.poster_path}`, error: null };
+                    }
+                }
+            }
+        }
+        throw new Error('No image found.');
     } catch (err) {
         return { success: false, error: (err as Error).message };
     }
