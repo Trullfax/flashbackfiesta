@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 
 	export let playerArray: Partial<Player>[] = [];
+	export let isCreator: boolean;
 
 	let currentUrl = '';
 
@@ -78,5 +79,9 @@
 			</div>
 		</div>
 	</label>
-	<ButtonBig text="LET'S PLAY" on:click />
+	{#if isCreator}
+		<ButtonBig text="LET'S PLAY" on:click />
+	{:else}
+		<p class="text-white font-contrail text-lg mt-4">waiting for the host to start the fiesta...</p>
+	{/if}
 </div>
