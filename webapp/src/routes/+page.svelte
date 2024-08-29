@@ -20,7 +20,7 @@
 	}
 
 	async function createGameAndNavigate(categoryId: string) {
-		const response = await fetch('/', {
+		const response = await fetch('/api/create-game/', {
 			method: 'POST',
 			body: JSON.stringify({ categoryId }),
 			headers: {
@@ -28,7 +28,7 @@
 			}
 		});
 
-		const { gameId, error } = await response.json();
+		const { gameId, creatorCode, error } = await response.json();
 
 		if (error) {
 			addToast({ message: error, type: 'error' });
@@ -36,7 +36,12 @@
 		} else if (!gameId) {
 			addToast({ message: 'game could not created', type: 'error' });
 			return;
+		} else if (!creatorCode) {
+			addToast({ message: 'creator code could not created', type: 'error' });
+			return;
 		}
+
+		localStorage.setItem('creatorCode', creatorCode);
 
 		goto('/setup/' + gameId);
 	}

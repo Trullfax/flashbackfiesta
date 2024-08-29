@@ -3,14 +3,43 @@
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toastStore';
 	import { supabase } from '$lib/supabaseClient';
+	import { goto } from '$app/navigation';
+	import { redirect } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
 
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
 	export let data: PageData;
-	console.log(data);
 
 	const { gameId } = $page.params;
+
+	let isPlayer = false;
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			const playerId = localStorage.getItem('playerId');
+
+			for (const player of data.players) {
+				if (player.id === playerId) {
+					isPlayer = true;
+					break;
+				}
+			}
+		}
+	});
+
+	function isCreatorCheck() {
+		// Check if window is defined to confirm that code is running in the browser
+		if (typeof window !== 'undefined') {
+			const creatorCode: string = localStorage.getItem('creatorCode') ?? '';
+
+			if (creatorCode === data.game?.creator_code) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	const handlePlayerInserts = (payload) => {
 		const newPlayer = payload.new;
@@ -20,6 +49,11 @@
 	const handleGameUpdates = (payload) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
+
+		// TODO: Redirect to game page if game status is running (the following code does NOT work)
+		// if (updatedGame.status === 'running') {
+		// 	goto(`/game/${gameId}`);
+		// }
 	};
 
 	const channels = supabase
@@ -45,7 +79,7 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
-		const response = await fetch('/setup', {
+		const response = await fetch('/api/create-player/', {
 			method: 'POST',
 			body: JSON.stringify({ gameId, playerName, selectedAvatar }),
 			headers: {
@@ -63,19 +97,35 @@
 			return;
 		}
 
-		// set player_id in internal storage
-		localStorage.setItem('player_id', player.id);
+		// set playerId in internal storage
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('playerId', player.id);
+		}
 
 		// scroll to player lobby
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
 	}
+
+	function startGame() {
+		if (isCreatorCheck()) {
+			const response = fetch('/api/start-game/', {
+				method: 'PUT',
+				body: JSON.stringify({ gameId }),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		}
+	}
 </script>
 
 <main class="overflow-hidden">
-	<section class="h-screen flex items-center justify-center">
-		<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
-	</section>
+	{#if !isPlayer}
+		<section class="h-screen flex items-center justify-center">
+			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
+		</section>
+	{/if}
 	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
-		<PlayerLobby playerArray={data.players} />
+		<PlayerLobby playerArray={data.players} isCreator={isCreatorCheck()} on:click={startGame} />
 	</section>
 </main>
