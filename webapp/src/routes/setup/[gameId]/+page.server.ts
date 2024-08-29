@@ -1,4 +1,5 @@
 import { supabase } from "$lib/supabaseClient";
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -18,6 +19,10 @@ export const load: PageServerLoad = async ({ params }) => {
         if (error) {
             throw new Error('Error fetching game:' + error.message);
         }
+
+        if (data.status !== 'not_started') {
+            throw new Error('Game has already started');
+        }
     
         return {
             game: {status: data.status, creator_code: data.creator_code} as Partial<Game>,
@@ -25,12 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
             players: data.Player as Partial<Player>[],
             error: null
         };
-    } catch (error) {
-        return {
-            game: {},
-            players: [],
-            category: {},
-            error: (error as Error).message
-        };
+    } catch (err) {
+        error(404, (err as Error).message);
     }
 }
