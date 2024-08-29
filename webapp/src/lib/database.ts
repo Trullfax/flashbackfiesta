@@ -1,45 +1,19 @@
 import { supabase } from "./supabaseClient";
 
-// Function to fetch category data based on the category id
-export async function fetchCategory(categoryId: string): Promise<Category | null> {
-    const { data, error } = await supabase
-        .from('Category')
-        .select(`
-            id,
-            name,
-            picture_path,
-            api_route,
-            hex_color
-        `)
-        .eq('id', categoryId)
-        .single();
+export async function getCardsByGameId(gameId: string): Promise<{ success: boolean; data?: Card[]; error?: string }> {
+    try {
+        const { data, error } = await supabase
+            .from('Card')
+            .select('*')
+            .eq('game_id', gameId);
 
-    if (error || !data) {
-        console.error('Error fetching category:', error);
-        return null;
+        if (error || !data) {
+            throw new Error('Failed to fetch cards: ' + (error?.message || 'No data found'));
+        }
+
+        return { success: true, data: data as Card[] };
+
+    } catch (error) {
+        return { success: false, error: (error as Error).message };
     }
-
-    return data as Category;
-}
-
-// Function to fetch game data based on the game id
-export async function fetchGame(gameId: string): Promise<Game | null> {
-    const { data, error } = await supabase
-        .from('Game')
-        .select(`
-            id,
-            status,
-            max_card_count,
-            difficulty,
-            category_id,
-            whose_turn_id
-        `)
-        .eq('id', gameId)
-        .single();
-    if (error || !data) {
-        console.error('Error fetching game:', error);
-        return null;
-    }
-
-    return data as Game;
 }

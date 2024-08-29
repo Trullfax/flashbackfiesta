@@ -4,58 +4,52 @@ import { supabase } from '$lib/supabaseClient';
 export const load: PageServerLoad = async ({ params, fetch }) => {
     try {
         const { gameId } = params;
-    
+
         if (!gameId) {
             throw new Error("gameId is invalid");
         }
-    
-        const { data, error } = await supabase
+
+        // Fetch game data from Supabase
+        const { data: gameData, error: gameError } = await supabase
             .from("Game")
-            .select('difficulty, Category (api_route, hex_color, name, picture_path, id)')
-            .eq('id', gameId);
+            .select('id, difficulty,category_id, Category (*)')
+            .eq('id', gameId)
+            .single();
 
-        console.log(data)
-
-        if (error || !data) {
-            throw new Error('Error fetching game in gameId: ' + (error?.message || 'No data found'));
+        if (gameError || !gameData) {
+            throw new Error('Error fetching game: ' + (gameError?.message || 'No data found'));
         }
 
-        const category = data[0].Category as Category;
+        const category = gameData.Category as Category;
 
         if (!category) {
             throw new Error('No category found for this game.');
         }
 
-        const numberOfCards = 10;
-        const categoryId = category.id;
-        const difficulty = data[0].difficulty;
-        const apiRoute = category.api_route;
-
-        if(!apiRoute) {
-            throw new Error('No api route found for this game.');   
-        }
-        console.log(category);
-        console.log(apiRoute);
-
-        const response = await fetch(apiRoute, {
-            method: 'POST',
-            body: JSON.stringify({ gameId, categoryId, difficulty, numberOfCards }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    
-        if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error('Error from fetching card api: ' + errorResponse.message);
+        if (!category.api_route) {
+            throw new Error('No API route found for this game.');
         }
 
-        const successResponse = await response.json();
+        // Fetch existing cards from Supabase
+        const { data: cardData, error: cardError } = await supabase
+            .from('Card')
+            .select('*')
+            .eq('game_id', gameId);
+
+        if (cardError) {
+            throw new Error('Error fetching cards: ' + (cardError?.message || 'No data found'));
+        }
+
+        console.log('gameData:', gameData);
 
         return {
-            error: null,
-            message: successResponse.message,
+            data: {
+                game: gameData as Partial<Game>,
+                categoryApiRoute: category.api_route,
+                cards: cardData as Card[]
+            }
         };
+
     } catch (error) {
         return {
             error: (error as Error).message
