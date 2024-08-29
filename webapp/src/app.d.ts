@@ -16,6 +16,7 @@ declare global {
 		difficulty: string;
 		category_id: string;
 		whose_turn_id?: string;
+		creator_code: string;
 	}
 
 	interface GameWithCategory extends Game {
