@@ -12,13 +12,28 @@
 
 	const { gameId } = $page.params;
 
-	const handleInserts = (payload) => {
-		console.log('Change received!', payload);
+	const handlePlayerInserts = (payload) => {
+		const newPlayer = payload.new;
+		data.players = [...data.players, newPlayer];
+	};
+
+	const handleGameUpdates = (payload) => {
+		const updatedGame = payload.new;
+		data.game = updatedGame;
 	};
 
 	const channels = supabase
 		.channel(gameId)
-		.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Player' }, handleInserts)
+		.on(
+			'postgres_changes',
+			{ event: 'INSERT', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+			handlePlayerInserts
+		)
+		.on(
+			'postgres_changes',
+			{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+			handleGameUpdates
+		)
 		.subscribe();
 
 	function handlePlayerSubmit(event: Event) {

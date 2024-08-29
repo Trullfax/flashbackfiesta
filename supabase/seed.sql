@@ -119,14 +119,16 @@ SET row_security = off;
 --
 
 INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api_route") VALUES
-	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', 'assets/categories/tv-card.svg', '#54e5c4', NULL),
-	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', 'assets/categories/movie-card.svg', '#ff847c', NULL);
+	('67a122be-1207-4105-bf13-e4b7fd33ab71', 'Movies', 'assets/categories/movie-card.svg', '#ff847c', '/api/generate-cards/movies'),
+	('f45ab00a-e923-4e68-a43e-4c5dddea8d45', 'TV-Shows', 'assets/categories/tv-card.svg', '#54e5c4', '/api/generate-cards/tv-shows');
 
 
 --
 -- Data for Name: Player; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
+INSERT INTO "public"."Player" ("id", "name", "avatar_path", "is_ready", "cards_count", "game_id") VALUES
+	('5b3ed872-6cdf-4b33-a57f-efcedaa545c2', 'Sören', '/assets/avatars/pou_4.svg', false, NULL, '0bf9de99-bad2-41eb-8f31-67361dafc3bb');
 
 
 --
@@ -134,7 +136,7 @@ INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api
 --
 
 INSERT INTO "public"."Game" ("id", "status", "whose_turn_id", "category_id", "max_card_count", "difficulty") VALUES
-	('9389b157-4391-44a3-b896-54d387ba2e23', 'not_started', NULL, '67a122be-1207-4105-bf13-e4b7fd33ab71', 200, 'easy');
+	('0bf9de99-bad2-41eb-8f31-67361dafc3bb', 'not_started', NULL, 'f45ab00a-e923-4e68-a43e-4c5dddea8d45', 200, 'easy');
 
 
 --
