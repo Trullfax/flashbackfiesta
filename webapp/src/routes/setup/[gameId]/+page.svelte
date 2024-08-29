@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import { addToast } from '$lib/stores/toastStore';
 	import { supabase } from '$lib/supabaseClient';
+	import { goto } from '$app/navigation';
+	import { redirect } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
@@ -47,6 +49,11 @@
 	const handleGameUpdates = (payload) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
+
+		// TODO: Redirect to game page if game status is running (the following code does NOT work)
+		// if (updatedGame.status === 'running') {
+		// 	goto(`/game/${gameId}`);
+		// }
 	};
 
 	const channels = supabase
@@ -98,6 +105,18 @@
 		// scroll to player lobby
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
 	}
+
+	function startGame() {
+		if (isCreatorCheck()) {
+			const response = fetch('/api/start-game/', {
+				method: 'PUT',
+				body: JSON.stringify({ gameId }),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		}
+	}
 </script>
 
 <main class="overflow-hidden">
@@ -107,6 +126,6 @@
 		</section>
 	{/if}
 	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
-		<PlayerLobby playerArray={data.players} isCreator={isCreatorCheck()} />
+		<PlayerLobby playerArray={data.players} isCreator={isCreatorCheck()} on:click={startGame} />
 	</section>
 </main>
