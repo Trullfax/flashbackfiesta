@@ -49,25 +49,25 @@
 		}
 	}
 
-	function handleCardInsert(payload: { new: any; }) {
-	    console.log('New card received:', payload.new);
-	    const newCard = payload.new;
-	    cards = [...cards, newCard];
+	function handleCardInsert(payload: { new: any }) {
+		console.log('New card received:', payload.new);
+		const newCard = payload.new;
+		cards = [...cards, newCard];
 	}
 
 	onMount(() => {
-	    const subscription = supabase
-	        .channel(gameId)
-	        .on(
-	            'postgres_changes',
-	            { event: 'INSERT', schema: 'public', table: 'Card', filter: `id=eq.${gameId}` },
-	            handleCardInsert
-	        )
-	        .subscribe();
-			
-	    return () => {
-	        subscription.unsubscribe();
-	    };
+		const subscription = supabase
+			.channel(gameId)
+			.on(
+				'postgres_changes',
+				{ event: 'INSERT', schema: 'public', table: 'Card', filter: `game_id=eq.${gameId}` },
+				handleCardInsert
+			)
+			.subscribe();
+
+		return () => {
+			subscription.unsubscribe();
+		};
 	});
 </script>
 
