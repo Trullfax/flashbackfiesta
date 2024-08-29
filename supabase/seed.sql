@@ -127,6 +127,8 @@ INSERT INTO "public"."Category" ("id", "name", "picture_path", "hex_color", "api
 -- Data for Name: Player; Type: TABLE DATA; Schema: public; Owner: supabase_admin
 --
 
+INSERT INTO "public"."Player" ("id", "name", "avatar_path", "is_ready", "cards_count", "game_id") VALUES
+	('5b3ed872-6cdf-4b33-a57f-efcedaa545c2', 'Sören', '/assets/avatars/pou_4.svg', false, NULL, '0bf9de99-bad2-41eb-8f31-67361dafc3bb');
 
 
 --
