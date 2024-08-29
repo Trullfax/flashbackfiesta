@@ -18,10 +18,6 @@ declare global {
 		whose_turn_id?: string;
 	}
 
-	interface GameWithCategory extends Game {
-		Category: Category[];
-	}
-
 	interface Category {
 		id: string;
 		name: string;

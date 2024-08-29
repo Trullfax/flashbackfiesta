@@ -10,17 +10,17 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         }
 
         // Fetch game data from Supabase
-        const { data: gameData, error: gameError } = await supabase
+        const { data: game, error: gameError } = await supabase
             .from("Game")
             .select('id, difficulty, category_id, Category (api_route, hex_color, name, picture_path, id)')
             .eq('id', gameId)
             .single();
 
-        if (gameError || !gameData) {
+        if (gameError || !game) {
             throw new Error('Error fetching game: ' + (gameError?.message || 'No data found'));
         }
 
-        const category = gameData.Category as Category;
+        const category = game.Category as Category;
 
         if (!category) {
             throw new Error('No category found for this game.');
@@ -41,13 +41,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         }
 
         return {
-            game: {
-                id: gameData.id,
-                category_id: gameData.Category?.id || '',
-                difficulty: gameData.difficulty
-            },
-            cards: cardData as Card[], // Replace with actual card data if needed
-            categoryApiRoute : category.api_route
+            game: game as Partial<Game>,
+            category: category as Category,
+            cards: cardData as Card[],
         };
 
     } catch (error) {

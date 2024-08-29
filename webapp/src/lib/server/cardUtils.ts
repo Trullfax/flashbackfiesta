@@ -2,7 +2,7 @@ import { createCard } from '$lib/server/databaseBackend';
 import { error } from '@sveltejs/kit';
 import { getCardsByGameId } from '$lib/database';
 
-export async function generateCardsFromWikidata(sparqlQuery: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch): Promise<{ success: boolean; addedCards: number; error?: string }> {
+export async function generateCardsFromWikidata(sparqlQuery: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
     try {
         const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
 
@@ -68,7 +68,7 @@ export async function generateCardsFromWikidata(sparqlQuery: string, gameId: str
             addedCards++;
         }
 
-        return { success: true, addedCards };
+        return { success: true, addedCards, error: null };
     } catch (err) {
         return { success: false, addedCards: 0, error: `Failed to generate cards: ${(err as Error).message}` };
     }

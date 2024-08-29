@@ -5,18 +5,18 @@
 	import { supabase } from '$lib/supabaseClient';
 	import CardComponent from '$lib/components/CardFront.svelte';
 
-	export let data: PageData & { game: Partial<Game>; cards: Card[]; categoryApiRoute: string };
+	export let data: PageData & { game: Partial<Game>; cards: Card[]; category: Category };
 
-	const gameId = $page.params.gameId; // Accessing gameId from page parameters
+	const gameId = $page.params.gameId;
 	let cards: Card[] = data.cards || [];
 	let numberOfCards = 10;
 	let error: string | null = null;
 
-	// Function to generate cards
 	async function generateCards() {
 		try {
+			// TODO: Add loading toast here.
 			console.log('Generating cards...');
-			const response = await fetch(data.categoryApiRoute, {
+			const response = await fetch(data.category.api_route, {
 				method: 'POST',
 				body: JSON.stringify({
 					gameId,
@@ -49,25 +49,22 @@
 		}
 	}
 
-	// Function to handle real-time updates
 	function handleCardInsert(payload: { new: any; }) {
 	    console.log('New card received:', payload.new);
 	    const newCard = payload.new;
 	    cards = [...cards, newCard];
 	}
 
-	// Subscribe to real-time updates
 	onMount(() => {
 	    const subscription = supabase
 	        .channel(gameId)
 	        .on(
 	            'postgres_changes',
-	            { event: 'INSERT', schema: 'public', table: 'Card' },
+	            { event: 'INSERT', schema: 'public', table: 'Card', filter: `id=eq.${gameId}` },
 	            handleCardInsert
 	        )
 	        .subscribe();
-
-	    // Cleanup on component unmount
+			
 	    return () => {
 	        subscription.unsubscribe();
 	    };
@@ -96,7 +93,7 @@
 						title={card.name}
 						subtitle={card.creator}
 						imagePath={card.picture_url}
-						accent_color="var(--ff-red)"
+						accent_color={data.category.hex_color}
 						year={Number(card.year)}
 						revealed={true}
 					/>
