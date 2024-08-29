@@ -28,16 +28,10 @@
 			}
 		});
 
-		const { gameId, creatorCode, error } = await response.json();
+		const { status, gameId, creatorCode, error } = await response.json();
 
-		if (error) {
+		if (status === 'error') {
 			addToast({ message: error, type: 'error' });
-			return;
-		} else if (!gameId) {
-			addToast({ message: 'game could not created', type: 'error' });
-			return;
-		} else if (!creatorCode) {
-			addToast({ message: 'creator code could not created', type: 'error' });
 			return;
 		}
 
