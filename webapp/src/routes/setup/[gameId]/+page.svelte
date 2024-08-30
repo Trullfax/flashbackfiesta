@@ -127,11 +127,16 @@
 
 <main class="overflow-hidden">
 	{#if !isPlayer}
-		<section class="h-screen flex items-center justify-center">
+		<section
+			class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom_-100vh]"
+		>
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 		</section>
 	{/if}
-	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
+	<section
+		id="playerLobby-section"
+		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom]"
+	>
 		<PlayerLobby playerArray={data.players} isCreator={isCreatorCheck()} on:click={startGame} />
 	</section>
 </main>

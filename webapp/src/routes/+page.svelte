@@ -42,10 +42,15 @@
 </script>
 
 <main class="overflow-hidden">
-	<section class="h-screen flex items-center justify-center">
+	<section
+		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top]"
+	>
 		<Start on:click={scrollToCategorySelection} />
 	</section>
-	<section id="category-section" class="h-screen flex items-center justify-center">
+	<section
+		id="category-section"
+		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top_-100vh]"
+	>
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>
 </main>
