@@ -24,6 +24,7 @@ export default {
       },
       backgroundImage: {
         'game-background': "url('/assets/gameBackground.svg')",
+        'flash-background': "url('/assets/flashbackground.svg')",
       }
     },
   },
