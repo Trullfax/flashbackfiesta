@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params }) => {
     
         const { data, error } = await supabase
             .from("Game")
-            .select('status, creator_code, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)')
+            .select('status, creator_code, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path, is_creator)')
             .eq('id', gameId)
             .single();
     

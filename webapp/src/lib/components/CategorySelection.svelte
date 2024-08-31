@@ -56,6 +56,10 @@
 		{/if}
 	</div>
 	<div class="mt-8">
-		<ButtonSmall text="LET'S PLAY" accent_color="#ff847c" on:click={handleCategorySelection} />
+		<ButtonSmall
+			text="LET'S PLAY"
+			accent_color="var(--ff-green)"
+			on:click={handleCategorySelection}
+		/>
 	</div>
 </div>
