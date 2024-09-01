@@ -13,17 +13,23 @@
 	let numberOfCards = 10;
 
 	onMount(() => {
-		// TODO: Get this check working
-		// if (typeof window !== 'undefined') {
-		// 	const playerId = localStorage.getItem('playerId');
+		try {
+			if (typeof window !== 'undefined') {
+				const playerId = localStorage.getItem('playerId');
 
-		// 	for (const player of data.players) {
-		// 		if (player.id === playerId) {
-		// 			error(404, 'No matching player found');
-		// 			break;
-		// 		}
-		// 	}
-		// }
+				if (!playerId) {
+					throw new Error('playerId not found in local storage');
+				}
+
+				const playerExists = data.players.some((player) => player.id === playerId);
+
+				if (!playerExists) {
+					throw new Error('no matching player found in game');
+				}
+			}
+		} catch (err) {
+			error(404, (err as Error).message);
+		}
 
 		const channels = supabase
 			.channel(gameId)
