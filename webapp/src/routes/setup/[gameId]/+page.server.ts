@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params }) => {
     
         const { data, error } = await supabase
             .from("Game")
-            .select('status, creator_code, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path, is_creator)')
+            .select('*, Category (*), Player:Player!game_id (*)')
             .eq('id', gameId)
             .single();
     
@@ -20,14 +20,19 @@ export const load: PageServerLoad = async ({ params }) => {
             throw new Error('Error fetching game:' + error.message);
         }
 
-        if (data.status !== 'not_started') {
+        if (data.status !== 'not_started' && data.status !== 'setting_up') {
             throw new Error('Game has already started');
         }
     
         return {
-            game: {status: data.status, creator_code: data.creator_code} as Partial<Game>,
-            category: data.Category as Partial<Category>,
-            players: data.Player as Partial<Player>[],
+            game: { id: data?.id,
+                status: data?.status, 
+                whose_turn_id: data?.whose_turn_id,
+                max_card_count: data?.max_card_count,
+                difficulty: data?.difficulty,
+                creator_code: data?.creator_code } as Game,
+            category: data.Category as Category,
+            players: data.Player as Player[],
             error: null
         };
     } catch (err) {
