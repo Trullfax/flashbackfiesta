@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
+import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+export const load: PageServerLoad = async ({ params }) => {
     try {
         const { gameId } = params;
 
@@ -9,46 +10,35 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
             throw new Error("gameId is invalid");
         }
 
-        // Fetch game data from Supabase
-        const { data: game, error: gameError } = await supabase
+        const { data, error} = await supabase
             .from("Game")
-            .select('id, difficulty, category_id, Category (api_route, hex_color, name, picture_path, id)')
+            .select('*, Category (*), Player:Player!game_id (*), Card:Card!game_id (*)')
             .eq('id', gameId)
             .single();
 
-        if (gameError || !game) {
-            throw new Error('Error fetching game: ' + (gameError?.message || 'No data found'));
+        if (error) {
+            throw new Error('Error fetching game: ' + error.message );
         }
 
-        const category = game.Category as Category;
-
-        if (!category) {
-            throw new Error('No category found for this game.');
-        }
-
-        if (!category.api_route) {
+        if (!data.Category?.api_route) {
             throw new Error('No API route found for this game.');
         }
 
-        // Fetch existing cards from Supabase
-        const { data: cardData, error: cardError } = await supabase
-            .from('Card')
-            .select('*')
-            .eq('game_id', gameId);
-
-        if (cardError) {
-            throw new Error('Error fetching cards: ' + (cardError?.message || 'No data found'));
+        if (data.status !== 'running') {
+            throw new Error('Game is not running.')
         }
 
         return {
-            game: game as Partial<Game>,
-            category: category as Category,
-            cards: cardData as Card[],
+            game: { status: data?.status, 
+                    whose_turn_id: data?.whose_turn_id,
+                    max_card_count: data?.max_card_count,
+                    difficulty: data?.difficulty } as Game,
+            category: data?.Category as Category,
+            cards:  data?.Card as Card[],
+            players: data?.Player as Player[]
         };
 
-    } catch (error) {
-        return {
-            error: (error as Error).message
-        };
+    } catch (err) {
+        error(404, (err as Error).message);
     }
 };
