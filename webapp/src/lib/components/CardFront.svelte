@@ -2,14 +2,14 @@
 	export let title: string;
 	export let subtitle: string;
 	export let imagePath: string;
-	export let accent_color: string;
+	export let accentColor: string;
 	export let year: number;
 	export let revealed: boolean = false;
 </script>
 
 <div
 	class="group relative w-[10rem] h-[15rem] border-[.4rem] rounded-lg overflow-hidden"
-	style="border-color: {accent_color};"
+	style="border-color: {accentColor};"
 >
 	<img class="absolute" src={imagePath} alt={title} />
 	<div
