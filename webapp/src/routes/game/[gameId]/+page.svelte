@@ -10,21 +10,20 @@
 
 	const { gameId } = $page.params;
 
-	let cards: Card[] = data.cards || [];
 	let numberOfCards = 10;
 
 	onMount(() => {
 		// TODO: Get this check working
-		if (typeof window !== 'undefined') {
-			const playerId = localStorage.getItem('playerId');
+		// if (typeof window !== 'undefined') {
+		// 	const playerId = localStorage.getItem('playerId');
 
-			for (const player of data.players) {
-				if (player.id === playerId) {
-					error(404, 'No matching player found');
-					break;
-				}
-			}
-		}
+		// 	for (const player of data.players) {
+		// 		if (player.id === playerId) {
+		// 			error(404, 'No matching player found');
+		// 			break;
+		// 		}
+		// 	}
+		// }
 
 		const channels = supabase
 			.channel(gameId)
@@ -40,7 +39,7 @@
 			)
 			.on(
 				'postgres_changes',
-				{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Card' },
+				{ event: 'UPDATE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Card' },
 				handleCardUpdates
 			)
 			.subscribe();
@@ -51,21 +50,32 @@
 	});
 
 	function handlePlayerUpdates(payload: { new: any }) {
-		console.log('New card received:', payload.new);
+		console.log('Chance recieved: ' + payload.new);
 
-		// TODO: implement update handling
+		const newPlayer = payload.new;
+		const existingPlayerIndex = data.players.findIndex((player) => player.id === newPlayer.id);
+		data.players[existingPlayerIndex] = { ...data.players[existingPlayerIndex], ...newPlayer };
+
+		console.log(data.players);
 	}
 
 	function handleGameUpdates(payload: { new: any }) {
-		console.log('New card received:', payload.new);
+		console.log('Chance recieved: ' + payload.new);
 
-		// TODO: implement update handling
+		const newGame = payload.new;
+		data.game = { ...data.game, ...newGame };
+
+		console.log(data.game);
 	}
 
 	function handleCardUpdates(payload: { new: any }) {
-		console.log('New card received:', payload.new);
+		console.log('Chance recieved: ' + payload.new);
 
-		// TODO: implement update handling
+		const newCard = payload.new;
+		const existingCardIndex = data.cards.findIndex((card) => card.id === newCard.id);
+		data.cards[existingCardIndex] = { ...data.cards[existingCardIndex], ...newCard };
+
+		console.log(data.cards);
 	}
 
 	async function generateCards() {
@@ -106,7 +116,7 @@
 
 	// sort cards by year
 	$: {
-		cards.sort((a, b) => Number(a.year) - Number(b.year));
+		data.cards.sort((a, b) => Number(a.year) - Number(b.year));
 	}
 </script>
 
@@ -121,9 +131,9 @@
 		</button>
 	</div>
 
-	{#if cards.length > 0}
+	{#if data.cards.length > 0}
 		<ul class="flex flex-row flex-wrap gap-5 mt-5">
-			{#each cards as card}
+			{#each data.cards as card}
 				<li>
 					<CardComponent
 						title={card.name}
