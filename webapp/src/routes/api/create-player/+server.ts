@@ -4,17 +4,19 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { gameId, isCreator, playerName, selectedAvatar } = await request.json();
+        const { game, isCreator, playerName, selectedAvatar } = await request.json();
     
-        if (!gameId || gameId.trim() === '') {
-            throw new Error('gameId is invalid');
+        if (!game || !game.id) {
+            throw new Error('game is invalid');
+        } else if (game.status !== 'not_started') {
+            throw new Error('game has already started');
         } else if (!playerName || playerName.trim() === '') {
             throw new Error('playerName is invalid');
         } else if (!selectedAvatar || selectedAvatar.trim() === '') {
             throw new Error('selectedAvatar is invalid');
         }
     
-        const { success: ExistingSuccess, playerExists, error: ExistingError } = await checkIfPlayerExists(playerName, gameId);
+        const { success: ExistingSuccess, playerExists, error: ExistingError } = await checkIfPlayerExists(playerName, game.id);
 
         if (!ExistingSuccess) {
             throw ExistingError;
@@ -22,7 +24,7 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('player already exists');
         }
 
-        const { success: limitSuccess, limitReached, error: limitError } = await checkPlayerLimit(gameId);
+        const { success: limitSuccess, limitReached, error: limitError } = await checkPlayerLimit(game.id);
 
         if (!limitSuccess) {
             throw limitError;
@@ -30,7 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('player limit reached');
         }
 
-        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, isCreator, selectedAvatar, gameId);
+        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, isCreator, selectedAvatar, game.id);
 
         if (!createSuccess) {
             throw createError;
