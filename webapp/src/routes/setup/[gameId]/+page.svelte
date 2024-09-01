@@ -4,7 +4,6 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
-	import { redirect } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
@@ -15,6 +14,8 @@
 	const { gameId } = $page.params;
 
 	let isPlayer = false;
+	let settingUp = false;
+	let isStarting = false;
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
@@ -75,6 +76,12 @@
 				goto(`/game/${gameId}`);
 			}
 		}
+
+		if (updatedGame.status === 'setting_up') {
+			settingUp = true;
+		} else {
+			settingUp = false;
+		}
 	};
 
 	function handlePlayerSubmit(event: Event) {
@@ -90,7 +97,7 @@
 
 		const response = await fetch('/api/create-player/', {
 			method: 'POST',
-			body: JSON.stringify({ gameId, isCreator, playerName, selectedAvatar }),
+			body: JSON.stringify({ game: data.game, isCreator, playerName, selectedAvatar }),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -112,16 +119,36 @@
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
 	}
 
-	function startGame() {
-		if (isCreatorCheck()) {
-			const response = fetch('/api/start-game/', {
-				method: 'PUT',
-				body: JSON.stringify({ gameId }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
+	async function startGame() {
+		if (isStarting || !isCreatorCheck() || settingUp) return;
+
+		isStarting = true;
+
+		const response = await fetch('/api/start-game/', {
+			method: 'POST',
+			body: JSON.stringify({ game: data.game, category: data.category, players: data.players }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const { status, error } = await response.json();
+
+		if (status === 'error') {
+			// const response = await fetch('/api/start-game/', {
+			// 	method: 'PUT',
+			// 	body: JSON.stringify({ gameId }),
+			// 	headers: {
+			// 		'Content-Type': 'application/json'
+			// 	}
+			// });
+
+			addToast({ message: error, type: 'error' });
+			settingUp = false;
+			return;
 		}
+
+		isStarting = false;
 	}
 </script>
 
@@ -137,6 +164,11 @@
 		id="playerLobby-section"
 		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom]"
 	>
-		<PlayerLobby playerArray={data.players} isCreator={isCreatorCheck()} on:click={startGame} />
+		<PlayerLobby
+			playerArray={data.players}
+			isCreator={isCreatorCheck()}
+			{settingUp}
+			on:click={startGame}
+		/>
 	</section>
 </main>
