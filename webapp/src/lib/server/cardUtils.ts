@@ -1,5 +1,4 @@
 import { createCard } from '$lib/server/databaseBackend';
-import { error } from '@sveltejs/kit';
 import { getCardsByGameId } from '$lib/database';
 
 export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
@@ -27,7 +26,7 @@ export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: 
         }
 
         let addedCards = 0;
-        let existingCards: Card[] = cardsRetrievedData || [];
+        const existingCards: Card[] = cardsRetrievedData || [];
 
         for (const wikidataItem of wikidata) {
             let duplicateYear = false;
@@ -73,7 +72,6 @@ export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: 
                 existingCards.push(cardInDb as Card);
                 addedCards++;
             } else {
-                console.log(`Card for ${card.name} already exists in the database`);
                 continue;
             }
         }
