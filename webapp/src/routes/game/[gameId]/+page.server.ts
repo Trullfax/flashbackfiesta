@@ -24,6 +24,10 @@ export const load: PageServerLoad = async ({ params }) => {
             throw new Error('No API route found for this game.');
         }
 
+        if (data.status !== 'running') {
+            throw new Error('Game is not running.')
+        }
+
         return {
             game: { status: data?.status, 
                     whose_turn_id: data?.whose_turn_id,
