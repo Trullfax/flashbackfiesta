@@ -86,22 +86,16 @@ export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: 
 
 async function fetchTMDBImage(title: string, year: string, queryLink: string, fetch: typeof globalThis.fetch) {
     try {
-        const response = await fetch('/api/tmdb', {
-            method: 'POST',
-            body: JSON.stringify({
-                title: title,
-                year: year,
-                queryLink: queryLink
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const {status, data, error} = await response.json();
+        const TMDB_API_KEY = process.env.TMDB_SECRET_API_KEY;
+        const searchUrl = `${queryLink}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
 
-        if (status === 'error') {
-            throw new Error(error || 'Failed to fetch data from TMDB');
+        const response = await fetch(searchUrl);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data from TMDB');
         }
+
+        const data = await response.json();
 
         if (data.results && data.results.length > 0) {
             for (const item of data.results) {
