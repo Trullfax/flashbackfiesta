@@ -77,14 +77,14 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "Card_game_fkey"
+            foreignKeyName: "Card_game_id_fkey"
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "Game"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "Card_player_fkey"
+            foreignKeyName: "Card_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "Player"
@@ -191,7 +191,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "Player_game_fkey"
+            foreignKeyName: "Player_game_id_fkey"
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "Game"
@@ -208,7 +208,7 @@ export type Database = {
     }
     Enums: {
       difficulty: "easy" | "medium" | "hard" | "extreme"
-      status: "not_started" | "running" | "completed" | "aborted"
+      status: "not_started" | "setting_up" | "running" | "completed" | "aborted"
     }
     CompositeTypes: {
       [_ in never]: never
