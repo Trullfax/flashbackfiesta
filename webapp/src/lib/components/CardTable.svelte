@@ -37,7 +37,6 @@
 			addToast({ message: 'please select the card you want to place here first', type: 'error' });
 			return;
 		}
-		console.log('Placing card at index:', index, 'Selected card:', selectedCard);
 		dispatch('placecard', { index, myCardSelection: selectedCard });
 	}
 

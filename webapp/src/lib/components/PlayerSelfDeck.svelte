@@ -20,7 +20,6 @@
 	function handleCardSelection(cardId: string) {
 		selectedCardId = cardId;
 		const myCardSelection = cards.find((card) => card.id === selectedCardId);
-		console.log('Dispatching card selection:', myCardSelection);
 		dispatch('submitcard', { myCardSelection });
 	}
 </script>

@@ -111,7 +111,6 @@
 	function handleCardSubmit(event: Event) {
 		try {
 			const { myCardSelection } = (event as CustomEvent<{ myCardSelection: Card }>).detail;
-			console.log('Card submitted:', myCardSelection);
 
 			if (!myCardSelection) {
 				throw new Error('something went wrong with the card selection');
@@ -126,7 +125,6 @@
 		try {
 			const { index, myCardSelection } = event.detail;
 			selectedCard = myCardSelection;
-			console.log('Placing card...' + JSON.stringify(selectedCard));
 
 			let beforeCard = index > 0 ? data.tableCards[index - 1] : null;
 			let afterCard = index < data.tableCards.length ? data.tableCards[index] : null;
@@ -139,9 +137,7 @@
 				(beforeCard === null || selectedCard.year > beforeCard.year) &&
 				(afterCard === null || selectedCard.year < afterCard.year)
 			) {
-				selectedCard.in_deck = false;
-				data.tableCards.splice(index, 0, selectedCard);
-				selectedCard = null;
+				// TODO: Write check for accuracy and update the card in the database.
 			} else {
 				throw new Error('the selected card cannot be placed in this position.');
 			}
