@@ -32,7 +32,7 @@
 	}
 
 	const { gameId } = $page.params;
-  
+
 	onMount(() => {
 		try {
 			if (typeof window !== 'undefined') {
@@ -125,22 +125,6 @@
 		try {
 			const { index, myCardSelection } = event.detail;
 			selectedCard = myCardSelection;
-
-			let beforeCard = index > 0 ? data.tableCards[index - 1] : null;
-			let afterCard = index < data.tableCards.length ? data.tableCards[index] : null;
-
-			// TODO: Here is already the correction check.
-			// If a card is not in correct chronological order, it won't be placed on the table.
-			// We need to implement that the card is placed either way, but corrected if the user clicks on wrong position.
-			// Also follow up with a toast, that the user *needs* to draw a new card, if the placement was wrong.
-			if (
-				(beforeCard === null || selectedCard.year > beforeCard.year) &&
-				(afterCard === null || selectedCard.year < afterCard.year)
-			) {
-				// TODO: Write check for accuracy and update the card in the database.
-			} else {
-				throw new Error('the selected card cannot be placed in this position.');
-			}
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
 		}
@@ -164,6 +148,7 @@
 
 	<div class="col-span-full">
 		<CardTable
+			player={myPlayer}
 			game={data.game}
 			category={data.category}
 			cards={data.tableCards}

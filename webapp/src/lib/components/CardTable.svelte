@@ -1,43 +1,59 @@
 <script lang="ts">
 	import CardFront from '$lib/components/CardFront.svelte';
 	import ButtonPlaceCard from '$lib/components/ButtonPlaceCard.svelte';
-	import ButtonArrow from './ButtonArrow.svelte';
+	import ButtonArrow from '$lib/components/ButtonArrow.svelte';
+	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import { addToast } from '$lib/stores/toastStore';
+	import { createEventDispatcher } from 'svelte';
 
 	export let category: Category;
 	export let cards: Card[];
-	export let game: Partial<Game>;
+	export let game: Game;
+	export let player: Player | null;
 	export let selectedCard: Card | null;
-	import { createEventDispatcher } from 'svelte';
 
 	let numberOfCards = 10;
-
 	let cardListContainer: HTMLUListElement;
+	let temporarilyPlacedCardIndex: number | null = null;
+
+	const dispatch = createEventDispatcher();
 
 	function scrollLeft() {
 		if (cardListContainer) {
 			cardListContainer.scrollBy({ left: -700, behavior: 'smooth' });
 		}
 	}
+
 	function scrollRight() {
 		if (cardListContainer) {
 			cardListContainer.scrollBy({ left: 700, behavior: 'smooth' });
 		}
 	}
+
 	function getRandomRotation(): string {
 		const randomAngle = Math.random() * 5 - 2.5;
 		return `rotate(${randomAngle}deg)`;
 	}
 
-	const dispatch = createEventDispatcher();
-
 	function handlePlaceCard(index: number) {
-		if (!selectedCard) {
-			addToast({ message: 'please select the card you want to place here first', type: 'error' });
+		if (player && game.whose_turn_id !== player.id) {
+			addToast({ message: 'It is not your turn', type: 'error' });
 			return;
 		}
-		dispatch('placecard', { index, myCardSelection: selectedCard });
+
+		if (!selectedCard) {
+			addToast({ message: 'Please select the card you want to place here first', type: 'error' });
+			return;
+		}
+		temporarilyPlacedCardIndex = index;
+	}
+
+	function confirmCardPlacement() {
+		if (temporarilyPlacedCardIndex !== null && selectedCard) {
+			dispatch('placecard', { index: temporarilyPlacedCardIndex, myCardSelection: selectedCard });
+			temporarilyPlacedCardIndex = null;
+		}
 	}
 
 	async function generateCards() {
@@ -86,16 +102,33 @@
 				bind:this={cardListContainer}
 			>
 				{#each cards as card, i}
-					{#if i === 0}
-						<div class="self-center">
-							<ButtonPlaceCard
-								text="place here"
-								accentColor={category.hex_color}
-								on:click={() => handlePlaceCard(0)}
-							/>
-						</div>
-					{/if}
-					<li id={card.id} class="list-none self-center" style="transform: {getRandomRotation()};">
+					<li
+						id={card.id}
+						class="list-none flex self-center relative"
+						style="transform: {getRandomRotation()};"
+					>
+						{#if i === 0 && game.whose_turn_id === player?.id}
+							<div class="self-center">
+								{#if selectedCard && temporarilyPlacedCardIndex === i}
+									<div class="animate-pulse scale-75 transition-all">
+										<CardFront
+											title={selectedCard.name}
+											subtitle={selectedCard.creator}
+											imagePath={selectedCard.picture_url}
+											accentColor={category.hex_color}
+											year={Number(selectedCard.year)}
+											revealed={selectedCard.played}
+										/>
+									</div>
+								{:else}
+									<ButtonPlaceCard
+										text="place here"
+										accentColor={category.hex_color}
+										on:click={() => handlePlaceCard(i)}
+									/>
+								{/if}
+							</div>
+						{/if}
 						<CardFront
 							title={card.name}
 							subtitle={card.creator}
@@ -104,19 +137,38 @@
 							year={Number(card.year)}
 							revealed={card.played}
 						/>
+						{#if game.whose_turn_id === player?.id}
+							<div class="self-center">
+								{#if selectedCard && temporarilyPlacedCardIndex === i + 1}
+								<div class="animate-pulse scale-75 transition-all">
+									<CardFront
+										title={selectedCard.name}
+										subtitle={selectedCard.creator}
+										imagePath={selectedCard.picture_url}
+										accentColor={category.hex_color}
+										year={Number(selectedCard.year)}
+										revealed={selectedCard.played}
+									/>
+								</div>
+								{:else}
+									<ButtonPlaceCard
+										text="place here"
+										accentColor={category.hex_color}
+										on:click={() => handlePlaceCard(i + 1)}
+									/>
+								{/if}
+							</div>
+						{/if}
 					</li>
-					<div class="self-center">
-						<ButtonPlaceCard
-							text="place here"
-							accentColor={category.hex_color}
-							on:click={() => handlePlaceCard(i + 1)}
-						/>
-					</div>
 				{/each}
 			</ul>
-
 			<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
 		</div>
+		{#if temporarilyPlacedCardIndex !== null}
+			<div>
+				<ButtonSmall text="confrm" on:click={confirmCardPlacement} />
+			</div>
+		{/if}
 	{:else}
 		<div>
 			<input
