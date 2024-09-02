@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from "@sveltejs/kit";
 import { supabase } from '$lib/server/supabaseBackendClient';
+import { generateCards, updateCardOwner } from '$lib/server/databaseBackend';
 
 const firstCardFetch: number = 100;
 const cardsPerPlayer: number = 5;
@@ -65,40 +66,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
     }
 };
 
-async function generateCards(category: Category, game: Game, numberOfCards: number, fetch: typeof globalThis.fetch) {
-    try {
-        const response = await fetch(category.api_route, {
-            method: 'POST',
-            body: JSON.stringify({
-                gameId: game.id,
-                categoryId: category.id,
-                difficulty: game.difficulty,
-                numberOfCards
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-                `Failed to generate cards. Status: ${response.status}. Error: ${errorText}`
-            );
-        }
-
-        const result = await response.json();
-
-        if (result.success === 'error') {
-            throw new Error(result.error || 'Failed to generate cards');
-        }
-
-        return {success: true, error: null};
-    } catch (error) {
-        return {success: false, error: (error as Error).message};
-    }
-}
-
 async function assigningCards(gameId: string, players: Player[]) {
     try {
         const { data: cards, error: cardsError } = await supabase
@@ -131,28 +98,11 @@ async function assigningCards(gameId: string, players: Player[]) {
 
         const { error: updateError } = await supabase
             .from('Card')
-            .update({ in_deck: true })
+            .update({ played: true })
             .match({ id: lastCard.id });
 
         if (updateError) {
             throw new Error(updateError.message);
-        }
-
-        return {success: true, error: null};
-    } catch (error) {
-        return {success: false, error: (error as Error).message};
-    }
-}
-
-async function updateCardOwner(cardId: string, playerId: string) {
-    try {
-        const { error } = await supabase
-            .from('Card')
-            .update({ player_id: playerId })
-            .match({ id: cardId });
-
-        if (error) {
-            throw new Error(error.message);
         }
 
         return {success: true, error: null};

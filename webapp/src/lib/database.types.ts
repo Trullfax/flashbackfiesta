@@ -40,9 +40,9 @@ export type Database = {
           creator: string | null
           game_id: string
           id: string
-          in_deck: boolean
           name: string
           picture_url: string
+          played: boolean
           player_id: string | null
           year: number
         }
@@ -51,9 +51,9 @@ export type Database = {
           creator?: string | null
           game_id: string
           id?: string
-          in_deck?: boolean
           name: string
           picture_url: string
+          played?: boolean
           player_id?: string | null
           year: number
         }
@@ -62,9 +62,9 @@ export type Database = {
           creator?: string | null
           game_id?: string
           id?: string
-          in_deck?: boolean
           name?: string
           picture_url?: string
+          played?: boolean
           player_id?: string | null
           year?: number
         }
@@ -125,6 +125,7 @@ export type Database = {
           max_card_count: number
           status: Database["public"]["Enums"]["status"]
           whose_turn_id: string | null
+          winner_id: string | null
         }
         Insert: {
           category_id: string
@@ -134,6 +135,7 @@ export type Database = {
           max_card_count?: number
           status?: Database["public"]["Enums"]["status"]
           whose_turn_id?: string | null
+          winner_id?: string | null
         }
         Update: {
           category_id?: string
@@ -143,6 +145,7 @@ export type Database = {
           max_card_count?: number
           status?: Database["public"]["Enums"]["status"]
           whose_turn_id?: string | null
+          winner_id?: string | null
         }
         Relationships: [
           {
@@ -155,6 +158,13 @@ export type Database = {
           {
             foreignKeyName: "Game_whose_turn_fkey"
             columns: ["whose_turn_id"]
+            isOneToOne: false
+            referencedRelation: "Player"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Game_winner_id_fkey"
+            columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "Player"
             referencedColumns: ["id"]

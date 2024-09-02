@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params }) => {
             category: data?.Category as Category,
             cards: data?.Card as Card[],
             players: data?.Player as Player[],
-            tableCards: data.Card.filter((card) => !card.in_deck && card.player_id === null) as Card[]
+            tableCards: data.Card.filter((card) => card.played && card.player_id === null) as Card[]
         };
     } catch (err) {
         error(404, (err as Error).message);
