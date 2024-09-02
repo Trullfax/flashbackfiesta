@@ -131,7 +131,7 @@
 	}
 </script>
 
-<main class="h-screen grid items-center gap-10 bg-game-background bg-no-repeat bg-cover">
+<main class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover">
 	<div class="grid grid-cols-6 gap-4 col-span-full">
 		{#if opponents.length > 0}
 			{#each opponents as player, i}
@@ -157,7 +157,7 @@
 		/>
 	</div>
 
-	<div class="col-span-full flex justify-center">
+	<div class="col-span-full">
 		{#if myPlayer}
 			<PlayerSelfDeck
 				{myPlayer}

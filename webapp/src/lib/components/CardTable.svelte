@@ -92,11 +92,12 @@
 
 <Toasts />
 
-<section class="card-table flex flex-col items-center relative">
+<section class="card-table grid grid-rows-[1fr_150px] justify-items-center items-start relative">
 	{#if cards.length > 0}
 		<div class="flex items-center">
-			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
-
+			<div class="scale-75">
+				<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
+			</div>
 			<ul
 				class="flex flex-row max-w-[80vw] min-h-[17rem] flex-nowrap mt-5 ml-10 mr-10 overflow-hidden"
 				bind:this={cardListContainer}
@@ -110,7 +111,7 @@
 						{#if i === 0 && game.whose_turn_id === player?.id}
 							<div class="self-center">
 								{#if selectedCard && temporarilyPlacedCardIndex === i}
-									<div class="animate-pulse scale-75 transition-all">
+									<div class="animate-pulse transition-all">
 										<CardFront
 											title={selectedCard.name}
 											subtitle={selectedCard.creator}
@@ -129,27 +130,29 @@
 								{/if}
 							</div>
 						{/if}
-						<CardFront
-							title={card.name}
-							subtitle={card.creator}
-							imagePath={card.picture_url}
-							accentColor={category.hex_color}
-							year={Number(card.year)}
-							revealed={card.played}
-						/>
+						<div class="scale-75">
+							<CardFront
+								title={card.name}
+								subtitle={card.creator}
+								imagePath={card.picture_url}
+								accentColor={category.hex_color}
+								year={Number(card.year)}
+								revealed={card.played}
+							/>
+						</div>
 						{#if game.whose_turn_id === player?.id}
 							<div class="self-center">
 								{#if selectedCard && temporarilyPlacedCardIndex === i + 1}
-								<div class="animate-pulse scale-75 transition-all">
-									<CardFront
-										title={selectedCard.name}
-										subtitle={selectedCard.creator}
-										imagePath={selectedCard.picture_url}
-										accentColor={category.hex_color}
-										year={Number(selectedCard.year)}
-										revealed={selectedCard.played}
-									/>
-								</div>
+									<div class="animate-pulse transition-all">
+										<CardFront
+											title={selectedCard.name}
+											subtitle={selectedCard.creator}
+											imagePath={selectedCard.picture_url}
+											accentColor={category.hex_color}
+											year={Number(selectedCard.year)}
+											revealed={selectedCard.played}
+										/>
+									</div>
 								{:else}
 									<ButtonPlaceCard
 										text="place here"
@@ -162,11 +165,13 @@
 					</li>
 				{/each}
 			</ul>
-			<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
+			<div class="scale-75">
+				<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
+			</div>
 		</div>
 		{#if temporarilyPlacedCardIndex !== null}
 			<div>
-				<ButtonSmall text="confrm" on:click={confirmCardPlacement} />
+				<ButtonSmall text="confirm" on:click={confirmCardPlacement} />
 			</div>
 		{/if}
 	{:else}

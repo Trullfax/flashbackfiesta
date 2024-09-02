@@ -10,7 +10,7 @@
 
 	let selectedCardId: string | null = null;
 
-	export function getRandomRotation(): string {
+	function getRandomRotation(): string {
 		const randomAngle = Math.random() * 5 - 2.5;
 		return `rotate(${randomAngle}deg)`;
 	}
@@ -24,10 +24,10 @@
 	}
 </script>
 
-<div class="flex w-[90vw] justify-between items-center">
+<div class="grid grid-cols-[1fr_2fr_1fr] items-center justify-items-center">
 	<PlayerDeck player={myPlayer} {turn} {category} />
 
-	<ul class="flex gap-3">
+	<ul class="flex gap-3 flex-wrap">
 		{#each cards as card}
 			<button on:click={() => handleCardSelection(card.id)}>
 				<li
@@ -52,7 +52,6 @@
 			</button>
 		{/each}
 	</ul>
-
 	<button on:click>
 		<img src={category.picture_path} alt="categorycard for {category.name}" class="w-[10rem]" />
 	</button>

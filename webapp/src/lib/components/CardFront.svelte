@@ -21,13 +21,13 @@
 	></div>
 	<div class="absolute bottom-1 p-2 font-contrail text-white">
 		<p
-			class={`${size === 'small' ? 'text-[8px] mb-1' : 'text-[10px] mb-1'}`}
+			class={`text-left ${size === 'small' ? 'text-[8px] mb-1' : 'text-[10px] mb-1'}`}
 		>
 			{subtitle}
 		</p>
-		<h1 class={`${size === 'small' ? 'text-[12px]/[12px] mb-[2px]' : 'text-lg/[20px]'}`}>{title}</h1>
+		<h1 class={`text-left ${size === 'small' ? 'text-[12px]/[12px] mb-[2px]' : 'text-lg/[20px]'}`}>{title}</h1>
 		{#if revealed}
-			<p class={`mt-1 font-vampiro text-yellow drop-shadow-bold ${size === 'small' ? 'text-xl' : 'text-3xl'}`}>{year}</p>
+			<p class={`mt-1 font-vampiro text-yellow drop-shadow-bold text-left ${size === 'small' ? 'text-xl' : 'text-3xl'}`}>{year}</p>
 		{/if}
 	</div>
 </div>
