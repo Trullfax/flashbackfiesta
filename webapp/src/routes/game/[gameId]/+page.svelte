@@ -32,7 +32,7 @@
 	}
 
 	const { gameId } = $page.params;
-
+  
 	onMount(() => {
 		try {
 			if (typeof window !== 'undefined') {

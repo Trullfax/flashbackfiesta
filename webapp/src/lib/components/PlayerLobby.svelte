@@ -6,6 +6,7 @@
 
 	export let playerArray: Partial<Player>[] = [];
 	export let isCreator: boolean;
+	export let settingUp: boolean;
 
 	let currentUrl = '';
 
@@ -93,9 +94,17 @@
 			</div>
 		</div>
 	</label>
-	{#if isCreator}
-		<ButtonBig text="LET'S PLAY" on:click />
+	{#if settingUp}
+		<p class="text-red font-contrail text-lg mt-4">setting up game...</p>
 	{:else}
-		<p class="text-white font-contrail text-lg mt-4">waiting for the host to start the fiesta...</p>
+		<div>
+			{#if isCreator}
+				<ButtonBig text="LET'S PLAY" on:click />
+			{:else}
+				<p class="text-white font-contrail text-lg mt-4">
+					waiting for the host to start the fiesta...
+				</p>
+			{/if}
+		</div>
 	{/if}
 </div>
