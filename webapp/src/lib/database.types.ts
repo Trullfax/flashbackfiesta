@@ -40,9 +40,9 @@ export type Database = {
           creator: string | null
           game_id: string
           id: string
-          in_deck: boolean
           name: string
           picture_url: string
+          played: boolean
           player_id: string | null
           year: number
         }
@@ -51,9 +51,9 @@ export type Database = {
           creator?: string | null
           game_id: string
           id?: string
-          in_deck?: boolean
           name: string
           picture_url: string
+          played?: boolean
           player_id?: string | null
           year: number
         }
@@ -62,9 +62,9 @@ export type Database = {
           creator?: string | null
           game_id?: string
           id?: string
-          in_deck?: boolean
           name?: string
           picture_url?: string
+          played?: boolean
           player_id?: string | null
           year?: number
         }

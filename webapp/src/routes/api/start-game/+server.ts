@@ -98,7 +98,7 @@ async function assigningCards(gameId: string, players: Player[]) {
 
         const { error: updateError } = await supabase
             .from('Card')
-            .update({ in_deck: true })
+            .update({ played: true })
             .match({ id: lastCard.id });
 
         if (updateError) {

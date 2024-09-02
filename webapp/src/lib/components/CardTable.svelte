@@ -102,7 +102,7 @@
 							imagePath={card.picture_url}
 							accentColor={category.hex_color}
 							year={Number(card.year)}
-							revealed={!card.in_deck}
+							revealed={card.played}
 						/>
 					</li>
 					<div class="self-center">

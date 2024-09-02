@@ -36,7 +36,7 @@ declare global {
 		category_id: string;
 		game_id: string;
 		player_id?: string;
-		in_deck?: boolean;
+		played?: boolean;
 	}
 
 	interface Player {
