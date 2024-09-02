@@ -61,10 +61,10 @@
 					<div>
 						{#if playerArray[index]}
 							<p
-								class="w-[6rem] font-contrail text-center text-white text-clip overflow-hidden {index ===
+								class="w-[8rem] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
 								0
-									? 'text-[1.25rem]'
-									: 'text-[1rem]'}"
+									? 'text-[1rem]'
+									: 'text-[.75rem]'}"
 							>
 								{playerArray[index].name}
 							</p>

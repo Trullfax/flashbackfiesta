@@ -6,17 +6,17 @@
 	export let category: Category;
 </script>
 
-<div class="flex flex-row gap-6">
+<div class="flex max-w-max h-max gap-6">
 	<img
 		src={player.avatar_path}
 		alt={`avatar of ${player.name}`}
 		class="size-24 drop-shadow-bold {turn ? 'animate-pulse' : ''}"
 	/>
-	<div class="w-[10rem] flex flex-col gap-4">
+	<div class="w-[10rem] flex max-w-max h-max flex-col gap-4">
 		<p class="font-contrail text-[1.5rem] text-black translate-y-[0.25rem]">
 			{player.name}
 		</p>
-		<div class="flex flex-row translate-x-[0.25rem]">
+		<div class="flex max-w-max translate-x-[0.25rem]">
 			{#each Array(player.cards_count) as _, index}
 				<div
 					class="relative {index % 2 === 0

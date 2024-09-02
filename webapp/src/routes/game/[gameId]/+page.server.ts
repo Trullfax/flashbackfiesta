@@ -10,14 +10,14 @@ export const load: PageServerLoad = async ({ params }) => {
             throw new Error("gameId is invalid");
         }
 
-        const { data, error} = await supabase
+        const { data, error: gameError } = await supabase
             .from("Game")
             .select('*, Category (*), Player:Player!game_id (*), Card:Card!game_id (*)')
             .eq('id', gameId)
             .single();
 
-        if (error) {
-            throw new Error('Error fetching game: ' + error.message );
+        if (gameError) {
+            throw new Error('Error fetching game:');
         }
 
         if (!data.Category?.api_route) {
@@ -29,16 +29,18 @@ export const load: PageServerLoad = async ({ params }) => {
         }
 
         return {
-            game: { id: data?.id,
-                    status: data?.status, 
-                    whose_turn_id: data?.whose_turn_id,
-                    max_card_count: data?.max_card_count,
-                    difficulty: data?.difficulty } as Game,
+            game: {
+                id: data?.id,
+                status: data?.status,
+                whose_turn_id: data?.whose_turn_id,
+                max_card_count: data?.max_card_count,
+                difficulty: data?.difficulty
+            } as Game,
             category: data?.Category as Category,
-            cards:  data?.Card as Card[],
-            players: data?.Player as Player[]
+            cards: data?.Card as Card[],
+            players: data?.Player as Player[],
+            tableCards: data.Card.filter((card) => !card.in_deck && card.player_id === null) as Card[]
         };
-
     } catch (err) {
         error(404, (err as Error).message);
     }
