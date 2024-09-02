@@ -1,12 +1,15 @@
 <script lang="ts">
 	import CardFront from '$lib/components/CardFront.svelte';
 	import ButtonPlaceCard from '$lib/components/ButtonPlaceCard.svelte';
-	import Title from '$lib/components/Title.svelte';
 	import ButtonArrow from './ButtonArrow.svelte';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import { addToast } from '$lib/stores/toastStore';
 
 	export let category: Category;
 	export let cards: Card[];
 	export let game: Partial<Game>;
+	export let selectedCard: Card | null;
+	import { createEventDispatcher } from 'svelte';
 
 	let numberOfCards = 10;
 
@@ -27,6 +30,17 @@
 		return `rotate(${randomAngle}deg)`;
 	}
 
+	const dispatch = createEventDispatcher();
+
+	function handlePlaceCard(index: number) {
+		if (!selectedCard) {
+			addToast({ message: 'please select the card you want to place here first', type: 'error' });
+			return;
+		}
+		console.log('Placing card at index:', index, 'Selected card:', selectedCard);
+		dispatch('placecard', { index, myCardSelection: selectedCard });
+	}
+
 	async function generateCards() {
 		try {
 			console.log('Generating cards...');
@@ -34,7 +48,7 @@
 				method: 'POST',
 				body: JSON.stringify({
 					gameId: game.id,
-					categoryId: game.category_id,
+					categoryId: category.id,
 					difficulty: game.difficulty,
 					numberOfCards
 				}),
@@ -61,10 +75,11 @@
 	}
 </script>
 
+<Toasts />
+
 <section class="card-table flex flex-col items-center relative">
-	<Title title={category.name ?? ''} subtitle={`place your cards`} flip={false} />
 	{#if cards.length > 0}
-		<div class="flex gap-5 items-center">
+		<div class="flex items-center">
 			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 
 			<ul
@@ -74,7 +89,11 @@
 				{#each cards as card, i}
 					{#if i === 0}
 						<div class="self-center">
-							<ButtonPlaceCard text="place here" accentColor={category.hex_color} />
+							<ButtonPlaceCard
+								text="place here"
+								accentColor={category.hex_color}
+								on:click={() => handlePlaceCard(0)}
+							/>
 						</div>
 					{/if}
 					<li id={card.id} class="list-none self-center" style="transform: {getRandomRotation()};">
@@ -84,11 +103,15 @@
 							imagePath={card.picture_url}
 							accentColor={category.hex_color}
 							year={Number(card.year)}
-							revealed={card.in_deck}
+							revealed={!card.in_deck}
 						/>
 					</li>
 					<div class="self-center">
-						<ButtonPlaceCard text="place here" accentColor={category.hex_color} />
+						<ButtonPlaceCard
+							text="place here"
+							accentColor={category.hex_color}
+							on:click={() => handlePlaceCard(i + 1)}
+						/>
 					</div>
 				{/each}
 			</ul>
@@ -110,7 +133,4 @@
 		</div>
 		<p>No cards to display. Click "Generate Cards" to fetch new cards.</p>
 	{/if}
-	<section>
-		<img src={category.picture_path} alt={category.name} />
-	</section>
 </section>

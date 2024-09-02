@@ -44,3 +44,16 @@
       @apply text-lg;
     }
   }
+
+.col-span-1-opponent {
+  grid-column: span 2 / span 2;
+  justify-self: center;
+}
+.col-span-2-opponent {
+  grid-column: span 3 / span 3;
+  justify-self: center;
+}
+.col-span-3-opponent {
+  grid-column: span 2 / span 2;
+  justify-self: center;
+}

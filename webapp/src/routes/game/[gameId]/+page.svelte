@@ -5,21 +5,44 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { error } from '@sveltejs/kit';
 	import CardTable from '$lib/components/CardTable.svelte';
+	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
+	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
 
 	export let data: PageData;
+	let myPlayerId: string | null = null;
+	let myPlayer: Player | null = null;
+	let opponents: Player[] = [];
+	let selectedCard: Card | null = null;
+
+	// Reactive block to handle assigned player and opponents
+	$: {
+		try {
+			if (myPlayerId && data.players) {
+				myPlayer = data.players.find((player) => player.id === myPlayerId) || null;
+
+				if (!myPlayer) {
+					throw new Error(`Player with ID ${myPlayerId} not found`);
+				}
+
+				opponents = data.players.filter((player) => player.id !== myPlayerId);
+			}
+		} catch (err) {
+			error(404, (err as Error).message);
+		}
+	}
 
 	const { gameId } = $page.params;
 
 	onMount(() => {
 		try {
 			if (typeof window !== 'undefined') {
-				const playerId = localStorage.getItem('playerId');
+				myPlayerId = localStorage.getItem('playerId');
 
-				if (!playerId) {
-					throw new Error('playerId not found in local storage');
+				if (!myPlayerId) {
+					throw new Error('player not found in local storage');
 				}
 
-				const playerExists = data.players.some((player) => player.id === playerId);
+				const playerExists = data.players.some((player) => player.id === myPlayerId);
 
 				if (!playerExists) {
 					throw new Error('no matching player found in game');
@@ -54,42 +77,114 @@
 	});
 
 	function handlePlayerUpdates(payload: { new: any }) {
-		console.log('Chance recieved: ' + payload.new);
-
 		const newPlayer = payload.new;
 		const existingPlayerIndex = data.players.findIndex((player) => player.id === newPlayer.id);
 		data.players[existingPlayerIndex] = { ...data.players[existingPlayerIndex], ...newPlayer };
-
-		console.log(data.players);
 	}
 
 	function handleGameUpdates(payload: { new: any }) {
-		console.log('Chance recieved: ' + payload.new);
-
 		const newGame = payload.new;
 		data.game = { ...data.game, ...newGame };
-
-		console.log(data.game);
 	}
 
 	function handleCardUpdates(payload: { new: any }) {
-		console.log('Chance recieved: ' + payload.new);
-
 		const newCard = payload.new;
 		const existingCardIndex = data.cards.findIndex((card) => card.id === newCard.id);
 		data.cards[existingCardIndex] = { ...data.cards[existingCardIndex], ...newCard };
-
-		console.log(data.cards);
 	}
 
-	// sort cards by year
-	$: {
-		data.cards.sort((a, b) => Number(a.year) - Number(b.year));
+	// Compute classes based on number of opponents
+	$: playerClasses = opponents.map((_, i) => {
+		const count = opponents.length;
+		switch (count) {
+			case 1:
+				return 'col-span-1-opponent';
+			case 2:
+				return 'col-span-2-opponent';
+			case 3:
+				return 'col-span-3-opponent';
+			default:
+				return '';
+		}
+	});
+
+	function handleCardSubmit(event: Event) {
+		try {
+			const { myCardSelection } = (event as CustomEvent<{ myCardSelection: Card }>).detail;
+			console.log('Card submitted:', myCardSelection);
+
+			if (!myCardSelection) {
+				throw new Error('something went wrong with the card selection');
+			}
+			selectedCard = myCardSelection;
+		} catch (err) {
+			console.error('Error:', (err as Error).message);
+		}
+	}
+
+	function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
+		try {
+			const { index, myCardSelection } = event.detail;
+			selectedCard = myCardSelection;
+			console.log('Placing card...' + JSON.stringify(selectedCard));
+
+			let beforeCard = index > 0 ? data.tableCards[index - 1] : null;
+			let afterCard = index < data.tableCards.length ? data.tableCards[index] : null;
+
+			// TODO: Here is already the correction check.
+			// If a card is not in correct chronological order, it won't be placed on the table.
+			// We need to implement that the card is placed either way, but corrected if the user clicks on wrong position.
+			// Also follow up with a toast, that the user *needs* to draw a new card, if the placement was wrong.
+			if (
+				(beforeCard === null || selectedCard.year > beforeCard.year) &&
+				(afterCard === null || selectedCard.year < afterCard.year)
+			) {
+				selectedCard.in_deck = false;
+				data.tableCards.splice(index, 0, selectedCard);
+				selectedCard = null;
+			} else {
+				throw new Error('the selected card cannot be placed in this position.');
+			}
+		} catch (err) {
+			console.error('Error:', (err as Error).message);
+		}
 	}
 </script>
 
-<main class="h-screen flex flex-col items-center gap-10 bg-game-background bg-no-repeat bg-cover">
-	<div>
-		<CardTable game={data.game} category={data.category} cards={data.cards} />
+<main class="h-screen grid items-center gap-10 bg-game-background bg-no-repeat bg-cover">
+	<div class="grid grid-cols-6 gap-4 col-span-full">
+		{#if opponents.length > 0}
+			{#each opponents as player, i}
+				<div class={playerClasses[i]}>
+					<PlayerDeck
+						{player}
+						turn={data.game.whose_turn_id === player.id}
+						category={data.category}
+					/>
+				</div>
+			{/each}
+		{/if}
+	</div>
+
+	<div class="col-span-full">
+		<CardTable
+			game={data.game}
+			category={data.category}
+			cards={data.tableCards}
+			{selectedCard}
+			on:placecard={handleCardPlacement}
+		/>
+	</div>
+
+	<div class="col-span-full flex justify-center">
+		{#if myPlayer}
+			<PlayerSelfDeck
+				{myPlayer}
+				turn={data.game.whose_turn_id === myPlayer.id}
+				category={data.category}
+				cards={data.cards.filter((card) => myPlayer && card.player_id === myPlayer.id)}
+				on:submitcard={handleCardSubmit}
+			/>
+		{/if}
 	</div>
 </main>
