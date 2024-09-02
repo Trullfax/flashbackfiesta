@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from "@sveltejs/kit";
 import { supabase } from '$lib/server/supabaseBackendClient';
-import { generateCards } from '$lib/server/databaseBackend';
+import { generateCards, updateCardOwner } from '$lib/server/databaseBackend';
 
 const firstCardFetch: number = 100;
 const cardsPerPlayer: number = 5;
@@ -113,23 +113,6 @@ async function assigningCards(gameId: string, players: Player[]) {
 
         if (updateError) {
             throw new Error(updateError.message);
-        }
-
-        return {success: true, error: null};
-    } catch (error) {
-        return {success: false, error: (error as Error).message};
-    }
-}
-
-async function updateCardOwner(cardId: string, playerId: string) {
-    try {
-        const { error } = await supabase
-            .from('Card')
-            .update({ player_id: playerId })
-            .match({ id: cardId });
-
-        if (error) {
-            throw new Error(error.message);
         }
 
         return {success: true, error: null};

@@ -59,3 +59,20 @@ export async function generateCards(category: Category, game: Game, numberOfCard
         return {success: false, error: (error as Error).message};
     }
 }
+
+export async function updateCardOwner(cardId: string, playerId: string) {
+    try {
+        const { error } = await supabase
+            .from('Card')
+            .update({ player_id: playerId })
+            .match({ id: cardId });
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return {success: true, error: null};
+    } catch (error) {
+        return {success: false, error: (error as Error).message};
+    }
+}
