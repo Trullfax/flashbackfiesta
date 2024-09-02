@@ -29,7 +29,8 @@ export const load: PageServerLoad = async ({ params }) => {
         }
 
         return {
-            game: { status: data?.status, 
+            game: { id: data?.id,
+                    status: data?.status, 
                     whose_turn_id: data?.whose_turn_id,
                     max_card_count: data?.max_card_count,
                     difficulty: data?.difficulty } as Game,
