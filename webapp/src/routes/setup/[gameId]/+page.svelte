@@ -105,8 +105,8 @@
 
 		const { status, player, error } = await response.json();
 
-		if (status === 'error') {
-			addToast({ message: error, type: 'error' });
+		if (!response.ok || status === 'error') {
+			addToast({ message: error || 'An unknown error occurred', type: 'error' });
 			return;
 		}
 
@@ -134,16 +134,8 @@
 
 		const { status, error } = await response.json();
 
-		if (status === 'error') {
-			// const response = await fetch('/api/start-game/', {
-			// 	method: 'PUT',
-			// 	body: JSON.stringify({ gameId }),
-			// 	headers: {
-			// 		'Content-Type': 'application/json'
-			// 	}
-			// });
-
-			addToast({ message: error, type: 'error' });
+		if (!response.ok || status === 'error') {
+			addToast({ message: error || 'An unknown error occurred', type: 'error' });
 			settingUp = false;
 			return;
 		}

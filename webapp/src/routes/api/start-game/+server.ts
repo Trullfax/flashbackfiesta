@@ -2,12 +2,19 @@ import type { RequestHandler } from './$types';
 import { json } from "@sveltejs/kit";
 import { supabase } from '$lib/server/supabaseBackendClient';
 
-const firstCardFetch: number = 40;
+const firstCardFetch: number = 100;
 const cardsPerPlayer: number = 5;
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
+    let gameId: string = '';
     try {
         const { game, category, players } = await request.json();
+
+        if (!game || !category || !players) {
+            throw new Error('Invalid request body');
+        }
+
+        gameId = game.id;
 
         // Set game status to setting_up
         const { error: settingUpError } = await supabase
@@ -47,8 +54,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
         }
 
         return json({ status: 'success' , error: null });
-    } catch (error) {
-        return json({ status: 'error', error: (error as Error).message });
+    } catch (err) {
+        const { success: rollbackSuccess, error: rollbackError} = await rollback(gameId);
+
+        if (!rollbackSuccess) {
+            return json({ status: 'error', error: (err as Error).message + ' ;rollback failed: ' + rollbackError });
+        }
+
+        return json({ status: 'error', error: (err as Error).message });
     }
 };
 
@@ -95,7 +108,7 @@ async function assigningCards(gameId: string, players: Player[]) {
             .limit(cardsPerPlayer * players.length + 1);
 
         if (cardsError) {
-            throw cardsError;
+            throw new Error(cardsError.message);
         }
 
         // assign cards to players
@@ -105,10 +118,10 @@ async function assigningCards(gameId: string, players: Player[]) {
 
             for (let j = 0; j < playerCards.length; j++) {
                 const card = playerCards[j];
-                const { error } = await updateCardOwner(card.id, player.id);
+                const { error: updateOwnerError } = await updateCardOwner(card.id, player.id);
 
-                if (error) {
-                    throw error;
+                if (updateOwnerError) {
+                    throw updateOwnerError;
                 }
             }
         }
@@ -122,7 +135,7 @@ async function assigningCards(gameId: string, players: Player[]) {
             .match({ id: lastCard.id });
 
         if (updateError) {
-            throw updateError;
+            throw new Error(updateError.message);
         }
 
         return {success: true, error: null};
@@ -139,7 +152,7 @@ async function updateCardOwner(cardId: string, playerId: string) {
             .match({ id: cardId });
 
         if (error) {
-            throw error;
+            throw new Error(error.message);
         }
 
         return {success: true, error: null};
@@ -148,21 +161,30 @@ async function updateCardOwner(cardId: string, playerId: string) {
     }
 }
 
-// export const PUT: RequestHandler = async ({ request }) => {
-//     try {
-//         const { gameID } = await request.json();
+async function rollback(gameId: string) {
+    try {
+        // rollback the game status
+        const { error: rollbackStatusError } = await supabase
+            .from('Game')
+            .update({ status: 'not_started' })
+            .match({ id: gameId });
 
-//         const { error } = await supabase
-//             .from('Game')
-//             .update({ status: 'not_started' })
-//             .match({ id: gameID });
+        if (rollbackStatusError) {
+            throw new Error(rollbackStatusError.message);
+        }
 
-//         if (error) {
-//             throw error;
-//         }
+        // rollback the cards
+        const { error: rollbackCardsError } = await supabase
+            .from('Card')
+            .delete()
+            .match({ game_id: gameId });
 
-//         return json({ status: 'success', error: null });
-//     } catch (error) {
-//         return json({ status: 'error', error: (error as Error).message });
-//     }
-// };
+        if (rollbackCardsError) {
+            throw new Error(rollbackCardsError.message);
+        }
+
+        return {success: true, error: null};
+    } catch (error) {
+        return {success: false, error: (error as Error).message};
+    }
+}
