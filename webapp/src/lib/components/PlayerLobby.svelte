@@ -97,7 +97,7 @@
 		</label>
 	</div>
 	<div class="flex row-span-1">
-		{#if !settingUp}
+		{#if settingUp}
 			<div class="flex flex-col items-center gap-5 mt-5">
 				<span class="cardshuffle"></span>
 				<p class="text-white font-contrail text-lg mt-4">setting up game...</p>
