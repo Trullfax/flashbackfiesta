@@ -43,7 +43,7 @@
 		}
 
 		if (!selectedCard) {
-			addToast({ message: 'Please select the card you want to place here first', type: 'error' });
+			addToast({ message: 'Please select the card you want to place here first!', type: 'error' });
 			return;
 		}
 		temporarilyPlacedCardIndex = index;
@@ -55,57 +55,24 @@
 			temporarilyPlacedCardIndex = null;
 		}
 	}
-
-	async function generateCards() {
-		try {
-			console.log('Generating cards...');
-			const response = await fetch(category.api_route, {
-				method: 'POST',
-				body: JSON.stringify({
-					gameId: game.id,
-					categoryId: category.id,
-					difficulty: game.difficulty,
-					numberOfCards
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-
-			if (!response.ok) {
-				const errorText = await response.text();
-				throw new Error(
-					`Failed to generate cards. Status: ${response.status}. Error: ${errorText}`
-				);
-			}
-
-			const result = await response.json();
-
-			if (!result.success) {
-				throw new Error(result.error || 'Failed to generate cards');
-			}
-		} catch (error) {
-			console.error('Error:', (error as Error).message);
-		}
-	}
 </script>
 
 <Toasts />
 
-<section class="card-table grid grid-rows-[1fr_150px] justify-items-center items-start relative">
+<section class="card-table grid grid-rows-[1fr_200px] justify-items-center items-center relative">
 	{#if cards.length > 0}
-		<div class="flex items-center">
+		<div class="flex items-center justify-center">
 			<div class="scale-75">
 				<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 			</div>
 			<ul
-				class="flex flex-row max-w-[80vw] min-h-[17rem] flex-nowrap mt-5 ml-10 mr-10 overflow-hidden"
+				class="flex w-[70vw] min-h-min pt-5 pb-5 flex-nowrap ml-10 mr-10 overflow-hidden transition-all duration-300"
 				bind:this={cardListContainer}
 			>
 				{#each cards as card, i}
 					<li
 						id={card.id}
-						class="list-none flex self-center relative"
+						class="list-none flex self-center relative transition-all"
 						style="transform: {getRandomRotation()};"
 					>
 						{#if i === 0 && game.whose_turn_id === player?.id}
@@ -170,23 +137,11 @@
 			</div>
 		</div>
 		{#if temporarilyPlacedCardIndex !== null}
-			<div>
+			<div class="self-start">
 				<ButtonSmall text="confirm" on:click={confirmCardPlacement} />
 			</div>
 		{/if}
 	{:else}
-		<div>
-			<input
-				type="number"
-				min="1"
-				max="100"
-				bind:value={numberOfCards}
-				class="p-2 border rounded"
-			/>
-			<button class="mt-2 p-2 bg-blue-500 text-white rounded" on:click={generateCards}>
-				Generate Cards
-			</button>
-		</div>
-		<p>No cards to display. Click "Generate Cards" to fetch new cards.</p>
+		<p class="font-contrail">No cards to display.</p>
 	{/if}
 </section>

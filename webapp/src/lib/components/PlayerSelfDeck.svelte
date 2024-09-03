@@ -24,7 +24,7 @@
 	}
 </script>
 
-<div class="grid grid-cols-[1fr_2fr_1fr] items-center justify-items-center">
+<section class="grid grid-cols-[1fr_2fr] items-center justify-items-center">
 	<PlayerDeck player={myPlayer} {turn} {category} />
 
 	<ul class="flex gap-3 flex-wrap">
@@ -52,7 +52,4 @@
 			</button>
 		{/each}
 	</ul>
-	<button on:click>
-		<img src={category.picture_path} alt="categorycard for {category.name}" class="w-[10rem]" />
-	</button>
-</div>
+</section>

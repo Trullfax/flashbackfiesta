@@ -4,7 +4,7 @@ import { supabase } from '$lib/server/supabaseBackendClient';
 import { generateCards, updateCardOwner } from '$lib/server/databaseBackend';
 import { getCardsByGameId } from '$lib/database';
 
-const minCardsInDeck: number = 15;  
+const minCardsInDeck: number = 15;
 const cardFetch: number = 100;
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
     try {
         const { game, category, selectedCard, cardPos, player } = await request.json();
 
-        if (!game || !category || !selectedCard || !cardPos || !player) {
+        if (!game || !category || !selectedCard || cardPos === null || !player) {
             throw new Error('Missing parameters');
         }
 
@@ -29,8 +29,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             throw new Error('Game is not running');
         }
 
-        // check if game has a winner
-        if (game.winner_id !== null) {
+        // check if game has a winner (!= because it can be null or undefined)
+        if (game.winner_id != null) {
             throw new Error('Game has a winner');
         }
 
@@ -46,14 +46,17 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             throw new Error('Failed to fetch cards: ' + cardsError || 'No data found');
         }
 
-        // set needed arrays of cards
-        const playedCards: Card[] = cards.filter((card) => card.played && card.player_id === null);
+        // set needed arrays of cards and sort them by year
+        const playedCards: Card[] = cards
+            .filter((card) => card.played && card.player_id === null)
+            .sort((a, b) => a.year - b.year);
+
         const cardsInDeck = cards.filter((card) => !card.played && card.player_id === null);
 
         if (cardsInDeck.length <= 0 || playedCards.length <= 0) {
             throw new Error('No cards in deck');
         }
-        
+
         // check if card was placed at the correct position
         const { success: checkSuccess, correct, error: checkError } = await checkCardPosition(playedCards, selectedCard, cardPos);
 
@@ -143,15 +146,25 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             generateCards(category, game, cardFetch, fetch);
         }
 
-        return json({ status: 'success', error: null });
+        return json({
+            status: 'success',
+            correct: correct,
+            winner: winner ? player as Player : false,
+            error: null
+        });
     } catch (err) {
         const { success: rollbackSuccess, error: rollbackError } = await rollback(rollbackPlayer!, rollbackGame!, rollbackSelectedCard!);
 
         if (!rollbackSuccess) {
             return json({ status: 'error', error: (err as Error).message + ' ;rollback failed: ' + rollbackError });
         }
-        
-        return json({ status: 'error', error: (err as Error).message });
+
+        return json({
+            status: 'error',
+            correct: null,
+            winner: null,
+            error: (err as Error).message
+        });
     }
 };
 
@@ -168,7 +181,7 @@ async function checkCardPosition(playedCards: Card[], selectedCard: Card, cardPo
         ) {
             correct = true;
         }
-       
+
         return { success: true, correct: correct, error: null };
     } catch (err) {
         return { success: false, correct: false, error: (err as Error).message };

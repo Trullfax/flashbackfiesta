@@ -4,15 +4,19 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { error } from '@sveltejs/kit';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import { addToast } from '$lib/stores/toastStore';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
+	import { Confetti } from 'svelte-confetti';
 
 	export let data: PageData;
 	let myPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let selectedCard: Card | null = null;
+	let showConfetti: boolean = false;
 
 	// Reactive block to handle assigned player and opponents
 	$: {
@@ -88,9 +92,14 @@
 	}
 
 	function handleCardUpdates(payload: { new: any }) {
-		const newCard = payload.new;
-		const existingCardIndex = data.cards.findIndex((card) => card.id === newCard.id);
-		data.cards[existingCardIndex] = { ...data.cards[existingCardIndex], ...newCard };
+		const newCard: Card = payload.new;
+
+		if (newCard.played) {
+			data.cards = data.cards.filter((card) => card.id !== newCard.id);
+			data.tableCards = [...data.tableCards, newCard];
+		} else {
+			data.cards = [...data.cards, newCard];
+		}
 	}
 
 	// Compute classes based on number of opponents
@@ -118,20 +127,81 @@
 			selectedCard = myCardSelection;
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
+			addToast({ message: (err as Error).message || 'An unknown error occurred', type: 'error' });
+			return;
 		}
 	}
 
-	function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
+	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
+			
 			const { index, myCardSelection } = event.detail;
 			selectedCard = myCardSelection;
+
+			const response = await fetch('/api/update-game/', {
+				method: 'POST',
+				body: JSON.stringify({
+					game: data.game,
+					category: data.category,
+					selectedCard: selectedCard,
+					cardPos: index,
+					player: data.players.find((player) => player.id === myPlayerId)
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			const { status, correct, winner, error } = await response.json();
+
+			if (!response.ok || status === 'error') {
+				throw new Error(error || 'An unknown error occurred');
+			}
+			if (status === 'success') {
+				if (correct) {
+					addToast({ message: 'Correct!', type: 'success' });
+				} else {
+					addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+				}
+				if (winner) {
+					addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
+				}
+				if (winner.id === myPlayerId) {
+					showConfetti = true;
+				}
+				selectedCard = null;
+			}
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
+			return;
 		}
 	}
 </script>
 
-<main class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover">
+<Toasts />
+
+<main
+	class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover relative max-w-screen overflow-clip"
+>
+	{#if showConfetti}
+		<div class="absolute top-[50%] left-[50%]">
+			<Confetti
+				size={10}
+				x={[-2, 2]}
+				y={[-2, 2]}
+				delay={[0, 1000]}
+				fallDistance="100px"
+				amount={500}
+				colorArray={[
+					'var(--ff-purple)',
+					'var(--ff-green)',
+					'var(--ff-red)',
+					'var(--ff-blue)',
+					'var(--ff-yellow)'
+				]}
+			/>
+		</div>
+	{/if}
 	<div class="grid grid-cols-6 gap-4 col-span-full">
 		{#if opponents.length > 0}
 			{#each opponents as player, i}
@@ -151,7 +221,7 @@
 			player={myPlayer}
 			game={data.game}
 			category={data.category}
-			cards={data.tableCards}
+			cards={data.tableCards.sort((a, b) => a.year - b.year)}
 			{selectedCard}
 			on:placecard={handleCardPlacement}
 		/>
@@ -167,5 +237,26 @@
 				on:submitcard={handleCardSubmit}
 			/>
 		{/if}
+	</div>
+	<div class="absolute rotate-45 -left-20 top-50">
+		<img
+			src={data.category.picture_path}
+			alt="categorycard for {data.category.name}"
+			class="w-[10rem]"
+		/>
+	</div>
+	<div class="absolute rotate-12 -left-20">
+		<img
+			src={data.category.picture_path}
+			alt="categorycard for {data.category.name}"
+			class="w-[10rem]"
+		/>
+	</div>
+	<div class="absolute -rotate-12 -right-20 top-10">
+		<img
+			src={data.category.picture_path}
+			alt="categorycard for {data.category.name}"
+			class="w-[10rem]"
+		/>
 	</div>
 </main>
