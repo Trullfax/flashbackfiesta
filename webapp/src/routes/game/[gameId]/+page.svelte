@@ -226,7 +226,7 @@
 		{/if}
 	</div>
 
-	<div class="col-span-full">
+	<div class="col-span-full grid">
 		<CardTable
 			player={myPlayer}
 			game={data.game}
