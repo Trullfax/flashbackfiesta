@@ -120,7 +120,7 @@
 											revealed={selectedCard.played}
 										/>
 									</div>
-								{:else}
+								{:else if (cards.length < 2 || i === (cards.length - 1) ||((Number(cards[i].year) + 1) !== (Number(cards[i + 1].year))))}
 									<ButtonPlaceCard
 										text="place here"
 										accentColor={category.hex_color}

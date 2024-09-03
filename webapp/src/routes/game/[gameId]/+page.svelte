@@ -18,7 +18,7 @@
 	let myPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
-	let opponent: Player | null = null;
+	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
 	let showConfetti: boolean = false;
 
@@ -33,7 +33,7 @@
 				}
 
 				opponents = data.players.filter((player) => player.id !== myPlayerId);
-				opponent = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
+				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {
 			error(404, (err as Error).message);
@@ -184,9 +184,8 @@
 
 <Toasts />
 {#if data.game.whose_turn_id !== myPlayer?.id}
-	<div class="overlay w-screen h-screen bg-black opacity-50 z-10 absolute"></div>
 	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
-		<p class="font-contrail text-2xl text-white text-center">waiting for {opponent?.name}</p>
+		<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
 		<LoadingBar color={data.category.hex_color} />
 	</div>
 {/if}
