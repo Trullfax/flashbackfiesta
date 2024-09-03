@@ -4,15 +4,23 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { error } from '@sveltejs/kit';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import { addToast } from '$lib/stores/toastStore';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
+	import EmojiClick from '$lib/components/EmojiClick.svelte';
+	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
+	import { Confetti } from 'svelte-confetti';
+	import LoadingBar from '$lib/components/LoadingBar.svelte';
 
 	export let data: PageData;
 	let myPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
+	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
+	let showConfetti: boolean = false;
 
 	// Reactive block to handle assigned player and opponents
 	$: {
@@ -25,6 +33,7 @@
 				}
 
 				opponents = data.players.filter((player) => player.id !== myPlayerId);
+				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {
 			error(404, (err as Error).message);
@@ -32,7 +41,7 @@
 	}
 
 	const { gameId } = $page.params;
-  
+
 	onMount(() => {
 		try {
 			if (typeof window !== 'undefined') {
@@ -88,9 +97,14 @@
 	}
 
 	function handleCardUpdates(payload: { new: any }) {
-		const newCard = payload.new;
-		const existingCardIndex = data.cards.findIndex((card) => card.id === newCard.id);
-		data.cards[existingCardIndex] = { ...data.cards[existingCardIndex], ...newCard };
+		const newCard: Card = payload.new;
+
+		if (newCard.played) {
+			data.cards = data.cards.filter((card) => card.id !== newCard.id);
+			data.tableCards = [...data.tableCards, newCard];
+		} else {
+			data.cards = [...data.cards, newCard];
+		}
 	}
 
 	// Compute classes based on number of opponents
@@ -118,36 +132,86 @@
 			selectedCard = myCardSelection;
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
+			addToast({ message: (err as Error).message || 'An unknown error occurred', type: 'error' });
+			return;
 		}
 	}
 
-	function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
+	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
 			const { index, myCardSelection } = event.detail;
 			selectedCard = myCardSelection;
 
-			let beforeCard = index > 0 ? data.tableCards[index - 1] : null;
-			let afterCard = index < data.tableCards.length ? data.tableCards[index] : null;
+			const response = await fetch('/api/update-game/', {
+				method: 'POST',
+				body: JSON.stringify({
+					game: data.game,
+					category: data.category,
+					selectedCard: selectedCard,
+					cardPos: index,
+					player: data.players.find((player) => player.id === myPlayerId)
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
 
-			// TODO: Here is already the correction check.
-			// If a card is not in correct chronological order, it won't be placed on the table.
-			// We need to implement that the card is placed either way, but corrected if the user clicks on wrong position.
-			// Also follow up with a toast, that the user *needs* to draw a new card, if the placement was wrong.
-			if (
-				(beforeCard === null || selectedCard.year > beforeCard.year) &&
-				(afterCard === null || selectedCard.year < afterCard.year)
-			) {
-				// TODO: Write check for accuracy and update the card in the database.
-			} else {
-				throw new Error('the selected card cannot be placed in this position.');
+			const { status, correct, winner, error } = await response.json();
+
+			if (!response.ok || status === 'error') {
+				throw new Error(error || 'An unknown error occurred');
+			}
+			if (status === 'success') {
+				if (correct) {
+					addToast({ message: 'Correct!', type: 'success' });
+				} else {
+					addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+				}
+				if (winner) {
+					addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
+				}
+				if (winner.id === myPlayerId) {
+					showConfetti = true;
+				}
+				selectedCard = null;
 			}
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
+			return;
 		}
 	}
 </script>
 
-<main class="h-screen grid items-center gap-10 bg-game-background bg-no-repeat bg-cover">
+<Toasts />
+{#if data.game.whose_turn_id !== myPlayer?.id}
+	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
+		<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
+		<LoadingBar color={data.category.hex_color} />
+	</div>
+{/if}
+<main
+	class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover relative max-w-screen overflow-clip"
+>
+	{#if showConfetti}
+		<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+			<Confetti
+				size={10}
+				x={[-2, 2]}
+				y={[-2, 2]}
+				delay={[0, 1000]}
+				fallDistance="100px"
+				amount={500}
+				colorArray={[
+					'var(--ff-purple)',
+					'var(--ff-green)',
+					'var(--ff-red)',
+					'var(--ff-blue)',
+					'var(--ff-yellow)'
+				]}
+			/>
+		</div>
+	{/if}
+
 	<div class="grid grid-cols-6 gap-4 col-span-full">
 		{#if opponents.length > 0}
 			{#each opponents as player, i}
@@ -162,17 +226,18 @@
 		{/if}
 	</div>
 
-	<div class="col-span-full">
+	<div class="col-span-full grid">
 		<CardTable
+			player={myPlayer}
 			game={data.game}
 			category={data.category}
-			cards={data.tableCards}
+			cards={data.tableCards.sort((a, b) => a.year - b.year)}
 			{selectedCard}
 			on:placecard={handleCardPlacement}
 		/>
 	</div>
 
-	<div class="col-span-full flex justify-center">
+	<div class="col-span-full">
 		{#if myPlayer}
 			<PlayerSelfDeck
 				{myPlayer}
@@ -183,4 +248,8 @@
 			/>
 		{/if}
 	</div>
+
+	<EmojiClick {myPlayer} {gameId} />
+
+	<FlyingPlayCards category={data.category} />
 </main>

@@ -82,14 +82,24 @@ async function assigningCards(gameId: string, players: Player[]) {
         for (let i = 0; i < players.length; i++) {
             const player = players[i];
             const playerCards = cards.slice(i * cardsPerPlayer, (i + 1) * cardsPerPlayer);
-
+        
             for (let j = 0; j < playerCards.length; j++) {
                 const card = playerCards[j];
                 const { error: updateOwnerError } = await updateCardOwner(card.id, player.id);
-
+        
                 if (updateOwnerError) {
                     throw updateOwnerError;
                 }
+            }
+        
+            // update the cards_count column
+            const { error: updateCardsCountError } = await supabase
+                .from('Player')
+                .update({ cards_count: cardsPerPlayer })
+                .eq('id', player.id);
+        
+            if (updateCardsCountError) {
+                throw updateCardsCountError;
             }
         }
 
@@ -131,6 +141,16 @@ async function rollback(gameId: string) {
 
         if (rollbackCardsError) {
             throw new Error(rollbackCardsError.message);
+        }
+
+        // rollback the players cards_count
+        const { error: rollbackPlayersError } = await supabase
+            .from('Player')
+            .update({ cards_count: 0 })
+            .match({ game_id: gameId });
+
+        if (rollbackPlayersError) {
+            throw new Error(rollbackPlayersError.message);
         }
 
         return {success: true, error: null};
