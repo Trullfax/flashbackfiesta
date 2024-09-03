@@ -143,6 +143,16 @@ async function rollback(gameId: string) {
             throw new Error(rollbackCardsError.message);
         }
 
+        // rollback the players cards_count
+        const { error: rollbackPlayersError } = await supabase
+            .from('Player')
+            .update({ cards_count: 0 })
+            .match({ game_id: gameId });
+
+        if (rollbackPlayersError) {
+            throw new Error(rollbackPlayersError.message);
+        }
+
         return {success: true, error: null};
     } catch (error) {
         return {success: false, error: (error as Error).message};
