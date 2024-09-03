@@ -3,6 +3,7 @@
 	import Title from '$lib/components/Title.svelte';
 	import { Copy } from 'lucide-svelte';
 	import { page } from '$app/stores';
+	import LoadingBar from './LoadingBar.svelte';
 
 	export let playerArray: Partial<Player>[] = [];
 	export let isCreator: boolean;
@@ -107,7 +108,7 @@
 				{#if isCreator}
 					<ButtonBig text="LET'S PLAY" on:click />
 				{:else}
-					<span class="loader"></span>
+					<LoadingBar />
 					<p class="text-white font-contrail text-lg mt-4">
 						waiting for the host to start the fiesta...
 					</p>
@@ -118,37 +119,6 @@
 </div>
 
 <style>
-	.loader {
-		width: 100%;
-		height: 4.8px;
-		display: inline-block;
-		position: relative;
-		background: rgba(255, 255, 255, 0.15);
-		overflow: hidden;
-	}
-	.loader::after {
-		content: '';
-		width: 192px;
-		height: 4.8px;
-		background: #fff;
-		position: absolute;
-		top: 0;
-		left: 0;
-		box-sizing: border-box;
-		animation: animloader 2s linear infinite;
-	}
-
-	@keyframes animloader {
-		0% {
-			left: 0;
-			transform: translateX(-100%);
-		}
-		100% {
-			left: 100%;
-			transform: translateX(0%);
-		}
-	}
-
 	.cardshuffle {
 		position: relative;
 		display: flex;

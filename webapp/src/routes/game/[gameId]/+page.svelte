@@ -12,11 +12,13 @@
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
 	import { Confetti } from 'svelte-confetti';
+	import LoadingBar from '$lib/components/LoadingBar.svelte';
 
 	export let data: PageData;
 	let myPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
+	let opponent: Player | null = null;
 	let selectedCard: Card | null = null;
 	let showConfetti: boolean = false;
 
@@ -31,6 +33,7 @@
 				}
 
 				opponents = data.players.filter((player) => player.id !== myPlayerId);
+				opponent = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {
 			error(404, (err as Error).message);
@@ -180,12 +183,18 @@
 </script>
 
 <Toasts />
-
+{#if data.game.whose_turn_id !== myPlayer?.id}
+	<div class="overlay w-screen h-screen bg-black opacity-50 z-10 absolute"></div>
+	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
+		<p class="font-contrail text-2xl text-white text-center">waiting for {opponent?.name}</p>
+		<LoadingBar color={data.category.hex_color} />
+	</div>
+{/if}
 <main
 	class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover relative max-w-screen overflow-clip"
 >
 	{#if showConfetti}
-		<div class="absolute top-[50%] left-[50%]">
+		<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 			<Confetti
 				size={10}
 				x={[-2, 2]}
@@ -203,6 +212,7 @@
 			/>
 		</div>
 	{/if}
+
 	<div class="grid grid-cols-6 gap-4 col-span-full">
 		{#if opponents.length > 0}
 			{#each opponents as player, i}
