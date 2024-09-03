@@ -13,7 +13,6 @@
 	export let player: Player | null;
 	export let selectedCard: Card | null;
 
-	let numberOfCards = 10;
 	let cardListContainer: HTMLUListElement;
 	let temporarilyPlacedCardIndex: number | null = null;
 
