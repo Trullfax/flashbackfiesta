@@ -1,21 +1,26 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	export let myPlayer: Player | null = null;
+	export let gameId: string;
 	let showEmoji: boolean = false;
 	let clickedEmojiPlayerName: String | null = null;
 
-	// Join the Realtime channel (adjust channel name as needed)
-	const channel = supabase.channel('emoji-channel');
+	let channel = supabase.channel('emoji' + gameId);
 
-	// Listen for broadcasted emoji events
-	channel
-		.on('broadcast', { event: 'showEmoji' }, (broadcast) => {
-			const playerName = broadcast.payload.playerName || 'Unknown Player';
-			triggerEmoji(playerName);
-		})
-		.subscribe();
+	onMount(() => {
+		channel
+			.on('broadcast', { event: 'showEmoji' }, (broadcast) => {
+				const playerName = broadcast.payload.playerName || 'Unknown Player';
+				triggerEmoji(playerName);
+			})
+			.subscribe();
+		return () => {
+			channel.unsubscribe();
+		};
+	});
 
 	function triggerEmoji(playerName: string) {
 		clickedEmojiPlayerName = playerName;
@@ -25,7 +30,6 @@
 		}, 1000);
 	}
 
-	// Function to broadcast the emoji event
 	async function handleEmojiClick() {
 		if (myPlayer) {
 			triggerEmoji(myPlayer.name);

@@ -249,7 +249,7 @@
 		{/if}
 	</div>
 
-	<EmojiClick {myPlayer} />
+	<EmojiClick {myPlayer} {gameId} />
 
 	<FlyingPlayCards category={data.category} />
 </main>
