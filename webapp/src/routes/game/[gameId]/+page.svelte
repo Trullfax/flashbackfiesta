@@ -9,6 +9,8 @@
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
+	import EmojiClick from '$lib/components/EmojiClick.svelte';
+	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
 	import { Confetti } from 'svelte-confetti';
 
 	export let data: PageData;
@@ -134,7 +136,6 @@
 
 	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
-			
 			const { index, myCardSelection } = event.detail;
 			selectedCard = myCardSelection;
 
@@ -238,25 +239,8 @@
 			/>
 		{/if}
 	</div>
-	<div class="absolute rotate-45 -left-20 top-50">
-		<img
-			src={data.category.picture_path}
-			alt="categorycard for {data.category.name}"
-			class="w-[10rem]"
-		/>
-	</div>
-	<div class="absolute rotate-12 -left-20">
-		<img
-			src={data.category.picture_path}
-			alt="categorycard for {data.category.name}"
-			class="w-[10rem]"
-		/>
-	</div>
-	<div class="absolute -rotate-12 -right-20 top-10">
-		<img
-			src={data.category.picture_path}
-			alt="categorycard for {data.category.name}"
-			class="w-[10rem]"
-		/>
-	</div>
+
+	<EmojiClick {myPlayer} />
+
+	<FlyingPlayCards category={data.category} />
 </main>
