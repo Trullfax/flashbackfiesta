@@ -4,18 +4,20 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { error } from '@sveltejs/kit';
-	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import { addToast } from '$lib/stores/toastStore';
+	import { Confetti } from 'svelte-confetti';
+	import { goto } from '$app/navigation';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
-	import { Confetti } from 'svelte-confetti';
 	import LoadingBar from '$lib/components/LoadingBar.svelte';
+	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
 
 	export let data: PageData;
-	let myPlayerId: string | null = null;
+	let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
@@ -25,14 +27,14 @@
 	// Reactive block to handle assigned player and opponents
 	$: {
 		try {
-			if (myPlayerId && data.players) {
-				myPlayer = data.players.find((player) => player.id === myPlayerId) || null;
+			if (storedPlayerId && data.players) {
+				myPlayer = data.players.find((player) => player.id === storedPlayerId) || null;
 
 				if (!myPlayer) {
-					throw new Error(`Player with ID ${myPlayerId} not found`);
+					throw new Error(`Player with ID ${storedPlayerId} not found`);
 				}
 
-				opponents = data.players.filter((player) => player.id !== myPlayerId);
+				opponents = data.players.filter((player) => player.id !== storedPlayerId);
 				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {
@@ -45,13 +47,13 @@
 	onMount(() => {
 		try {
 			if (typeof window !== 'undefined') {
-				myPlayerId = localStorage.getItem('playerId');
+				storedPlayerId = localStorage.getItem('playerId');
 
-				if (!myPlayerId) {
+				if (!storedPlayerId) {
 					throw new Error('player not found in local storage');
 				}
 
-				const playerExists = data.players.some((player) => player.id === myPlayerId);
+				const playerExists = data.players.some((player) => player.id === storedPlayerId);
 
 				if (!playerExists) {
 					throw new Error('no matching player found in game');
@@ -139,51 +141,72 @@
 
 	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
-			const { index, myCardSelection } = event.detail;
-			selectedCard = myCardSelection;
+			if (!data.game.winner_id) {
+				if (data.game.whose_turn_id !== myPlayer?.id) {
+					addToast({ message: 'It is not your turn!', type: 'error' });
+					return;
+				}
 
-			const response = await fetch('/api/update-game/', {
-				method: 'POST',
-				body: JSON.stringify({
-					game: data.game,
-					category: data.category,
-					selectedCard: selectedCard,
-					cardPos: index,
-					player: data.players.find((player) => player.id === myPlayerId)
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
+				const { index, myCardSelection } = event.detail;
+				selectedCard = myCardSelection;
 
-			const { status, correct, winner, error } = await response.json();
+				const response = await fetch('/api/update-game/', {
+					method: 'POST',
+					body: JSON.stringify({
+						game: data.game,
+						category: data.category,
+						selectedCard: selectedCard,
+						cardPos: index,
+						player: data.players.find((player) => player.id === storedPlayerId)
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 
-			if (!response.ok || status === 'error') {
-				throw new Error(error || 'An unknown error occurred');
-			}
-			if (status === 'success') {
-				if (correct) {
-					addToast({ message: 'Correct!', type: 'success' });
-				} else {
-					addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+				const { status, correct, winner, error } = await response.json();
+
+				if (!response.ok || status === 'error') {
+					throw new Error(error || 'An unknown error occurred');
 				}
-				if (winner) {
-					addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
+				if (status === 'success') {
+					if (correct) {
+						addToast({ message: 'Correct!', type: 'success' });
+					} else {
+						addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+					}
+					if (winner) {
+						addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
+					}
+					if (winner.id === storedPlayerId) {
+						showConfetti = true;
+					}
+					selectedCard = null;
 				}
-				if (winner.id === myPlayerId) {
-					showConfetti = true;
-				}
-				selectedCard = null;
 			}
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
 			return;
 		}
 	}
+
+	async function handleBackToStart() {
+		if (data.game.winner_id) {
+			const response = await fetch('/api/delete-game', {
+				method: 'POST',
+				body: JSON.stringify({ gameId }),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			goto('/');
+		}
+	}
 </script>
 
 <Toasts />
-{#if data.game.whose_turn_id !== myPlayer?.id}
+{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
 	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
 		<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
 		<LoadingBar color={data.category.hex_color} />
@@ -252,4 +275,13 @@
 	<EmojiClick {myPlayer} {gameId} />
 
 	<FlyingPlayCards category={data.category} />
+
+	{#if data.game.winner_id && myPlayer}
+		<GameEndScreen
+			category={data.category}
+			winner={data.players.find((player) => player.id === data.game.winner_id)}
+			winner_self={data.game.winner_id === myPlayer.id}
+			on:click={handleBackToStart}
+		/>
+	{/if}
 </main>
