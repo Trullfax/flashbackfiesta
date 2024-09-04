@@ -24,6 +24,16 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('player already exists');
         }
 
+        const { success: creatorSuccess, creatorExists, error: creatorError } = await checkIfCreatorExists(game.id);
+
+        let validatedCreator: boolean = isCreator;
+
+        if (!creatorSuccess) {
+            throw creatorError;
+        } else if (creatorExists && isCreator) {
+            validatedCreator = false;
+        }
+
         const { success: limitSuccess, limitReached, error: limitError } = await checkPlayerLimit(game.id);
 
         if (!limitSuccess) {
@@ -32,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('player limit reached');
         }
 
-        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, isCreator, selectedAvatar, game.id);
+        const { success: createSuccess, player, error: createError } = await createPlayer(playerName, validatedCreator, selectedAvatar, game.id);
 
         if (!createSuccess) {
             throw createError;
@@ -64,6 +74,28 @@ async function checkIfPlayerExists(playerName: string, gameId: string) {
         return { success: true, playerExists: false, error: null };
     } catch (error) {
         return { success: false, playerExists: false, error: (error as Error).message };
+    }
+}
+
+async function checkIfCreatorExists(gameId: string) {
+    try {
+        const { data, error } = await supabase
+            .from('Player')
+            .select('name')
+            .eq('game_id', gameId)
+            .eq('is_creator', true);
+    
+        if (error) {
+            throw new Error('Error checking if creator exists:' + error.message);
+        }
+        
+        if (data && data.length > 0) {
+            return { success: true, creatorExists: true, error: null };
+        }
+    
+        return { success: true, creatorExists: false, error: null };
+    } catch (error) {
+        return { success: false, creatorExists: false, error: (error as Error).message };
     }
 }
 
