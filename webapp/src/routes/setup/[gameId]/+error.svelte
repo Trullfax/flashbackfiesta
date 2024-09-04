@@ -6,6 +6,10 @@
 	console.warn($page.error?.message ?? '');
 </script>
 
+<svelte:head>
+	<title>bazinga! - something went wrong.</title>
+</svelte:head>
+
 <main class="flex p-20 items-center">
 	<div class="flex flex-col gap-8">
 		<p class="font-contrail text-[5rem] text-yellow -rotate-[5deg] drop-shadow-title">BAZINGA</p>

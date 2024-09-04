@@ -9,6 +9,8 @@
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 
+	let pageTitle = 'create your player';
+
 	export let data: PageData;
 
 	const { gameId } = $page.params;
@@ -18,12 +20,17 @@
 	let isStarting = false;
 
 	onMount(() => {
+		if (!isPlayer) {
+			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
+		}
+
 		if (typeof window !== 'undefined') {
 			const playerId = localStorage.getItem('playerId');
 
 			for (const player of data.players) {
 				if (player.id === playerId) {
 					isPlayer = true;
+					pageTitle = 'invite your competitors';
 					break;
 				}
 			}
@@ -110,13 +117,12 @@
 			return;
 		}
 
-		// set playerId in internal storage
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('playerId', player.id);
 		}
 
-		// scroll to player lobby
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
+		pageTitle = 'invite your competitors';
 	}
 
 	async function startGame() {
@@ -144,11 +150,16 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
+
 <Toasts />
 
 <main class="overflow-hidden">
 	{#if !isPlayer}
 		<section
+			id="playerSelection-section"
 			class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom_-100vh]"
 		>
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
