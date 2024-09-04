@@ -19,6 +19,7 @@ declare global {
 		category_id: string;
 		whose_turn_id?: string;
 		creator_code: string;
+		winner_id?: string;
 	}
 
 	interface Category {
