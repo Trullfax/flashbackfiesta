@@ -15,6 +15,9 @@
 	import LoadingBar from '$lib/components/LoadingBar.svelte';
 
 	export let data: PageData;
+
+	let pageTitle = 'fiesta time! - ' + data.category.name.toLowerCase();
+
 	let myPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
@@ -181,6 +184,10 @@
 		}
 	}
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
 
 <Toasts />
 {#if data.game.whose_turn_id !== myPlayer?.id}
