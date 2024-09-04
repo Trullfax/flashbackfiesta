@@ -193,7 +193,7 @@ async function rollback(player: Player, game: Game, selectedCard: Card) {
         // rollback the game status
         const { error: rollbackGameUpdateError } = await supabase
             .from('Game')
-            .update({ status: 'running', whose_turn_id: player.id, winner_id: null })
+            .update({ status: game.status, whose_turn_id: player.id, winner_id: null })
             .match({ id: game.id });
 
         if (rollbackGameUpdateError) {
