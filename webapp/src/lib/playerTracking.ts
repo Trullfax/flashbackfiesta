@@ -1,50 +1,56 @@
 import { supabase } from '$lib/supabaseClient';
 
-let presenceTimeout: any = null;
+interface Presence {
+    game: Game;
+    player: Player;
+    presence_ref: string;
+}
 
-export async function joinPresence(player: Player, gameId: string) {
+let presenceTimeout: NodeJS.Timeout | null = null;
+
+export async function joinPresence(player: Player, game: Game) {
+    // Create the presence channel
     const presenceChannel = supabase
-        .channel(`presence:${gameId}`)
-        .on('presence', { event: 'sync' }, () => {
-            const newState = presenceChannel.presenceState();
-            console.log('sync', newState);
-        })
-        .on('presence', { event: 'join' }, (player) => handlePlayerOnline)
-        .on('presence', { event: 'leave' }, (player) => handlePlayerOffline)
+        .channel(`presence:${game.id}`)
+        .on('presence', { event: 'sync' }, () => {})
+        .on('presence', { event: 'join' }, () => handlePlayerOnline())
+        .on('presence', { event: 'leave' }, ({ leftPresences }) => handlePlayerOffline(leftPresences as Presence[]))
         .subscribe();
 
     // Join the presence channel with the player ID
-    await presenceChannel.track({ id: player.id });
+    await presenceChannel.track({ player: player, game: game });
+
+    return presenceChannel;
 }
 
-function handlePlayerOnline(player: Player) {
-    clearTimeout(presenceTimeout);
-    console.log(`${player.id} rejoined the game.`);
+function handlePlayerOnline() {
+    if (presenceTimeout !== null) {
+        clearTimeout(presenceTimeout);
+    }
 }
 
-function handlePlayerOffline(player: Player) {
-    console.log(`${player.id} went offline.`);
-    presenceTimeout = setTimeout(() => {
-        // Remove player from the game after timeout
-        // removePlayer(player.id);
-        console.log(`${player.id} was removed from the game.`);
-    }, 60000); // 1 minute timeout
+async function handlePlayerOffline(leftPresences: Presence[]) {
+    const player = leftPresences[0].player;
+    const game = leftPresences[0].game;
+
+    const time: number = game.status === 'not_started' ? 5000 : 20000;
+
+    presenceTimeout = setTimeout(async () => {
+        const response = await fetch('/api/player-timeout', {
+            method: 'POST',
+            body: JSON.stringify({ player, game }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    
+        const { status, error } = await response.json();
+    
+        if (!response.ok || status === 'error') {
+            console.error('Failed to delete player:', error || 'Unknown error');
+        }
+
+        console.warn('Player timed out:', player.name);
+    }, time);
 }
 
-async function removePlayer(playerId: string) {
-    // const response = await fetch('/api/remove-player/', {
-    // 	method: 'POST',
-    // 	body: JSON.stringify({ gameId, playerId }),
-    // 	headers: {
-    // 		'Content-Type': 'application/json'
-    // 	}
-    // });
-    // const { status, error } = await response.json();
-    // if (!response.ok || status === 'error') {
-    // 	addToast({ message: error || 'An unknown error occurred', type: 'error' });
-    // 	return;
-    // }
-    // if (typeof window !== 'undefined') {
-    // 	localStorage.removeItem('playerId');
-    // }
-}
