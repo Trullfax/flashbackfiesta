@@ -17,7 +17,10 @@
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
 
 	export let data: PageData;
-	let storedPlayerId: string | null = null;
+
+	let pageTitle = 'fiesta time! - ' + data.category.name.toLowerCase();
+
+  let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
@@ -37,9 +40,7 @@
 				opponents = data.players.filter((player) => player.id !== storedPlayerId);
 				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
-		} catch (err) {
-			error(404, (err as Error).message);
-		}
+		} catch (err) {}
 	}
 
 	const { gameId } = $page.params;
@@ -60,7 +61,8 @@
 				}
 			}
 		} catch (err) {
-			error(404, (err as Error).message);
+			console.warn('Error:', (err as Error).message);
+			goto('/error');
 		}
 
 		const channels = supabase
@@ -205,8 +207,13 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
+
 <Toasts />
-{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+
+{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
 	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
 		<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
 		<LoadingBar color={data.category.hex_color} />
@@ -215,73 +222,75 @@
 <main
 	class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover relative max-w-screen overflow-clip"
 >
-	{#if showConfetti}
-		<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<Confetti
-				size={10}
-				x={[-2, 2]}
-				y={[-2, 2]}
-				delay={[0, 1000]}
-				fallDistance="100px"
-				amount={500}
-				colorArray={[
-					'var(--ff-purple)',
-					'var(--ff-green)',
-					'var(--ff-red)',
-					'var(--ff-blue)',
-					'var(--ff-yellow)'
-				]}
+	{#if myPlayer}
+		{#if showConfetti}
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+				<Confetti
+					size={10}
+					x={[-2, 2]}
+					y={[-2, 2]}
+					delay={[0, 1000]}
+					fallDistance="100px"
+					amount={500}
+					colorArray={[
+						'var(--ff-purple)',
+						'var(--ff-green)',
+						'var(--ff-red)',
+						'var(--ff-blue)',
+						'var(--ff-yellow)'
+					]}
+				/>
+			</div>
+		{/if}
+
+		<div class="grid grid-cols-6 gap-4 col-span-full">
+			{#if opponents.length > 0}
+				{#each opponents as player, i}
+					<div class={playerClasses[i]}>
+						<PlayerDeck
+							{player}
+							turn={data.game.whose_turn_id === player.id}
+							category={data.category}
+						/>
+					</div>
+				{/each}
+			{/if}
+		</div>
+
+		<div class="col-span-full grid">
+			<CardTable
+				player={myPlayer}
+				game={data.game}
+				category={data.category}
+				cards={data.tableCards.sort((a, b) => a.year - b.year)}
+				{selectedCard}
+				on:placecard={handleCardPlacement}
 			/>
 		</div>
-	{/if}
 
-	<div class="grid grid-cols-6 gap-4 col-span-full">
-		{#if opponents.length > 0}
-			{#each opponents as player, i}
-				<div class={playerClasses[i]}>
-					<PlayerDeck
-						{player}
-						turn={data.game.whose_turn_id === player.id}
-						category={data.category}
-					/>
-				</div>
-			{/each}
-		{/if}
-	</div>
+		<div class="col-span-full">
+			{#if myPlayer}
+				<PlayerSelfDeck
+					{myPlayer}
+					turn={data.game.whose_turn_id === myPlayer.id}
+					category={data.category}
+					cards={data.cards.filter((card) => myPlayer && card.player_id === myPlayer.id)}
+					on:submitcard={handleCardSubmit}
+				/>
+			{/if}
+		</div>
 
-	<div class="col-span-full grid">
-		<CardTable
-			player={myPlayer}
-			game={data.game}
-			category={data.category}
-			cards={data.tableCards.sort((a, b) => a.year - b.year)}
-			{selectedCard}
-			on:placecard={handleCardPlacement}
-		/>
-	</div>
+    <FlyingPlayCards category={data.category} />
 
-	<div class="col-span-full">
-		{#if myPlayer}
-			<PlayerSelfDeck
-				{myPlayer}
-				turn={data.game.whose_turn_id === myPlayer.id}
-				category={data.category}
-				cards={data.cards.filter((card) => myPlayer && card.player_id === myPlayer.id)}
-				on:submitcard={handleCardSubmit}
-			/>
-		{/if}
-	</div>
+    <EmojiClick {myPlayer} {gameId} />
 
-	<EmojiClick {myPlayer} {gameId} />
-
-	<FlyingPlayCards category={data.category} />
-
-	{#if data.game.winner_id && myPlayer}
-		<GameEndScreen
-			category={data.category}
-			winner={data.players.find((player) => player.id === data.game.winner_id)}
-			winner_self={data.game.winner_id === myPlayer.id}
-			on:click={handleBackToStart}
-		/>
-	{/if}
+    {#if data.game.winner_id && myPlayer}
+      <GameEndScreen
+        category={data.category}
+        winner={data.players.find((player) => player.id === data.game.winner_id)}
+        winner_self={data.game.winner_id === myPlayer.id}
+        on:click={handleBackToStart}
+      />
+    {/if}
+  {/if}
 </main>
