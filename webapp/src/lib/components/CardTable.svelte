@@ -24,21 +24,9 @@
 		}
 	}
 
-	function scrollUp() {
-		if (cardListContainer) {
-			cardListContainer.scrollBy({ top: -700, behavior: 'smooth' });
-		}
-	}
-
 	function scrollRight() {
 		if (cardListContainer) {
 			cardListContainer.scrollBy({ left: 700, behavior: 'smooth' });
-		}
-	}
-
-	function scrollDown() {
-		if (cardListContainer) {
-			cardListContainer.scrollBy({ top: -700, behavior: 'smooth' });
 		}
 	}
 
@@ -77,11 +65,8 @@
 		<div class="hidden md:block scale-75">
 			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 		</div>
-		<div class="md:hidden scale-75">
-			<ButtonArrow on:click={scrollUp} color={category.hex_color} rotation={0} />
-		</div>
 		<ul
-			class="flex flex-col md:grid pr-10 pl-10 items-center min-h-min max-w-full flex-nowrap overflow-hidden transition-all"
+			class="flex flex-col md:grid pr-10 pl-10 items-center min-h-min h-full md:h-auto max-w-full flex-nowrap overflow-hidden transition-all"
 			bind:this={cardListContainer}
 			style={`grid-template-columns: repeat(${cards.length}, 1fr);`}
 		>
@@ -94,7 +79,7 @@
 					{#if i === 0 && game.whose_turn_id === player?.id}
 						<div class="self-center">
 							{#if selectedCard && temporarilyPlacedCardIndex === i}
-								<div class="animate-pulse transition-all">
+								<div class="animate-pulse transition-all relative md:static">
 									<CardFront
 										title={selectedCard.name}
 										subtitle={selectedCard.creator}
@@ -103,6 +88,13 @@
 										year={Number(selectedCard.year)}
 										revealed={selectedCard.played}
 									/>
+									{#if temporarilyPlacedCardIndex !== null}
+										<div
+											class="md:hidden col-span-full absolute -rotate-12 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"
+										>
+											<ButtonPlaceCard text="confirm" on:click={confirmCardPlacement} />
+										</div>
+									{/if}
 								</div>
 							{:else}
 								<ButtonPlaceCard
@@ -113,7 +105,7 @@
 							{/if}
 						</div>
 					{/if}
-					<div class="md:scale-75">
+					<div class="scale-75">
 						<CardFront
 							title={card.name}
 							subtitle={card.creator}
@@ -126,7 +118,7 @@
 					{#if game.whose_turn_id === player?.id}
 						<div class="self-center">
 							{#if selectedCard && temporarilyPlacedCardIndex === i + 1}
-								<div class="animate-pulse transition-all">
+								<div class="animate-pulse transition-all relative md:static">
 									<CardFront
 										title={selectedCard.name}
 										subtitle={selectedCard.creator}
@@ -135,6 +127,13 @@
 										year={Number(selectedCard.year)}
 										revealed={selectedCard.played}
 									/>
+									{#if temporarilyPlacedCardIndex !== null}
+										<div
+											class="md:hidden col-span-full absolute -rotate-12 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"
+										>
+											<ButtonPlaceCard text="confirm" on:click={confirmCardPlacement} />
+										</div>
+									{/if}
 								</div>
 							{:else if cards.length < 2 || i === cards.length - 1 || Number(cards[i].year) + 1 !== Number(cards[i + 1].year)}
 								<ButtonPlaceCard
@@ -151,11 +150,8 @@
 		<div class="hidden md:block scale-75">
 			<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
 		</div>
-		<div class="md:hidden scale-75">
-			<ButtonArrow on:click={scrollDown} color={category.hex_color} rotation={180} />
-		</div>
 		{#if temporarilyPlacedCardIndex !== null}
-			<div class="col-span-full">
+			<div class="hidden md:block col-span-full">
 				<ButtonSmall text="confirm" on:click={confirmCardPlacement} />
 			</div>
 		{/if}

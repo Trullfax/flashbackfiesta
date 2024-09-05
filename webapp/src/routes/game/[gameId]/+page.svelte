@@ -215,13 +215,15 @@
 
 {#if myPlayer}
 	{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
-		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
-			<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
+		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple drop-shadow-bold md:drop-shadow-none p-5 md:p-0 md:bg-none">
+			<p class="font-contrail text-2xl text-center text-white md:text-black">
+				waiting for {waitingFor?.name}
+			</p>
 			<LoadingBar color={data.category.hex_color} />
 		</div>
 	{/if}
 	<main
-		class="md:max-h-screen h-screen md:grid md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
+		class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
 	>
 		{#if showConfetti}
 			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -244,7 +246,7 @@
 		{/if}
 
 		<div
-			class="grid grid-cols-6 gap-4 col-span-full pt-5 md:max-w-[75vw] self-start sm:justify-self-center sticky md:relative top-0 z-10 md:bg-none bg-game-background bg-cover"
+			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
 		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
@@ -259,7 +261,7 @@
 			{/if}
 		</div>
 
-		<div class="col-span-full h-full grid relative z-10">
+		<div class="col-span-full h-full md:h-auto grid relative z-10 overflow-y-scroll">
 			<CardTable
 				player={myPlayer}
 				game={data.game}
@@ -270,9 +272,7 @@
 			/>
 		</div>
 
-		<div
-			class="col-span-full z-10 fixed md:relative bottom-0 md:bg-none bg-game-background bg-cover"
-		>
+		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-game-background bg-cover">
 			{#if myPlayer}
 				<PlayerSelfDeck
 					{myPlayer}
