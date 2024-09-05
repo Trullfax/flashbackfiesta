@@ -17,7 +17,7 @@
 
 	function scrollToCategorySelection() {
 		document.getElementById('category-section')?.scrollIntoView({ behavior: 'smooth' });
-		pageTitle = 'choose a category';
+		pageTitle = 'Choose a category · Flashbackfiesta';
 	}
 
 	function handleCategorySubmit(event: Event) {

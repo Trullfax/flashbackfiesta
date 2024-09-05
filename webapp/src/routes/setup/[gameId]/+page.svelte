@@ -32,7 +32,7 @@
 			for (const player of data.players) {
 				if (player.id === playerId) {
 					isPlayer = true;
-					pageTitle = 'invite your competitors';
+					pageTitle = 'Invite your friends · Flashbackfiesta';
 					break;
 				}
 			}
@@ -128,7 +128,7 @@
 		}
 
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
-		pageTitle = 'invite your competitors';
+		pageTitle = 'Invite your friends · Flashbackfiesta';
 
 		isCreatingPlayer = false;
 	}

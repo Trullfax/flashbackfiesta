@@ -18,7 +18,7 @@
 
 	export let data: PageData;
 
-	let pageTitle = 'Fiesta time! · ' + data.category.name;
+	let pageTitle = data.category.name + ' fiesta · Flashbackfiesta';
 
   let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
