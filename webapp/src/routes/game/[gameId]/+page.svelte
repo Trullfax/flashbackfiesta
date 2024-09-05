@@ -287,7 +287,7 @@
 
 		<EmojiClick {myPlayer} {gameId} />
 
-		{#if data.game.winner_id && myPlayer}
+		{#if !data.game.winner_id && myPlayer}
 			<GameEndScreen
 				category={data.category}
 				winner={data.players.find((player) => player.id === data.game.winner_id)}
