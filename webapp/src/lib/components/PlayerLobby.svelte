@@ -45,18 +45,20 @@
 	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
 		<div
-			class="h-[7rem] gap-5 -translate-y-[1.5rem]"
+			class="h-[10rem] p-10 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
 			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
 		>
 			{#if playerArray && playerArray.length > 0}
 				{#each { length: playerArray.length } as _, index}
-					<div class="flex flex-col items-center gap-5">
+					<div
+						class="flex flex-col items-center gap-3 sm:gap-5"
+					>
 						<div
-							class=" bg-grey drop-shadow-bold {index % 2 === 0
-								? '-rotate-[3.5deg]'
-								: 'rotate-[2.5deg]'} {playerArray[index].is_creator
-								? 'w-[6.5rem] h-[6.5rem]'
-								: 'w-[5rem] h-[5rem]'}"
+							class="bg-grey drop-shadow-title
+							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
+							{playerArray[index].is_creator
+								? 'scale-125 sm:scale-100 sm:w-[6.5rem] sm:h-[6.5rem]'
+								: 'sm:w-[5rem] sm:h-[5rem]'}"
 						>
 							<img
 								src={playerArray[index].avatar_path}
@@ -66,7 +68,7 @@
 						<div>
 							{#if playerArray[index]}
 								<p
-									class="w-[8rem] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
+									class="sm:w-[8rem] drop-shadow-[1px_1px_0px_#1d1e1d] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
 									0
 										? 'text-[1rem]'
 										: 'text-[.75rem]'}"
@@ -78,7 +80,7 @@
 					</div>
 				{/each}
 			{:else}
-				<p class="font-contrail">No Players found!</p>
+				<h3 class="font-contrail text-white col-span-full drop-shadow-[1px_1px_0px_#1d1e1d]">No Players found!</h3>
 			{/if}
 		</div>
 		<label for="gamelink">
@@ -87,7 +89,7 @@
 					type="text"
 					value={currentUrl}
 					name="gamelink"
-					class="font-contrail w-[20rem] p-2 drop-shadow-bold z-10 focus-visible:outline-none"
+					class="font-contrail text-[.7rem] sm:text-sm w-[15rem] sm:w-[20rem] p-1 sm:p-2 drop-shadow-bold z-10 focus-visible:outline-none"
 					readonly
 				/>
 				<div class="group">

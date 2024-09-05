@@ -6,9 +6,9 @@
 	export let flip: boolean = false;
 </script>
 
-<div class="grid grid-cols-2 relative w-[80vw] sm:w-[50vw] lg:w-[30vw] mt-10 mb-12">
+<div class="grid grid-cols-2 relative w-[80vw] max-w-[400px] sm:w-[50vw] lg:w-[30vw] mt-10 mb-12">
 	<h1 class="col-span-full justify-self-start font-contrail text-yellow text-[3rem] sm:text-[5rem] z-30 -rotate-[5deg] drop-shadow-title">{title}</h1>
-	<h2 class="col-span-full justify-self-end font-vampiro text-white text-[1.5rem] sm:text-[2.2rem] z-50 -rotate-[5deg] drop-shadow-subtitle">
+	<h2 class="col-span-full justify-self-end font-vampiro text-white text-[1.5rem] sm:mt-3 sm:text-[2.2rem] z-50 -rotate-[5deg] drop-shadow-[2px_2px_0px_#1d1e1d] sm:drop-shadow-subtitle">
 		{subtitle}
 	</h2>
 	<img

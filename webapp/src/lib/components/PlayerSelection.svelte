@@ -78,7 +78,7 @@
 		<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
 	</div>
 	<div class="max-w-max grid justify-items-start">
-		<p class="font-contrail text-white text-3xl -rotate-[5deg] max-w-max mt-10 -mb-5 lg:mt-0 md:mb-0 ">you're playing...</p>
+		<p class="font-contrail text-white text-xl sm:text-3xl -rotate-[5deg] max-w-max mt-10 -mb-7 sm:-mb-5 lg:mt-0 md:mb-0 ">you're playing...</p>
 		<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
 		<label for="playername">
 			<input

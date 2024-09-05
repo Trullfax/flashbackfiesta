@@ -43,7 +43,7 @@
 <img
 	src={purpleLine}
 	alt="background decoration"
-	class="absolute max-w-[10rem] top-[150vh] right-0 z-10 md:max-w-[15rem]"
+	class="hidden lg:block absolute max-w-[10rem] top-[150vh] right-0 z-10 md:max-w-[15rem]"
 />
 <img
 	src={yellowTriangle}
