@@ -4,9 +4,10 @@
     import blueBow from '$lib/assets/background/elements/blue-bow.svg';
     import blueSquare from '$lib/assets/background/elements/blue-square-lines.svg';
     import line from '$lib/assets/background/elements/line.svg';
+	import purpleLine from '$lib/assets/background/elements/purple-line.svg';
     import yellowTriangle from '$lib/assets/background/yellow-triangle.svg';
 	import whiteBlackZicZac from '$lib/assets/background/white-black-ziczac-lines.svg';
-	import whiteTriangleStroke from '$lib/assets/background/white-triangle-stroke.svg';
+	import whiteTriangleStroke from '$lib/assets/background/elements/white-triangle-stroke.svg';
 </script>
 
 <img
@@ -27,17 +28,22 @@
 <img
 	src={blueBow}
 	alt="background decoration"
-	class="absolute left-0 max-w-[10rem] md:left-10 z-10 top-[90vh] md:max-w-[15rem]"
+	class="absolute left-0 max-w-[10rem] md:left-10 z-10 top-[80vh] md:max-w-[40rem]"
 />
 <img
 	src={redTriangle}
 	alt="background decoration"
-	class="absolute max-w-[300vw] top-[120vh] md:max-w-[100vw] -z-10 md:top-[100vh]"
+	class="absolute max-w-[300vw] top-[120vh] md:max-w-[100vw] -z-10 md:top-[80vh]"
 />
 <img
 	src={line}
 	alt="background decoration"
 	class="absolute max-w-[10rem] top-[100vh] right-10 z-10 md:top-[85vh] md:max-w-[15rem]"
+/>
+<img
+	src={purpleLine}
+	alt="background decoration"
+	class="absolute max-w-[10rem] top-[150vh] right-0 z-10 md:max-w-[15rem]"
 />
 <img
 	src={yellowTriangle}
