@@ -268,7 +268,7 @@
 			/>
 		</div>
 
-		<div class="col-span-full relative z-10">
+		<div class="col-span-full z-10">
 			{#if myPlayer}
 				<PlayerSelfDeck
 					{myPlayer}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import CardFront from '$lib/components/CardFront.svelte';
+	import ButtonArrow from '$lib/components/ButtonArrow.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	export let myPlayer: Player;
@@ -15,6 +16,16 @@
 		return `rotate(${randomAngle}deg)`;
 	}
 
+	let carouselContainer: HTMLUListElement;
+
+	function scrollLeft() {
+		carouselContainer.scrollBy({ left: -carouselContainer.offsetWidth / 2, behavior: 'smooth' });
+	}
+
+	function scrollRight() {
+		carouselContainer.scrollBy({ left: carouselContainer.offsetWidth / 2, behavior: 'smooth' });
+	}
+
 	const dispatch = createEventDispatcher();
 
 	function handleCardSelection(cardId: string) {
@@ -24,10 +35,30 @@
 	}
 </script>
 
-<section class="grid grid-cols-[1fr_2fr] items-center justify-items-center">
-	<PlayerDeck player={myPlayer} {turn} {category} />
+<section class="grid md:grid-cols-[1fr_2fr] items-center justify-items-center">
+	<div
+		class="block md:hidden z-10 size-10 absolute bottom-5 left-5 drop-shadow-title {turn
+			? 'animate-pulse'
+			: ''}"
+	>
+		<img src={myPlayer.avatar_path} alt={'Avatar for ' + myPlayer.name} />
+	</div>
+	<div class="hidden md:block">
+		<PlayerDeck player={myPlayer} {turn} {category} />
+	</div>
 
-	<ul class="flex gap-3 flex-wrap">
+	<!-- Carousel Buttons -->
+	<div class="md:hidden absolute -left-5 z-10 p-2 scale-50">
+		<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
+	</div>
+	<div class="md:hidden absolute -right-5 z-10 p-2 scale-50">
+		<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
+	</div>
+
+	<ul
+		class="flex gap-3 max-w-[80vw] md:max-w-max overflow-x-auto overflow-y-visible md:overflow-x-visible md:p-0 p-10 scroll-smooth"
+		bind:this={carouselContainer}
+	>
 		{#each cards as card}
 			<button on:click={() => handleCardSelection(card.id)}>
 				<li
