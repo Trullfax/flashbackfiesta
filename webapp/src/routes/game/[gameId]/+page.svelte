@@ -243,7 +243,7 @@
 			</div>
 		{/if}
 
-		<div class="grid grid-cols-6 gap-4 col-span-full">
+		<div class="grid grid-cols-6 gap-4 col-span-full pt-5 md:max-w-[75vw] self-start sm:justify-self-center relative z-10">
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
 					<div class={playerClasses[i]}>
@@ -257,7 +257,7 @@
 			{/if}
 		</div>
 
-		<div class="col-span-full grid">
+		<div class="col-span-full grid relative z-10">
 			<CardTable
 				player={myPlayer}
 				game={data.game}
@@ -268,7 +268,7 @@
 			/>
 		</div>
 
-		<div class="col-span-full">
+		<div class="col-span-full relative z-10">
 			{#if myPlayer}
 				<PlayerSelfDeck
 					{myPlayer}

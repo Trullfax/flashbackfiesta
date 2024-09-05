@@ -45,7 +45,7 @@
 	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
 		<div
-			class="h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
+			class="h-[7rem] sm:h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
 			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
 		>
 			{#if playerArray && playerArray.length > 0}
@@ -57,8 +57,8 @@
 							class="bg-grey drop-shadow-title
 							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
 							{playerArray[index].is_creator
-								? 'scale-125 sm:scale-100 sm:w-[6.5rem] sm:h-[6.5rem]'
-								: 'sm:w-[5rem] sm:h-[5rem]'}
+								? 'max-w-[6.5rem] max-h-[6.5rem]'
+								: 'max-w-[5rem] max-h-[5rem]'}
 								{settingUp ? 'animate-bounce' : ''}"
 						>
 							<img

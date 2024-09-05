@@ -7,6 +7,8 @@
     import yellowCylinder from '$lib/assets/background/elements/cylinder.svg';
 	import gameBgTriangle from '$lib/assets/background/game-bg-triangle.svg';
 	import blueTriangle from '$lib/assets/background/blue-triangle.svg';
+	import redBlackLines from '$lib/assets/background/red-black-lines.svg';
+	import cube from '$lib/assets/background/elements/cube.svg';
 </script>
 
 
@@ -49,5 +51,15 @@
 	src={blueTriangle}
 	alt="background decoration"
 	class="absolute right-0 top-[80vh] -z-20"
+/>
+<img
+	src={redBlackLines}
+	alt="background decoration"
+	class="absolute left-0 top-[175vh] -z-20"
+/>
+<img
+	src={cube}
+	alt="background decoration"
+	class="absolute -left-10 top-[100vh] -z-20 max-w-[10rem]"
 />
 
