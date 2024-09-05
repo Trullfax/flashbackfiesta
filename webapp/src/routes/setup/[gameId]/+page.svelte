@@ -10,6 +10,8 @@
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 	import SetupBackground from '$lib/components/SetupBackground.svelte';
 
+	let pageTitle = 'create your player';
+
 	export let data: PageData;
 
 	const { gameId } = $page.params;
@@ -17,14 +19,20 @@
 	let isPlayer = false;
 	let settingUp = false;
 	let isStarting = false;
+	let isCreatingPlayer = false;
 
 	onMount(() => {
+		if (!isPlayer) {
+			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
+		}
+
 		if (typeof window !== 'undefined') {
 			const playerId = localStorage.getItem('playerId');
 
 			for (const player of data.players) {
 				if (player.id === playerId) {
 					isPlayer = true;
+					pageTitle = 'invite your competitors';
 					break;
 				}
 			}
@@ -94,6 +102,10 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
+		if (isCreatingPlayer || isPlayer) return;
+
+		isCreatingPlayer = true;
+
 		const isCreator: boolean = isCreatorCheck();
 
 		const response = await fetch('/api/create-player/', {
@@ -111,13 +123,14 @@
 			return;
 		}
 
-		// set playerId in internal storage
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('playerId', player.id);
 		}
 
-		// scroll to player lobby
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
+		pageTitle = 'invite your competitors';
+
+		isCreatingPlayer = false;
 	}
 
 	async function startGame() {
@@ -145,12 +158,17 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
+
 <Toasts />
 
 <main class="overflow-hidden relative">
 	<SetupBackground />
 	{#if !isPlayer}
 		<section
+			id="playerSelection-section"
 			class="h-screen flex items-center justify-center"
 		>
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
