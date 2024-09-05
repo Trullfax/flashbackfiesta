@@ -42,9 +42,12 @@
 </script>
 
 <div class="grid justify-items-center items-center gap-6 grid-rows-4">
-	<div class="flex flex-col items-center gap-4 row-span-3">
+	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
 		<Title title="YOUR FIESTA" subtitle="invite your competitors" flip={true} />
-		<div class="h-[7rem] flex flex-row items-center gap-6 -translate-y-[1.5rem]">
+		<div
+			class="h-[7rem] gap-5 -translate-y-[1.5rem]"
+			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
+		>
 			{#if playerArray && playerArray.length > 0}
 				{#each { length: playerArray.length } as _, index}
 					<div class="flex flex-col items-center gap-5">

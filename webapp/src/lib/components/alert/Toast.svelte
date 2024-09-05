@@ -21,7 +21,7 @@
       <InfoIcon width="1.1em" />
     {/if}
   
-    <div class="text font-contrail">
+    <div class="text text-[1.25rem] font-contrail">
       <slot />
     </div>
   

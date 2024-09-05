@@ -8,6 +8,7 @@
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
+	import SetupBackground from '$lib/components/SetupBackground.svelte';
 
 	export let data: PageData;
 
@@ -146,17 +147,18 @@
 
 <Toasts />
 
-<main class="overflow-hidden">
+<main class="overflow-hidden relative">
+	<SetupBackground />
 	{#if !isPlayer}
 		<section
-			class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom_-100vh]"
+			class="h-screen flex items-center justify-center"
 		>
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 		</section>
 	{/if}
 	<section
 		id="playerLobby-section"
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom]"
+		class="h-screen flex items-center justify-center"
 	>
 		<PlayerLobby
 			playerArray={data.players}

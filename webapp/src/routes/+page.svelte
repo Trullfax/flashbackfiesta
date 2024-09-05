@@ -5,6 +5,7 @@
 
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
+	import StartpageBackground from '$lib/components/StartpageBackground.svelte';
 
 	export let data: PageData;
 
@@ -41,16 +42,12 @@
 	}
 </script>
 
-<main class="overflow-hidden">
-	<section
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top]"
-	>
+<main class="relative overflow-hidden">
+	<StartpageBackground />
+	<section class="h-screen relative z-10 flex items-center justify-center">
 		<Start on:click={scrollToCategorySelection} />
 	</section>
-	<section
-		id="category-section"
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top_-100vh]"
-	>
+	<section id="category-section" class="h-screen flex items-center justify-center">
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>
 </main>
