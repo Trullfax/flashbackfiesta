@@ -45,7 +45,7 @@
 	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
 		<div
-			class="h-[10rem] p-10 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
+			class="h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
 			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
 		>
 			{#if playerArray && playerArray.length > 0}
@@ -58,7 +58,8 @@
 							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
 							{playerArray[index].is_creator
 								? 'scale-125 sm:scale-100 sm:w-[6.5rem] sm:h-[6.5rem]'
-								: 'sm:w-[5rem] sm:h-[5rem]'}"
+								: 'sm:w-[5rem] sm:h-[5rem]'}
+								{settingUp ? 'animate-bounce' : ''}"
 						>
 							<img
 								src={playerArray[index].avatar_path}
@@ -68,7 +69,7 @@
 						<div>
 							{#if playerArray[index]}
 								<p
-									class="sm:w-[8rem] drop-shadow-[1px_1px_0px_#1d1e1d] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
+									class="sm:w-[8rem] drop-shadow-simple-text font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
 									0
 										? 'text-[1rem]'
 										: 'text-[.75rem]'}"
@@ -80,7 +81,7 @@
 					</div>
 				{/each}
 			{:else}
-				<h3 class="font-contrail text-white col-span-full drop-shadow-[1px_1px_0px_#1d1e1d]">No Players found!</h3>
+				<h3 class="font-contrail text-white col-span-full">no players found!</h3>
 			{/if}
 		</div>
 		<label for="gamelink">

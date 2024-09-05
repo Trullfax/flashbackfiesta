@@ -21,6 +21,7 @@ export default {
         'title': '6px 4px 0px #1d1e1d',
         'subtitle': '5px 3px 0px #1d1e1d',
         'bold': '10px 10px 0 #1d1e1d',
+        'simple-text': '1px 1px 0px #1d1e1d',
       },
       backgroundImage: {
         'game-background': "url('/assets/gameBackground.svg')",
