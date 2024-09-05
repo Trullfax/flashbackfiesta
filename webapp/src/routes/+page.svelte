@@ -5,8 +5,9 @@
 	import { onMount } from 'svelte';
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
+	import StartpageBackground from '$lib/components/StartpageBackground.svelte';
 
-	let pageTitle = 'start your fiesta';
+	let pageTitle = 'Start your fiesta · Flashbackfiesta';
 
 	export let data: PageData;
 
@@ -16,7 +17,7 @@
 
 	function scrollToCategorySelection() {
 		document.getElementById('category-section')?.scrollIntoView({ behavior: 'smooth' });
-		pageTitle = 'choose a category';
+		pageTitle = 'Choose a category · Flashbackfiesta';
 	}
 
 	function handleCategorySubmit(event: Event) {
@@ -52,17 +53,12 @@
 	<title>{pageTitle}</title>
 </svelte:head>
 
-<main class="overflow-hidden">
-	<section
-		id="start-section"
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top]"
-	>
+<main class="relative overflow-hidden">
+	<StartpageBackground />
+	<section id="start-section" class="h-screen relative z-10 flex items-center justify-center">
 		<Start on:click={scrollToCategorySelection} />
 	</section>
-	<section
-		id="category-section"
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_top_-100vh]"
-	>
+	<section id="category-section" class="h-screen flex items-center justify-center">
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>
 </main>

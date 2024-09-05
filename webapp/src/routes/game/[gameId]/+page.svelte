@@ -18,9 +18,9 @@
 
 	export let data: PageData;
 
-	let pageTitle = 'fiesta time! - ' + data.category.name.toLowerCase();
+	let pageTitle = data.category.name + ' fiesta · Flashbackfiesta';
 
-  let storedPlayerId: string | null = null;
+	let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
@@ -213,16 +213,18 @@
 
 <Toasts />
 
-{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
-	<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2">
-		<p class="font-contrail text-2xl text-center">waiting for {waitingFor?.name}</p>
-		<LoadingBar color={data.category.hex_color} />
-	</div>
-{/if}
-<main
-	class="h-screen grid grid-rows-3 items-center gap-5 bg-game-background bg-no-repeat bg-cover relative max-w-screen overflow-clip"
->
-	{#if myPlayer}
+{#if myPlayer}
+	{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0">
+			<p class="font-contrail text-2xl text-center text-white md:text-black">
+				waiting for {waitingFor?.name}
+			</p>
+			<LoadingBar color={data.category.hex_color} />
+		</div>
+	{/if}
+	<main
+		class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
+	>
 		{#if showConfetti}
 			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 				<Confetti
@@ -243,7 +245,9 @@
 			</div>
 		{/if}
 
-		<div class="grid grid-cols-6 gap-4 col-span-full">
+		<div
+			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
+		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
 					<div class={playerClasses[i]}>
@@ -257,7 +261,7 @@
 			{/if}
 		</div>
 
-		<div class="col-span-full grid">
+		<div class="col-span-full h-full md:h-auto grid relative z-10 overflow-y-scroll">
 			<CardTable
 				player={myPlayer}
 				game={data.game}
@@ -268,7 +272,7 @@
 			/>
 		</div>
 
-		<div class="col-span-full">
+		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-game-background bg-cover">
 			{#if myPlayer}
 				<PlayerSelfDeck
 					{myPlayer}
@@ -279,18 +283,17 @@
 				/>
 			{/if}
 		</div>
+		<FlyingPlayCards category={data.category} />
 
-    <FlyingPlayCards category={data.category} />
+		<EmojiClick {myPlayer} {gameId} />
 
-    <EmojiClick {myPlayer} {gameId} />
-
-    {#if data.game.winner_id && myPlayer}
-      <GameEndScreen
-        category={data.category}
-        winner={data.players.find((player) => player.id === data.game.winner_id)}
-        winner_self={data.game.winner_id === myPlayer.id}
-        on:click={handleBackToStart}
-      />
-    {/if}
-  {/if}
-</main>
+		{#if data.game.winner_id && myPlayer}
+			<GameEndScreen
+				category={data.category}
+				winner={data.players.find((player) => player.id === data.game.winner_id)}
+				winner_self={data.game.winner_id === myPlayer.id}
+				on:click={handleBackToStart}
+			/>
+		{/if}
+	</main>
+{/if}

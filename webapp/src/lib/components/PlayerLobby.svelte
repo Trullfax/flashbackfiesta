@@ -42,18 +42,24 @@
 </script>
 
 <div class="grid justify-items-center items-center gap-6 grid-rows-4">
-	<div class="flex flex-col items-center gap-4 row-span-3">
-		<Title title="YOUR FIESTA" subtitle="invite your competitors" flip={true} />
-		<div class="h-[7rem] flex flex-row items-center gap-6 -translate-y-[1.5rem]">
+	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
+		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
+		<div
+			class="h-[7rem] sm:h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
+			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
+		>
 			{#if playerArray && playerArray.length > 0}
 				{#each { length: playerArray.length } as _, index}
-					<div class="flex flex-col items-center gap-5">
+					<div
+						class="flex flex-col items-center gap-3 sm:gap-5"
+					>
 						<div
-							class=" bg-grey drop-shadow-bold {index % 2 === 0
-								? '-rotate-[3.5deg]'
-								: 'rotate-[2.5deg]'} {playerArray[index].is_creator
-								? 'w-[6.5rem] h-[6.5rem]'
-								: 'w-[5rem] h-[5rem]'}"
+							class="bg-grey drop-shadow-title
+							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
+							{playerArray[index].is_creator
+								? 'max-w-[6.5rem] max-h-[6.5rem]'
+								: 'max-w-[5rem] max-h-[5rem]'}
+								{settingUp ? 'animate-bounce' : ''}"
 						>
 							<img
 								src={playerArray[index].avatar_path}
@@ -63,7 +69,7 @@
 						<div>
 							{#if playerArray[index]}
 								<p
-									class="w-[8rem] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
+									class="sm:w-[8rem] drop-shadow-simple-text font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
 									0
 										? 'text-[1rem]'
 										: 'text-[.75rem]'}"
@@ -75,7 +81,7 @@
 					</div>
 				{/each}
 			{:else}
-				<p class="font-contrail">No Players found!</p>
+				<h3 class="font-contrail text-white col-span-full">no players found!</h3>
 			{/if}
 		</div>
 		<label for="gamelink">
@@ -84,7 +90,7 @@
 					type="text"
 					value={currentUrl}
 					name="gamelink"
-					class="font-contrail w-[20rem] p-2 drop-shadow-bold z-10 focus-visible:outline-none"
+					class="font-contrail text-[.7rem] sm:text-sm w-[15rem] sm:w-[20rem] p-1 sm:p-2 drop-shadow-bold z-10 focus-visible:outline-none"
 					readonly
 				/>
 				<div class="group">

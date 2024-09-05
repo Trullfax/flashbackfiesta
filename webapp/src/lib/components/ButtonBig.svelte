@@ -12,7 +12,7 @@
 			: 'group-hover:bg-purple'}"
 	>
 		<p
-			class="font-contrail text-3xl {hover_white
+			class="font-contrail text-2xl sm:text-3xl {hover_white
 				? 'group-hover:text-black'
 				: 'group-hover:text-white'} transition-all"
 		>
