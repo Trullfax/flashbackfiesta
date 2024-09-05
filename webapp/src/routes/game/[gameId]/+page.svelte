@@ -215,7 +215,7 @@
 
 {#if myPlayer}
 	{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
-		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple drop-shadow-bold md:drop-shadow-none p-5 md:p-0 md:bg-none">
+		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0">
 			<p class="font-contrail text-2xl text-center text-white md:text-black">
 				waiting for {waitingFor?.name}
 			</p>
