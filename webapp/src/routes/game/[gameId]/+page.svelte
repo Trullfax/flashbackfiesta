@@ -97,12 +97,12 @@
 			)
 			.on(
 				'postgres_changes',
-				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
 				handlePlayerDeletes
 			)
 			.on(
 				'postgres_changes',
-				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
 				handleGameDelete
 			)
 			.subscribe();
@@ -121,7 +121,7 @@
 		data.players[existingPlayerIndex] = { ...data.players[existingPlayerIndex], ...newPlayer };
 	}
 
-	const handlePlayerDeletes = (payload: any) => {
+	const handlePlayerDeletes = (payload: { old: any }) => {
 		const deletedPlayerId = payload.old.id;
 		data.players = data.players.filter((player) => player.id !== deletedPlayerId);
 	};
@@ -131,9 +131,11 @@
 		data.game = { ...data.game, ...newGame };
 	}
 
-	const handleGameDelete = () => {
-		console.warn('Game deleted');
-		goto('/error');
+	const handleGameDelete = (payload: { old: any }) => {
+		if (payload.old.id === gameId) {
+			console.warn('Game deleted');
+			goto('/error');
+		}
 	};
 
 	function handleCardUpdates(payload: { new: any }) {
