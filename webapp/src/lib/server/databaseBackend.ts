@@ -62,17 +62,31 @@ export async function generateCards(category: Category, game: Game, numberOfCard
 
 export async function updateCardOwner(cardId: string, playerId: string) {
     try {
-        const { error } = await supabase
+        const { error: updateError } = await supabase
             .from('Card')
             .update({ player_id: playerId })
             .match({ id: cardId });
 
-        if (error) {
-            throw new Error(error.message);
+        if (updateError) {
+            throw new Error(updateError.message);
         }
 
         return {success: true, error: null};
     } catch (error) {
         return {success: false, error: (error as Error).message};
+    }
+}
+
+export async function deleteGame(gameId: string) {
+    try {
+        const { error: deletionError } = await supabase.from('Game').delete().match({ id: gameId });
+
+        if (deletionError) {
+            throw new Error('Error deleting game:' + deletionError.message);
+        }
+    
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error: (error as Error).message };
     }
 }
