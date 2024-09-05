@@ -35,7 +35,7 @@
 	}
 </script>
 
-<section class="grid md:grid-cols-[1fr_2fr] items-center justify-items-center">
+<section class="grid md:grid-cols-[1fr_2fr] items-center justify-items-center relative w-[100vw] md:w-full">
 	<div
 		class="block md:hidden z-10 size-10 absolute bottom-5 left-5 drop-shadow-title {turn
 			? 'animate-pulse'
@@ -56,7 +56,7 @@
 	</div>
 
 	<ul
-		class="flex gap-3 max-w-[80vw] md:max-w-max overflow-x-auto overflow-y-visible md:overflow-x-visible md:p-0 p-10 scroll-smooth"
+		class="flex gap-3 max-w-[80vw] md:max-w-max overflow-x-auto overflow-y-visible md:overflow-x-visible md:pt-0 md:pb-0 pt-10 pb-10 scroll-smooth"
 		bind:this={carouselContainer}
 	>
 		{#each cards as card}

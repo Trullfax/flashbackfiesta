@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div class="emoji-button absolute bottom-5 right-5 md:bottom-10 md:right-10 z-30">
+<div class="emoji-button fixed bottom-5 right-5 md:bottom-10 md:right-10 z-30">
 	<button
 		class="w-12 h-12 text-[2rem] flex justify-center items-center bg-purple drop-shadow-subtitle rounded-full"
 		on:click={handleEmojiClick}
