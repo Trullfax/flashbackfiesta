@@ -28,7 +28,7 @@
 <img
 	src={blueBow}
 	alt="background decoration"
-	class="absolute left-0 max-w-[10rem] md:left-10 z-10 top-[80vh] md:max-w-[40rem]"
+	class="absolute left-0 max-w-[10rem] md:left-10 z-20 top-[80vh] md:max-w-[40rem]"
 />
 <img
 	src={redTriangle}
@@ -38,7 +38,7 @@
 <img
 	src={line}
 	alt="background decoration"
-	class="absolute max-w-[10rem] top-[100vh] right-10 z-10 md:top-[85vh] md:max-w-[15rem]"
+	class="absolute max-w-[10rem] top-[100vh] right-10 z-20 md:top-[85vh] md:max-w-[15rem]"
 />
 <img
 	src={purpleLine}
