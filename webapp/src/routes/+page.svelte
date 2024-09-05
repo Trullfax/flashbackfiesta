@@ -7,7 +7,7 @@
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
 	import StartpageBackground from '$lib/components/StartpageBackground.svelte';
 
-	let pageTitle = 'start your fiesta';
+	let pageTitle = 'Start your fiesta · Flashbackfiesta';
 
 	export let data: PageData;
 

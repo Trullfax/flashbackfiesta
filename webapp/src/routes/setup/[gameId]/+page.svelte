@@ -10,7 +10,7 @@
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 	import SetupBackground from '$lib/components/SetupBackground.svelte';
 
-	let pageTitle = 'create your player';
+	let pageTitle = 'Create your player · Flashbackfiesta';
 
 	export let data: PageData;
 
