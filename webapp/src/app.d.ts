@@ -1,3 +1,5 @@
+import type { Database } from '$lib/database.types';
+
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -11,12 +13,13 @@ declare global {
 
 	interface Game {
 		id: string;
-		status?: string;
+		status?: Database["public"]["Enums"]["status"];
 		max_card_count: number;
-		difficulty: string;
+		difficulty: Database["public"]["Enums"]["difficulty"];
 		category_id: string;
 		whose_turn_id?: string;
 		creator_code: string;
+		winner_id?: string;
 	}
 
 	interface Category {

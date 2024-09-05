@@ -21,6 +21,7 @@
 
 	let settingUp: boolean = false;
 	let isStarting: boolean = false;
+	let isCreatingPlayer = false;
 
 	onMount(() => {
 		if (myPlayer === null) {
@@ -107,6 +108,10 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
+		if (isCreatingPlayer || isPlayer) return;
+
+		isCreatingPlayer = true;
+
 		const isCreator: boolean = isCreatorCheck();
 
 		const response = await fetch('/api/create-player/', {
@@ -136,6 +141,8 @@
 
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
 		pageTitle = 'invite your competitors';
+
+		isCreatingPlayer = false;
 	}
 
 	async function startGame() {

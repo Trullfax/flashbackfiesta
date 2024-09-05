@@ -42,7 +42,7 @@
 		}
 
 		if (!selectedCard) {
-			addToast({ message: 'Please select the card you want to place here first!', type: 'error' });
+			addToast({ message: 'Please select a card first!', type: 'error' });
 			return;
 		}
 		temporarilyPlacedCardIndex = index;
@@ -58,7 +58,9 @@
 
 <Toasts />
 
-<section class="card-table max-w-[80vw] grid grid-rows-[1fr_200px] grid-cols-[1fr_10fr_1fr] justify-self-center justify-items-center items-center relative">
+<section
+	class="card-table max-w-[80vw] grid grid-rows-[1fr_200px] grid-cols-[1fr_10fr_1fr] justify-self-center justify-items-center items-center relative"
+>
 	{#if cards.length > 0}
 		<div class="scale-75">
 			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
