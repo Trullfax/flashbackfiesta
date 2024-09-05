@@ -5,6 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { joinPresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -15,25 +16,31 @@
 
 	const { gameId } = $page.params;
 
-	let isPlayer = false;
-	let settingUp = false;
-	let isStarting = false;
+	let myPlayer: Player | null = null;
+	let storedPlayerId: string | null = null;
+
+	let settingUp: boolean = false;
+	let isStarting: boolean = false;
 
 	onMount(() => {
-		if (!isPlayer) {
+		if (myPlayer === null) {
 			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
 		}
 
 		if (typeof window !== 'undefined') {
-			const playerId = localStorage.getItem('playerId');
+			storedPlayerId = localStorage.getItem('playerId');
 
 			for (const player of data.players) {
-				if (player.id === playerId) {
-					isPlayer = true;
+				if (player.id === storedPlayerId) {
+					myPlayer = player;
 					pageTitle = 'invite your competitors';
 					break;
 				}
 			}
+		}
+
+		if (myPlayer) {
+			joinPresence(myPlayer, gameId);
 		}
 
 		const channels = supabase
@@ -121,6 +128,12 @@
 			localStorage.setItem('playerId', player.id);
 		}
 
+		myPlayer = player;
+
+		if (myPlayer) {
+			await joinPresence(myPlayer, gameId); // Join presence when player is created
+		}
+
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
 		pageTitle = 'invite your competitors';
 	}
@@ -157,7 +170,7 @@
 <Toasts />
 
 <main class="overflow-hidden">
-	{#if !isPlayer}
+	{#if !myPlayer}
 		<section
 			id="playerSelection-section"
 			class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom_-100vh]"
