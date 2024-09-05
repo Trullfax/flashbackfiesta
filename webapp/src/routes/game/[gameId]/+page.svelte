@@ -3,10 +3,10 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { error } from '@sveltejs/kit';
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
+	import { joinPresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -20,7 +20,7 @@
 
 	let pageTitle = 'fiesta time! - ' + data.category.name.toLowerCase();
 
-  let storedPlayerId: string | null = null;
+	let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
@@ -59,10 +59,23 @@
 				if (!playerExists) {
 					throw new Error('no matching player found in game');
 				}
+
+				for (const player of data.players) {
+					if (player.id === storedPlayerId) {
+						myPlayer = player;
+						break;
+					}
+				}
 			}
 		} catch (err) {
 			console.warn('Error:', (err as Error).message);
 			goto('/error');
+		}
+
+		let presence: any;
+
+		if (myPlayer) {
+			presence = joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -82,9 +95,22 @@
 				{ event: 'UPDATE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Card' },
 				handleCardUpdates
 			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+				handlePlayerDeletes
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+				handleGameDelete
+			)
 			.subscribe();
 
 		return () => {
+			if (presence) {
+				presence.unsubscribe();
+			}
 			channels.unsubscribe();
 		};
 	});
@@ -95,10 +121,20 @@
 		data.players[existingPlayerIndex] = { ...data.players[existingPlayerIndex], ...newPlayer };
 	}
 
+	const handlePlayerDeletes = (payload: any) => {
+		const deletedPlayerId = payload.old.id;
+		data.players = data.players.filter((player) => player.id !== deletedPlayerId);
+	};
+
 	function handleGameUpdates(payload: { new: any }) {
 		const newGame = payload.new;
 		data.game = { ...data.game, ...newGame };
 	}
+
+	const handleGameDelete = () => {
+		console.warn('Game deleted');
+		goto('/error');
+	};
 
 	function handleCardUpdates(payload: { new: any }) {
 		const newCard: Card = payload.new;
@@ -280,17 +316,17 @@
 			{/if}
 		</div>
 
-    <FlyingPlayCards category={data.category} />
+		<FlyingPlayCards category={data.category} />
 
-    <EmojiClick {myPlayer} {gameId} />
+		<EmojiClick {myPlayer} {gameId} />
 
-    {#if data.game.winner_id && myPlayer}
-      <GameEndScreen
-        category={data.category}
-        winner={data.players.find((player) => player.id === data.game.winner_id)}
-        winner_self={data.game.winner_id === myPlayer.id}
-        on:click={handleBackToStart}
-      />
-    {/if}
-  {/if}
+		{#if data.game.winner_id && myPlayer}
+			<GameEndScreen
+				category={data.category}
+				winner={data.players.find((player) => player.id === data.game.winner_id)}
+				winner_self={data.game.winner_id === myPlayer.id}
+				on:click={handleBackToStart}
+			/>
+		{/if}
+	{/if}
 </main>

@@ -40,8 +40,10 @@
 			}
 		}
 
+		let presence: any;
+
 		if (myPlayer) {
-			joinPresence(myPlayer, gameId);
+			presence = joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -56,9 +58,22 @@
 				{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
 				handleGameUpdates
 			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' },
+				handlePlayerDeletes
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
+				handleGameDelete
+			)
 			.subscribe();
 
 		return () => {
+			if (presence) {
+				presence.unsubscribe();
+			}
 			channels.unsubscribe();
 		};
 	});
@@ -80,6 +95,11 @@
 		data.players = [...data.players, newPlayer];
 	};
 
+	const handlePlayerDeletes = (payload: any) => {
+		const deletedPlayerId = payload.old.id;
+		data.players = data.players.filter((player) => player.id !== deletedPlayerId);
+	};
+
 	const handleGameUpdates = (payload: any) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
@@ -99,6 +119,11 @@
 		}
 	};
 
+	const handleGameDelete = () => {
+		console.warn('Game deleted');
+		goto('/error');
+	};
+
 	function handlePlayerSubmit(event: Event) {
 		const { playerName, selectedAvatar } = (
 			event as CustomEvent<{ playerName: string; selectedAvatar: string }>
@@ -108,7 +133,7 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
-		if (isCreatingPlayer || isPlayer) return;
+		if (isCreatingPlayer || myPlayer) return;
 
 		isCreatingPlayer = true;
 
@@ -136,7 +161,7 @@
 		myPlayer = player;
 
 		if (myPlayer) {
-			await joinPresence(myPlayer, gameId); // Join presence when player is created
+			await joinPresence(myPlayer, data.game); // Join presence when player is created
 		}
 
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
