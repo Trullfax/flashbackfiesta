@@ -74,9 +74,9 @@
 			.subscribe();
 
 		return () => {
-			if (presence) {
-				presence.unsubscribe();
-			}
+			// if (presence) {
+			// 	presence.unsubscribe();
+			// }
 			channels.unsubscribe();
 		};
 	});
