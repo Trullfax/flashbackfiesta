@@ -9,8 +9,9 @@
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
+	import SetupBackground from '$lib/components/SetupBackground.svelte';
 
-	let pageTitle = 'create your player';
+	let pageTitle = 'Create your player · Flashbackfiesta';
 
 	export let data: PageData;
 
@@ -34,7 +35,7 @@
 			for (const player of data.players) {
 				if (player.id === storedPlayerId) {
 					myPlayer = player;
-					pageTitle = 'invite your competitors';
+					pageTitle = 'Invite your friends · Flashbackfiesta';
 					break;
 				}
 			}
@@ -167,7 +168,7 @@
 		}
 
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
-		pageTitle = 'invite your competitors';
+		pageTitle = 'Invite your friends · Flashbackfiesta';
 
 		isCreatingPlayer = false;
 	}
@@ -204,18 +205,20 @@
 
 <Toasts />
 
-<main class="overflow-hidden">
-	{#if !myPlayer}
+<main class="overflow-hidden relative">
+	<SetupBackground />
+	{#if !isPlayer}
+
 		<section
 			id="playerSelection-section"
-			class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom_-100vh]"
+			class="h-screen flex items-center justify-center"
 		>
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 		</section>
 	{/if}
 	<section
 		id="playerLobby-section"
-		class="h-screen flex items-center justify-center bg-flash-background bg-no-repeat bg-cover bg-[center_bottom]"
+		class="h-screen flex items-center justify-center"
 	>
 		<PlayerLobby
 			playerArray={data.players}

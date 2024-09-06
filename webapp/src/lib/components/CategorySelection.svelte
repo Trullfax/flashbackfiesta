@@ -24,14 +24,15 @@
 
 <Toasts />
 
-<div class="flex flex-col items-center">
-	<div class="w-[62rem] flex justify-start">
+<div class="grid justify-items-center w-[100vw] md:w-[75vw] max-w-[1000px]">
+	<div class="justify-self-start">
 		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
 	</div>
-	<div class="h-[17rem] flex flex-row gap-7">
+
+	<div class="h-[17rem] flex flex-row gap-4 md:gap-7">
 		{#if categories && categories.length > 0}
 			{#each categories as category}
-				<div class="flex flex-col items-center gap-6">
+				<div class="grid justify-items-center gap-6">
 					<button on:click={() => selectCategory(category)} class="w-[10rem] drop-shadow-bold">
 						<img
 							src={category.picture_path}
@@ -52,10 +53,10 @@
 				</div>
 			{/each}
 		{:else}
-			<p>No Categories found!</p>
+			<h3 class="font-contrail text-white col-span-full">no categories found!</h3>
 		{/if}
 	</div>
-	<div class="mt-8">
+	<div class="mt-12 md:mt-8">
 		<ButtonSmall
 			text="LET'S PLAY"
 			accent_color="var(--ff-green)"

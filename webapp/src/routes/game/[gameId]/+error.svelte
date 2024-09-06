@@ -7,10 +7,10 @@
 </script>
 
 <svelte:head>
-	<title>bazinga! - something went wrong.</title>
+	<title>bazinga! · Flashbackfiesta</title>
 </svelte:head>
 
-<main class="flex p-20 items-center">
+<main class="flex p-10 sm:p-20 items-center">
 	<div class="flex flex-col gap-8">
 		<p class="font-contrail text-[5rem] text-yellow -rotate-[5deg] drop-shadow-title">BAZINGA</p>
 		<p class="font-contrail text-[2rem] text-white">

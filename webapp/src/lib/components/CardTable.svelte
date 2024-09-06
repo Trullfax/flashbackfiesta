@@ -59,27 +59,27 @@
 <Toasts />
 
 <section
-	class="card-table max-w-[80vw] grid grid-rows-[1fr_200px] grid-cols-[1fr_10fr_1fr] justify-self-center justify-items-center items-center relative"
+	class="card-table max-w-[80vw] grid md:grid-rows-[1fr_200px] md:grid-cols-[1fr_10fr_1fr] justify-self-center justify-items-center items-center relative"
 >
 	{#if cards.length > 0}
-		<div class="scale-75">
+		<div class="hidden md:block scale-75">
 			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 		</div>
 		<ul
-			class="grid pr-10 pl-10 items-center min-h-min max-w-full flex-nowrap overflow-hidden transition-all"
+			class="flex flex-col md:grid pr-10 pl-10 items-center min-h-min h-full md:h-auto max-w-full flex-nowrap overflow-hidden transition-all"
 			bind:this={cardListContainer}
 			style={`grid-template-columns: repeat(${cards.length}, 1fr);`}
 		>
 			{#each cards as card, i}
 				<li
 					id={card.id}
-					class="list-none flex self-center relative transition-all"
+					class="scale-50 md:scale-100 list-none flex flex-col md:flex-row self-center relative transition-all"
 					style="transform: {getRandomRotation()};"
 				>
 					{#if i === 0 && game.whose_turn_id === player?.id}
 						<div class="self-center">
 							{#if selectedCard && temporarilyPlacedCardIndex === i}
-								<div class="animate-pulse transition-all">
+								<div class="animate-pulse transition-all relative md:static">
 									<CardFront
 										title={selectedCard.name}
 										subtitle={selectedCard.creator}
@@ -88,6 +88,13 @@
 										year={Number(selectedCard.year)}
 										revealed={selectedCard.played}
 									/>
+									{#if temporarilyPlacedCardIndex !== null}
+										<div
+											class="md:hidden col-span-full absolute -rotate-12 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"
+										>
+											<ButtonPlaceCard text="confirm" on:click={confirmCardPlacement} />
+										</div>
+									{/if}
 								</div>
 							{:else}
 								<ButtonPlaceCard
@@ -111,7 +118,7 @@
 					{#if game.whose_turn_id === player?.id}
 						<div class="self-center">
 							{#if selectedCard && temporarilyPlacedCardIndex === i + 1}
-								<div class="animate-pulse transition-all">
+								<div class="animate-pulse transition-all relative md:static">
 									<CardFront
 										title={selectedCard.name}
 										subtitle={selectedCard.creator}
@@ -120,6 +127,13 @@
 										year={Number(selectedCard.year)}
 										revealed={selectedCard.played}
 									/>
+									{#if temporarilyPlacedCardIndex !== null}
+										<div
+											class="md:hidden col-span-full absolute -rotate-12 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"
+										>
+											<ButtonPlaceCard text="confirm" on:click={confirmCardPlacement} />
+										</div>
+									{/if}
 								</div>
 							{:else if cards.length < 2 || i === cards.length - 1 || Number(cards[i].year) + 1 !== Number(cards[i + 1].year)}
 								<ButtonPlaceCard
@@ -133,11 +147,11 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="scale-75">
+		<div class="hidden md:block scale-75">
 			<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
 		</div>
 		{#if temporarilyPlacedCardIndex !== null}
-			<div class="col-span-full">
+			<div class="hidden md:block col-span-full">
 				<ButtonSmall text="confirm" on:click={confirmCardPlacement} />
 			</div>
 		{/if}
