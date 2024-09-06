@@ -207,7 +207,7 @@
 
 <main class="overflow-hidden relative">
 	<SetupBackground />
-	{#if !isPlayer}
+	{#if !myPlayer}
 
 		<section
 			id="playerSelection-section"
