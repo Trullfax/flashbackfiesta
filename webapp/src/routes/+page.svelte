@@ -57,6 +57,11 @@
 	<StartpageBackground />
 	<section id="start-section" class="h-screen relative z-10 flex items-center justify-center">
 		<Start on:click={scrollToCategorySelection} />
+		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple z-10">
+			<a class="font-contrail text-[.7rem] sm:text-l text-white" href="/imprint"
+				>made with ♥ by Anna-Lena Langhans and Tjalf-Bjarne Scharnweber</a
+			>
+		</div>
 	</section>
 	<section id="category-section" class="h-screen flex items-center justify-center">
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />

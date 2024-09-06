@@ -9,6 +9,7 @@
 	import blueTriangle from '$lib/assets/background/blue-triangle.svg';
 	import redBlackLines from '$lib/assets/background/red-black-lines.svg';
 	import cube from '$lib/assets/background/elements/cube.svg';
+	import greenBow from '$lib/assets/background/elements/green-bow.svg';
 </script>
 
 
@@ -50,16 +51,30 @@
 <img
 	src={blueTriangle}
 	alt="background decoration"
-	class="absolute right-0 top-[80vh] -z-20"
+	class="absolute right-0 top-[100vh] -z-20"
 />
 <img
 	src={redBlackLines}
 	alt="background decoration"
-	class="absolute left-0 top-[175vh] -z-20"
+	class="absolute left-0 top-[180vh] md:top-[135vh] -z-20"
 />
 <img
 	src={cube}
 	alt="background decoration"
-	class="absolute -left-10 top-[100vh] -z-20 max-w-[10rem]"
+	class="absolute -left-10 top-[100vh] md:top-[120vh] -z-20 max-w-[10rem] md:max-w-[30rem]"
 />
-
+<img
+	src={greenBow}
+	alt="background decoration"
+	class="hidden md:block absolute left-20 top-[170vh] z-20"
+/>
+<img
+	src={line}
+	alt="background decoration"
+	class="hidden md:block absolute max-w-[20rem] top-[120vh] right-10 z-10"
+/>
+<img
+	src={ziczac}
+	alt="background decoration"
+	class="hidden md:block absolute max-w-[15rem] top-[165vh] right-20 z-10 rotate-80"
+/>

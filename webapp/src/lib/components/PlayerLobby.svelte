@@ -45,7 +45,7 @@
 	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
 		<div
-			class="h-[7rem] sm:h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
+			class="h-[12rem] sm:h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
 			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
 		>
 			{#if playerArray && playerArray.length > 0}
