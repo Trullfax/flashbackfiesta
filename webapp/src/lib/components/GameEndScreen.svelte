@@ -17,7 +17,7 @@
 				/>
 			{/if}
 			<div
-				class="max-w-[30rem] h-[20rem] bg-purple drop-shadow-bold -translate-y-[5rem] flex flex-col justify-center items-center"
+				class="max-w-[30rem] md:w-[30rem] h-[20rem] bg-purple drop-shadow-bold -translate-y-[5rem] flex flex-col justify-center items-center"
 			>
 				<div class=" flex flex-col items-center justify-center translate-y-[2.75rem]">
 					{#if winner !== null}
