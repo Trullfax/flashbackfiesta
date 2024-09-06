@@ -1,6 +1,6 @@
-import { supabase } from "$lib/server/supabaseBackendClient";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
+import { deleteGame } from "$lib/server/databaseBackend";
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
@@ -10,10 +10,10 @@ export const POST: RequestHandler = async ({ request }) => {
             throw new Error('gameId is invalid');
         }
 
-        const { error: deletionError } = await supabase.from('Game').delete().match({ id: gameId });
+        const {success, error} = await deleteGame(gameId);
 
-        if (deletionError) {
-            throw new Error('Error deleting game:' + deletionError.message);
+        if (!success) {
+            throw new Error('Failed to delete game: ' + error);
         }
 
         return json({ status: 'success', error: null });

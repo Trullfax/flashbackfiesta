@@ -8,7 +8,7 @@
 	let showEmoji: boolean = false;
 	let clickedEmojiPlayerName: String | null = null;
 
-	let channel = supabase.channel('emoji' + gameId);
+	let channel = supabase.channel(`emoji:${gameId}`);
 
 	onMount(() => {
 		channel

@@ -5,6 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { joinPresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -16,26 +17,34 @@
 
 	const { gameId } = $page.params;
 
-	let isPlayer = false;
-	let settingUp = false;
-	let isStarting = false;
+	let myPlayer: Player | null = null;
+	let storedPlayerId: string | null = null;
+
+	let settingUp: boolean = false;
+	let isStarting: boolean = false;
 	let isCreatingPlayer = false;
 
 	onMount(() => {
-		if (!isPlayer) {
+		if (myPlayer === null) {
 			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
 		}
 
 		if (typeof window !== 'undefined') {
-			const playerId = localStorage.getItem('playerId');
+			storedPlayerId = localStorage.getItem('playerId');
 
 			for (const player of data.players) {
-				if (player.id === playerId) {
-					isPlayer = true;
+				if (player.id === storedPlayerId) {
+					myPlayer = player;
 					pageTitle = 'Invite your friends · Flashbackfiesta';
 					break;
 				}
 			}
+		}
+
+		let presence: any;
+
+		if (myPlayer) {
+			presence = joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -50,9 +59,22 @@
 				{ event: 'UPDATE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' },
 				handleGameUpdates
 			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
+				handlePlayerDeletes
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
+				handleGameDelete
+			)
 			.subscribe();
 
 		return () => {
+			if (presence) {
+				presence.unsubscribe();
+			}
 			channels.unsubscribe();
 		};
 	});
@@ -69,12 +91,17 @@
 		return false;
 	}
 
-	const handlePlayerInserts = (payload: any) => {
+	const handlePlayerInserts = (payload: { new: any }) => {
 		const newPlayer = payload.new;
 		data.players = [...data.players, newPlayer];
 	};
 
-	const handleGameUpdates = (payload: any) => {
+	const handlePlayerDeletes = (payload: { old: any }) => {
+		const deletedPlayerId = payload.old.id;
+		data.players = data.players.filter((player) => player.id !== deletedPlayerId);
+	};
+
+	const handleGameUpdates = (payload: { new: any }) => {
 		const updatedGame = payload.new;
 		data.game = updatedGame;
 
@@ -93,6 +120,13 @@
 		}
 	};
 
+	const handleGameDelete = (payload: { old: any }) => {
+		if (payload.old.id === gameId) {
+			console.warn('Game deleted');
+			goto('/error');
+		}
+	};
+
 	function handlePlayerSubmit(event: Event) {
 		const { playerName, selectedAvatar } = (
 			event as CustomEvent<{ playerName: string; selectedAvatar: string }>
@@ -102,7 +136,7 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
-		if (isCreatingPlayer || isPlayer) return;
+		if (isCreatingPlayer || myPlayer) return;
 
 		isCreatingPlayer = true;
 
@@ -125,6 +159,12 @@
 
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('playerId', player.id);
+		}
+
+		myPlayer = player;
+
+		if (myPlayer) {
+			await joinPresence(myPlayer, data.game); // Join presence when player is created
 		}
 
 		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -151,6 +191,7 @@
 		if (!response.ok || status === 'error') {
 			addToast({ message: error || 'An unknown error occurred', type: 'error' });
 			settingUp = false;
+			isStarting = false;
 			return;
 		}
 
@@ -167,6 +208,7 @@
 <main class="overflow-hidden relative">
 	<SetupBackground />
 	{#if !isPlayer}
+
 		<section
 			id="playerSelection-section"
 			class="h-screen flex items-center justify-center"

@@ -3,10 +3,10 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { error } from '@sveltejs/kit';
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
+	import { joinPresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -59,10 +59,23 @@
 				if (!playerExists) {
 					throw new Error('no matching player found in game');
 				}
+
+				for (const player of data.players) {
+					if (player.id === storedPlayerId) {
+						myPlayer = player;
+						break;
+					}
+				}
 			}
 		} catch (err) {
 			console.warn('Error:', (err as Error).message);
 			goto('/error');
+		}
+
+		let presence: any;
+
+		if (myPlayer) {
+			presence = joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -82,9 +95,22 @@
 				{ event: 'UPDATE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Card' },
 				handleCardUpdates
 			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
+				handlePlayerDeletes
+			)
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', filter: `id=eq.${gameId}`, table: 'Game' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
+				handleGameDelete
+			)
 			.subscribe();
 
 		return () => {
+			if (presence) {
+				presence.unsubscribe();
+			}
 			channels.unsubscribe();
 		};
 	});
@@ -95,10 +121,22 @@
 		data.players[existingPlayerIndex] = { ...data.players[existingPlayerIndex], ...newPlayer };
 	}
 
+	const handlePlayerDeletes = (payload: { old: any }) => {
+		const deletedPlayerId = payload.old.id;
+		data.players = data.players.filter((player) => player.id !== deletedPlayerId);
+	};
+
 	function handleGameUpdates(payload: { new: any }) {
 		const newGame = payload.new;
 		data.game = { ...data.game, ...newGame };
 	}
+
+	const handleGameDelete = (payload: { old: any }) => {
+		if (payload.old.id === gameId) {
+			console.warn('Game deleted');
+			goto('/error');
+		}
+	};
 
 	function handleCardUpdates(payload: { new: any }) {
 		const newCard: Card = payload.new;
@@ -214,7 +252,7 @@
 <Toasts />
 
 {#if myPlayer}
-	{#if myPlayer && data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+	{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
 		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0">
 			<p class="font-contrail text-2xl text-center text-white md:text-black">
 				waiting for {waitingFor?.name}
@@ -283,6 +321,7 @@
 				/>
 			{/if}
 		</div>
+
 		<FlyingPlayCards category={data.category} />
 
 		<EmojiClick {myPlayer} {gameId} />
