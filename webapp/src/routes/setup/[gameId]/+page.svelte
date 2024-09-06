@@ -25,10 +25,6 @@
 	let isCreatingPlayer = false;
 
 	onMount(() => {
-		if (myPlayer === null) {
-			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
-		}
-
 		if (typeof window !== 'undefined') {
 			storedPlayerId = localStorage.getItem('playerId');
 
@@ -39,6 +35,12 @@
 					break;
 				}
 			}
+		}
+
+		if (myPlayer) {
+			document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
+		} else {
+			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
 		}
 
 		let presence: any;
@@ -207,19 +209,12 @@
 
 <main class="overflow-hidden relative">
 	<SetupBackground />
-	{#if !myPlayer}
-
-		<section
-			id="playerSelection-section"
-			class="h-screen flex items-center justify-center"
-		>
+	<section id="playerSelection-section" class="h-screen flex items-center justify-center">
+		{#if !myPlayer}
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
-		</section>
-	{/if}
-	<section
-		id="playerLobby-section"
-		class="h-screen flex items-center justify-center"
-	>
+		{/if}
+	</section>
+	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
 		<PlayerLobby
 			playerArray={data.players}
 			isCreator={isCreatorCheck()}

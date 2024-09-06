@@ -50,15 +50,11 @@
 		>
 			{#if playerArray && playerArray.length > 0}
 				{#each { length: playerArray.length } as _, index}
-					<div
-						class="flex flex-col items-center gap-3 sm:gap-5"
-					>
+					<div class="flex flex-col items-center gap-3 sm:gap-5">
 						<div
 							class="bg-grey drop-shadow-title
 							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
-							{playerArray[index].is_creator
-								? 'max-w-[6.5rem] max-h-[6.5rem]'
-								: 'max-w-[5rem] max-h-[5rem]'}
+							{playerArray[index].is_creator ? 'max-w-[6.5rem] max-h-[6.5rem]' : 'max-w-[5rem] max-h-[5rem]'}
 								{settingUp ? 'animate-bounce' : ''}"
 						>
 							<img
@@ -69,7 +65,7 @@
 						<div>
 							{#if playerArray[index]}
 								<p
-									class="sm:w-[8rem] drop-shadow-simple-text font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
+									class="sm:w-[8rem] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
 									0
 										? 'text-[1rem]'
 										: 'text-[.75rem]'}"
