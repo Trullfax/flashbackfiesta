@@ -251,18 +251,20 @@
 
 <Toasts />
 
-{#if myPlayer}
-	{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
-		<div class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0">
-			<p class="font-contrail text-2xl text-center text-white md:text-black">
-				waiting for {waitingFor?.name}
-			</p>
-			<LoadingBar color={data.category.hex_color} />
-		</div>
-	{/if}
-	<main
-		class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
-	>
+<main
+	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
+>
+	{#if myPlayer}
+		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+			<div
+				class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0"
+			>
+				<p class="font-contrail text-2xl text-center text-white md:text-black">
+					waiting for {waitingFor?.name}
+				</p>
+				<LoadingBar color={data.category.hex_color} />
+			</div>
+		{/if}
 		{#if showConfetti}
 			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 				<Confetti
@@ -334,5 +336,5 @@
 				on:click={handleBackToStart}
 			/>
 		{/if}
-	</main>
-{/if}
+	{/if}
+</main>
