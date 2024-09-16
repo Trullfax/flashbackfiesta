@@ -5,7 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { joinPresence } from '$lib/playerTracking';
+	import { joinPresence, unsubscribePresense } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -43,10 +43,8 @@
 			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
 		}
 
-		let presence: any;
-
 		if (myPlayer) {
-			presence = joinPresence(myPlayer, data.game);
+			joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -74,9 +72,7 @@
 			.subscribe();
 
 		return () => {
-			// if (presence) {
-			// 	presence.unsubscribe();
-			// }
+			unsubscribePresense();
 			channels.unsubscribe();
 		};
 	});

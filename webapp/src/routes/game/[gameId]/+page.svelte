@@ -6,7 +6,7 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { joinPresence } from '$lib/playerTracking';
+	import { joinPresence, unsubscribePresense } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -72,10 +72,8 @@
 			goto('/error');
 		}
 
-		let presence: any;
-
 		if (myPlayer) {
-			presence = joinPresence(myPlayer, data.game);
+			joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -103,9 +101,7 @@
 			.subscribe();
 
 		return () => {
-			// if (presence) {
-			// 	presence.unsubscribe();
-			// }
+			unsubscribePresense;
 			channels.unsubscribe();
 		};
 	});

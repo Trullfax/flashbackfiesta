@@ -1,4 +1,5 @@
 import { supabase } from '$lib/supabaseClient';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface Presence {
     game: Game;
@@ -7,10 +8,11 @@ interface Presence {
 }
 
 let presenceTimeout: NodeJS.Timeout | null = null;
+let presenceChannel: RealtimeChannel | null = null;
 
 export async function joinPresence(player: Player, game: Game) {
     // Create the presence channel
-    const presenceChannel = supabase
+    presenceChannel = supabase
         .channel(`presence:${game.id}`)
         .on('presence', { event: 'sync' }, () => {})
         .on('presence', { event: 'join' }, () => handlePlayerOnline())
@@ -19,8 +21,6 @@ export async function joinPresence(player: Player, game: Game) {
 
     // Join the presence channel with the player ID
     await presenceChannel.track({ player: player, game: game });
-
-    return presenceChannel;
 }
 
 function handlePlayerOnline() {
@@ -54,3 +54,6 @@ async function handlePlayerOffline(leftPresences: Presence[]) {
     }, time);
 }
 
+export function unsubscribePresense() {
+    presenceChannel?.unsubscribe();
+}
