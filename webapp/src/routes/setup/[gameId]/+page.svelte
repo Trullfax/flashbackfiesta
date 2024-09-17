@@ -5,7 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { joinPresence, unsubscribePresense } from '$lib/playerTracking';
+	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -72,7 +72,7 @@
 			.subscribe();
 
 		return () => {
-			unsubscribePresense();
+			unsubscribePresence();
 			channels.unsubscribe();
 		};
 	});

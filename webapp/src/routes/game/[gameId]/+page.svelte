@@ -6,7 +6,7 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { joinPresence, unsubscribePresense } from '$lib/playerTracking';
+	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -104,7 +104,7 @@
 			.subscribe();
 
 		return () => {
-			unsubscribePresense;
+			unsubscribePresence;
 			channels?.unsubscribe();
 		};
 	});
