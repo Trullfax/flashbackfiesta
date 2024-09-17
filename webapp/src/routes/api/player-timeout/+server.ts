@@ -5,7 +5,28 @@ import { deleteGame } from "$lib/server/databaseBackend";
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { player, game } = await request.json();
+        const { player, gameId } = await request.json();
+        
+        const {data, error: dataError} = await supabase
+                    .from('Game')
+                    .select('*, Player:Player!game_id (*)')
+                    .eq('id', gameId)
+                    .single();
+
+        if (dataError || !data) {
+            throw new Error('Failed to get players: ' + dataError.message || 'No data found');
+        }
+
+        const game: Game = {
+            id: data?.id,
+            status: data?.status,
+            whose_turn_id: data?.whose_turn_id,
+            max_card_count: data?.max_card_count,
+            difficulty: data?.difficulty,
+            winner_id: data?.winner_id
+        } as Game;
+
+        const playerArray: Player[] = data.Player as Player[];
 
             if (game.status === 'not_started') {
                 if (player.is_creator) {
@@ -26,15 +47,6 @@ export const POST: RequestHandler = async ({ request }) => {
             }
     
             if (game.status !== 'not_started') {
-                
-                const {data: playerArray, error: playersError} = await supabase
-                    .from('Player')
-                    .select()
-                    .eq('game_id', game.id);
-
-                if (playersError || !playerArray) {
-                    throw new Error('Failed to get players: ' + playersError.message || 'No data found');
-                }
 
                 if (playerArray.length <= 1) {
                     // Delete the game (this will doesnt work if the player is the only player, but it will stay here for now)
@@ -44,8 +56,8 @@ export const POST: RequestHandler = async ({ request }) => {
                         throw new Error('Failed to delete game: ' + error);
                     }
                 }
-    
-                if (game.whose_turn_id === player.id) {
+
+                if (String(game.whose_turn_id) === String(player.id)) {
                     // Set a new player as the player on turn
                     const {success: nextPlayerSuccess, error: nextPlayerError} = await setNextPlayerTurn(playerArray as Player[], player, game.id);
 

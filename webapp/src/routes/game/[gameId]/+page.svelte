@@ -6,7 +6,7 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { joinPresence } from '$lib/playerTracking';
+	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -15,10 +15,13 @@
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
 	import LoadingBar from '$lib/components/LoadingBar.svelte';
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
+	import type { RealtimeChannel } from '@supabase/supabase-js';
 
 	export let data: PageData;
 
 	let pageTitle = data.category.name + ' fiesta · Flashbackfiesta';
+
+	let channels: RealtimeChannel | null = null;
 
 	let storedPlayerId: string | null = null;
 	let myPlayer: Player | null = null;
@@ -72,13 +75,11 @@
 			goto('/error');
 		}
 
-		let presence: any;
-
 		if (myPlayer) {
-			presence = joinPresence(myPlayer, data.game);
+			joinPresence(myPlayer, data.game);
 		}
 
-		const channels = supabase
+		channels = supabase
 			.channel(gameId)
 			.on(
 				'postgres_changes',
@@ -103,10 +104,8 @@
 			.subscribe();
 
 		return () => {
-			// if (presence) {
-			// 	presence.unsubscribe();
-			// }
-			channels.unsubscribe();
+			unsubscribePresence;
+			channels?.unsubscribe();
 		};
 	});
 
@@ -124,6 +123,10 @@
 	function handleGameUpdates(payload: { new: any }) {
 		const newGame = payload.new;
 		data.game = { ...data.game, ...newGame };
+
+		if (newGame.status === 'completed') {
+			channels?.unsubscribe();
+		}
 	}
 
 	function handleCardUpdates(payload: { new: any }) {

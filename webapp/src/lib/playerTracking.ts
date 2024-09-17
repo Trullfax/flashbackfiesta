@@ -1,4 +1,6 @@
 import { supabase } from '$lib/supabaseClient';
+import { presenceChannel, onlinePlayers, presenceTimeouts } from '$lib/stores/playerTrackingStore';
+import { get } from 'svelte/store'; // Used to get the current value of a store
 
 interface Presence {
     game: Game;
@@ -6,51 +8,91 @@ interface Presence {
     presence_ref: string;
 }
 
-let presenceTimeout: NodeJS.Timeout | null = null;
-
 export async function joinPresence(player: Player, game: Game) {
-    // Create the presence channel
-    const presenceChannel = supabase
-        .channel(`presence:${game.id}`)
-        .on('presence', { event: 'sync' }, () => {})
-        .on('presence', { event: 'join' }, () => handlePlayerOnline())
-        .on('presence', { event: 'leave' }, ({ leftPresences }) => handlePlayerOffline(leftPresences as Presence[]))
-        .subscribe();
+    let currentPresenceChannel = get(presenceChannel);
 
-    // Join the presence channel with the player ID
-    await presenceChannel.track({ player: player, game: game });
+    if (currentPresenceChannel !== null) {
+        handlePlayerOnline(player);
+    } else {
 
-    return presenceChannel;
+        // Create the presence channel
+        currentPresenceChannel = supabase
+            .channel(`presence:${game.id}`)
+            .on('presence', { event: 'sync' }, () => {})
+            .on('presence', { event: 'join' }, ({ newPresences }) => handlePlayerOnline(newPresences[0].player))
+            .on('presence', { event: 'leave' }, ({ leftPresences }) => handlePlayerOffline(leftPresences as Presence[]))
+            .subscribe();
+
+        // Update the store with the new presence channel
+        presenceChannel.set(currentPresenceChannel);
+
+        // Join the presence channel with the player ID
+        await currentPresenceChannel.track({ player: player, game: game });
+    }
 }
 
-function handlePlayerOnline() {
-    if (presenceTimeout !== null) {
-        clearTimeout(presenceTimeout);
-    }
+function handlePlayerOnline(player: Player) {
+    onlinePlayers.update(players => {
+        players[player.id] = true;  // Mark the player as online
+        return players;
+    });
+
+    // Clear the timeout for this player if it exists
+    presenceTimeouts.update(timeouts => {
+        if (timeouts[player.id] !== null) {
+            clearTimeout(timeouts[player.id] as NodeJS.Timeout);
+            timeouts[player.id] = null;
+        }
+        return timeouts;
+    });
 }
 
 async function handlePlayerOffline(leftPresences: Presence[]) {
     const player = leftPresences[0].player;
     const game = leftPresences[0].game;
 
-    const time: number = game.status === 'not_started' ? 5000 : 20000;
+    // Mark the player as offline right away
+    onlinePlayers.update(players => {
+        players[player.id] = false;  // Mark the player as offline
+        return players;
+    });
 
-    presenceTimeout = setTimeout(async () => {
-        const response = await fetch('/api/player-timeout', {
-            method: 'POST',
-            body: JSON.stringify({ player, game }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-    
-        const { status, error } = await response.json();
-    
-        if (!response.ok || status === 'error') {
-            console.error('Failed to delete player:', error || 'Unknown error');
-        }
+    const time: number = game.status === 'not_started' ? 5000 : 15000;
 
-        console.warn('Player timed out:', player.name);
-    }, time);
+    // Delay handling player offline to allow for page transitions/rejoins
+    presenceTimeouts.update(timeouts => {
+        timeouts[player.id] = setTimeout(async () => {
+            // Re-check the player's online status at the time of timeout
+            if (get(onlinePlayers)[player.id]) {
+                return;  // Player rejoined, no need to timeout
+            }
+
+            const response = await fetch('/api/player-timeout', {
+                method: 'POST',
+                body: JSON.stringify({ player, gameId: game.id }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const { status, error } = await response.json();
+
+            if (!response.ok || status === 'error') {
+                console.error('Failed to delete player:', error || 'Unknown error');
+            } else {
+                console.warn('Player timed out:', player.name);
+            }
+        }, time);
+
+        return timeouts;
+    });
 }
 
+export function unsubscribePresence() {
+    const currentPresenceChannel = get(presenceChannel);
+    currentPresenceChannel?.unsubscribe();
+    
+    presenceChannel.set(null);
+    onlinePlayers.set({});
+    presenceTimeouts.set({});
+}
