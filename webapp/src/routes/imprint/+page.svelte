@@ -3,6 +3,14 @@
 	import { X } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+	<title>Licensing and Legal Information · Flashbackfiesta</title>
+	<meta
+		name="description"
+		content="Imprint page for Flashback Fiesta. Includes licensing information for the GNU General Public License v3.0, data attribution for Wikidata and TMDb, and details about the libraries used, such as Lucide and Svelte Confetti."
+	/>
+</svelte:head>
+
 <main class="imprint w-[100vw] overflow-scroll flex items-start justify-center">
 	<section class="w-[80vw] max-w-[800px] font-contrail text-white mt-10">
 		<div class="flex justify-between">
@@ -58,7 +66,7 @@
 <style>
 	.imprint h1 {
 		font-size: 3rem;
-        line-height: 3rem;
+		line-height: 3rem;
 		margin-bottom: 2rem;
 	}
 	.imprint h2 {
