@@ -51,6 +51,10 @@
 
 <svelte:head>
 	<title>{pageTitle}</title>
+	<meta
+		name="description"
+		content="Dive into the ultimate pop culture challenge with Flashback Fiesta!"
+	/>
 </svelte:head>
 
 <main class="relative overflow-hidden">

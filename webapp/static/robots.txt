@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/
+Disallow: /error/
+Disallow: /setup/
+Disallow: /game/
+Allow: /
+Allow: /imprint
