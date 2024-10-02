@@ -72,7 +72,6 @@
 		>
 			{#each cards as card, i}
 				<li
-					id={card.id}
 					class="scale-50 md:scale-100 list-none flex flex-col md:flex-row self-center relative transition-all"
 					style="transform: {getRandomRotation()};"
 				>
@@ -105,7 +104,7 @@
 							{/if}
 						</div>
 					{/if}
-					<div class="scale-75">
+					<div id={String(card.id)} class="scale-75">
 						<CardFront
 							title={card.name}
 							subtitle={card.creator}

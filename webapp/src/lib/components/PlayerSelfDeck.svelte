@@ -62,7 +62,6 @@
 		{#each cards as card}
 			<button on:click={() => handleCardSelection(card.id)}>
 				<li
-					id={card.id}
 					class="list-none self-center transition-all duration-300 ease-in-out"
 					style="transform: {getRandomRotation()}; 
 						{selectedCardId === card.id

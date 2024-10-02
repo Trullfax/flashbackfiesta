@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
@@ -135,6 +136,11 @@
 		if (newCard.played) {
 			data.cards = data.cards.filter((card) => card.id !== newCard.id);
 			data.tableCards = [...data.tableCards, newCard];
+
+			tick().then(() => {
+				const cardElement = document.getElementById(String(newCard.id));
+				cardElement?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+			});
 		} else {
 			data.cards = [...data.cards, newCard];
 		}
