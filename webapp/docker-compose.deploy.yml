@@ -9,6 +9,7 @@ services:
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
         VITE_SUPABASE_KEY: ${VITE_SUPABASE_KEY}
         SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+        TMDB_SECRET_API_KEY: ${TMDB_SECRET_API_KEY}
     ports:
       - "3000:3000"
     env_file:

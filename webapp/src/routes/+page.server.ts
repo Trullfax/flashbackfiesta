@@ -1,4 +1,4 @@
-import { supabase } from "$lib/supabaseClient.js";
+import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -10,13 +10,15 @@ export const load: PageServerLoad = async () => {
         }
     
         return {
+            success: true,
             categories: data as Partial<Category>[],
             error: null
         };
     } catch (error) {
         return {
+            success: false,
             categories: [],
-            error: error.message
+            error: (error as Error).message
         };
     }
 }

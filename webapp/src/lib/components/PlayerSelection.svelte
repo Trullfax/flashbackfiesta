@@ -63,25 +63,23 @@
 
 <Toasts />
 
-<div class="grid grid-cols-2">
-	<div class="justify-self-center self-center grid grid-cols-3 items-center justify-items-center">
+<div class="grid gap-10 lg:gap-0 lg:grid-cols-2 max-w-[75vw] justify-items-center items-center">
+	<div class="grid grid-cols-3 items-center gap-5 justify-items-center">
 		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
 		<div class="relative">
-			<img src={currentAvatar} alt="Avatar" class="ml-5 drop-shadow-bold pr-5" />
+			<img src={currentAvatar} alt="Avatar" class="md:ml-5 scale-150 drop-shadow-bold md:pr-5" />
 			<button
 				on:click={shuffleAvatars}
-				class="hover:rotate-[100deg] transition-all rounded-full absolute -bottom-10 -right-5 bg-red w-20 h-20 flex justify-center items-center drop-shadow-text"
+				class="hover:rotate-[100deg] transition-all rounded-full absolute md:-bottom-[3.5rem] md:-right-[3.5rem] -right-[3rem] bg-red h-12 w-12 md:h-[4rem] md:w-[4rem] flex justify-center items-center drop-shadow-bold"
 			>
-				<Dice height={30} width={30} />
+				<Dice height={20} width={20} />
 			</button>
 		</div>
 		<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
 	</div>
-	<div class="justify-self-center">
-		<p class="font-contrail text-white text-3xl -rotate-[5deg] -mb-10">you're playing...</p>
-		<div class="-ml-10">
-			<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
-		</div>
+	<div class="max-w-max grid justify-items-start">
+		<p class="font-contrail text-white text-xl sm:text-3xl -rotate-[5deg] max-w-max mt-10 -mb-7 sm:-mb-5 lg:mt-0 md:mb-0 ">you're playing...</p>
+		<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
 		<label for="playername">
 			<input
 				type="text"
@@ -89,10 +87,10 @@
 				name="playername"
 				autocomplete="off"
 				placeholder="how should we call you?"
-				class="font-contrail w-[100%] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
+				class="font-contrail w-[250px] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
 			/>
 		</label>
-		<div class="mt-5 -ml-4">
+		<div class="mt-5 -ml-4 max-w-max">
 			<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handlePlayerSelection} />
 		</div>
 	</div>

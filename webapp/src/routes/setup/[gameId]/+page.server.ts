@@ -1,4 +1,5 @@
 import { supabase } from "$lib/supabaseClient";
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -6,27 +7,35 @@ export const load: PageServerLoad = async ({ params }) => {
         const { gameId } = params;
     
         if (!gameId) {
-            throw new Error("gameIs is invalid");
+            throw new Error("gameId is invalid");
         }
     
-        const { data, error } = await supabase.from("Game").select('status, Category (id, name, picture_path), Player:Player!game_id (id, name, is_ready, avatar_path)').eq('id', gameId);
+        const { data, error } = await supabase
+            .from("Game")
+            .select('*, Category (*), Player:Player!game_id (*)')
+            .eq('id', gameId)
+            .single();
     
         if (error) {
             throw new Error('Error fetching game:' + error.message);
         }
+
+        if (data.status !== 'not_started' && data.status !== 'setting_up') {
+            throw new Error('Game has already started');
+        }
     
         return {
-            game: {status: data[0].status} as Partial<Game>,
-            category: data[0].Category as Partial<Category>,
-            players: data[0].Player as Partial<Player>[],
+            game: { id: data?.id,
+                status: data?.status, 
+                whose_turn_id: data?.whose_turn_id,
+                max_card_count: data?.max_card_count,
+                difficulty: data?.difficulty,
+                creator_code: data?.creator_code } as Game,
+            category: data.Category as Category,
+            players: data.Player as Player[],
             error: null
         };
-    } catch (error) {
-        return {
-            gameStatus: {},
-            players: [],
-            category: {},
-            error: error.message
-        };
+    } catch (err) {
+        error(404, (err as Error).message);
     }
 }

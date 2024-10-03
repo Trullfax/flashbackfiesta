@@ -3,7 +3,7 @@
 	export let rotation: number = 0;
 </script>
 
-<button class="relative group flex justify-center w-[100px] h-[100px]" on:click>
+<button class="relative group flex justify-center scale-50 md:scale-100 w-[50px] h-[50px] md:w-[100px] md:h-[100px]" on:click>
 	<svg
 		width="99"
 		height="63"
@@ -11,7 +11,7 @@
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		style="transform: rotate({rotation}deg);"
-		class="absolute group-hover:scale-95 transition-all top-1 left-4"
+		class="absolute group-hover:scale-95 transition-all top-1 left-0 md:left-4"
 	>
 		<path
 			d="M10.8594 57.25L49.5 8.09094L88.1406 57.25L10.8594 57.25Z"

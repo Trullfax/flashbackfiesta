@@ -1,0 +1,27 @@
+<svg width="506" height="1140" viewBox="0 0 506 1140" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_105_25606" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="506" height="1140">
+<path d="M0 204L506 1139.5V0L0 204Z" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_105_25606)">
+<rect x="554.852" y="-10" width="1440" height="1024" transform="rotate(90 554.852 -10)" fill="#F2F2F2"/>
+<line x1="676.293" y1="1982.17" x2="494.027" y2="-9.50396" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="576.709" y1="1991.29" x2="394.443" y2="-0.390677" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="477.125" y1="2000.4" x2="294.859" y2="8.7226" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="377.541" y1="2009.51" x2="195.276" y2="17.8359" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="277.957" y1="2018.63" x2="95.6917" y2="26.9492" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="178.373" y1="2027.74" x2="-3.892" y2="36.0624" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="78.7893" y1="2036.85" x2="-103.476" y2="45.1757" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="614.426" y1="43.9966" x2="-879.332" y2="180.696" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="623.54" y1="143.58" x2="-870.219" y2="280.279" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="632.653" y1="243.164" x2="-861.105" y2="379.863" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="641.766" y1="342.748" x2="-851.992" y2="479.447" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="650.879" y1="442.332" x2="-842.879" y2="579.031" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="659.993" y1="541.916" x2="-833.766" y2="678.615" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="669.106" y1="641.5" x2="-824.652" y2="778.199" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="678.219" y1="741.084" x2="-815.539" y2="877.783" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="687.332" y1="840.668" x2="-806.426" y2="977.367" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="696.446" y1="940.251" x2="-797.313" y2="1076.95" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="705.559" y1="1039.84" x2="-788.199" y2="1176.53" stroke="#ECECEC" stroke-width="2.14275"/>
+<line x1="714.672" y1="1139.42" x2="-779.086" y2="1276.12" stroke="#ECECEC" stroke-width="2.14275"/>
+</g>
+</svg>
