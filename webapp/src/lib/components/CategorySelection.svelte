@@ -24,8 +24,8 @@
 
 <Toasts />
 
-<div class="grid justify-items-center w-[100vw] md:w-[75vw] max-w-[1000px]">
-	<div class="justify-self-start">
+<div class="grid justify-items-center md:w-[60vw] md:-translate-y-[5vh]">
+	<div class="justify-self-start scale-[70%] md:scale-[100%]">
 		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
 	</div>
 
@@ -33,11 +33,14 @@
 		{#if categories && categories.length > 0}
 			{#each categories as category}
 				<div class="grid justify-items-center gap-6">
-					<button on:click={() => selectCategory(category)} class="w-[10rem] drop-shadow-bold">
+					<button
+						on:click={() => selectCategory(category)}
+						class="w-[8rem] md:w-[10rem] drop-shadow-bold"
+					>
 						<img
 							src={category.picture_path}
 							alt="categorycard for {category.name}"
-							class="w-[10rem] transition-all {selectedCategory.name === category.name
+							class="transition-all {selectedCategory.name === category.name
 								? '-translate-y-6'
 								: ''}"
 						/>
