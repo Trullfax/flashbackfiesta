@@ -30,6 +30,7 @@
 	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
 	let showConfetti: boolean = false;
+	let cardIsCorrect: boolean = false;
 
 	// Reactive block to handle assigned player and opponents
 	$: {
@@ -102,6 +103,13 @@
 				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
 				handlePlayerDeletes
 			)
+			.on('broadcast', { event: 'showAnswer' }, (broadcast) => {
+				if (broadcast.payload.cardIsCorrect) {
+					addToast({ message: `${broadcast.payload.playerName} was correct!`, type: 'success' });
+				} else {
+					addToast({ message: `${broadcast.payload.playerName} was wrong!`, type: 'error' });
+				}
+			})
 			.subscribe();
 
 		return () => {
@@ -139,7 +147,18 @@
 
 			tick().then(() => {
 				const cardElement = document.getElementById(String(newCard.id));
-				cardElement?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+
+				if (cardElement) {
+					setTimeout(() => {
+						cardElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+					}, 100);
+					setTimeout(() => {
+						(cardElement as HTMLElement).style.opacity = '.3';
+					}, 700);
+					setTimeout(() => {
+						(cardElement as HTMLElement).style.opacity = '1';
+					}, 1500);
+				}
 			});
 		} else {
 			data.cards = [...data.cards, newCard];
@@ -208,10 +227,18 @@
 				}
 				if (status === 'success') {
 					if (correct) {
-						addToast({ message: 'Correct!', type: 'success' });
+						cardIsCorrect = true;
 					} else {
-						addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+						cardIsCorrect = false;
 					}
+					await supabase.channel(gameId).send({
+						type: 'broadcast',
+						event: 'showAnswer',
+						payload: {
+							cardIsCorrect: cardIsCorrect,
+							playerName: myPlayer?.name || 'Unknown Player'
+						}
+					});
 					if (winner) {
 						addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
 					}

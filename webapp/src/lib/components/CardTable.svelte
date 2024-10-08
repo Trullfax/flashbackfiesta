@@ -104,7 +104,7 @@
 							{/if}
 						</div>
 					{/if}
-					<div id={String(card.id)} class="scale-75">
+					<div id={String(card.id)} class="scale-75 transition duration-1000 ease-in-out">
 						<CardFront
 							title={card.name}
 							subtitle={card.creator}
