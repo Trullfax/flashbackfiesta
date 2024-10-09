@@ -5,18 +5,21 @@
 	import { onMount } from 'svelte';
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
-	import StartpageBackground from '$lib/components/StartpageBackground.svelte';
+	import Background from '$lib/components/Background.svelte';
 
 	let pageTitle = 'Start your fiesta · Flashbackfiesta';
+
+	let startSection: HTMLElement;
+	let categorySection: HTMLElement;
 
 	export let data: PageData;
 
 	onMount(() => {
-		document.getElementById('start-section')?.scrollIntoView({ behavior: 'smooth' });
+		startSection?.scrollIntoView({ behavior: 'smooth' });
 	});
 
 	function scrollToCategorySelection() {
-		document.getElementById('category-section')?.scrollIntoView({ behavior: 'smooth' });
+		categorySection?.scrollIntoView({ behavior: 'smooth' });
 		pageTitle = 'Choose a category · Flashbackfiesta';
 	}
 
@@ -58,16 +61,22 @@
 </svelte:head>
 
 <main class="relative overflow-hidden">
-	<StartpageBackground />
-	<section id="start-section" class="h-screen relative z-10 flex items-center justify-center">
+	<Background />
+	<section
+		bind:this={startSection}
+		class="h-screen relative z-50 flex items-center justify-center p-6"
+	>
 		<Start on:click={scrollToCategorySelection} />
-		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple z-10">
+		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple">
 			<a class="font-contrail text-[.7rem] sm:text-l text-white" href="/imprint"
 				>made with ♥ by Anna-Lena Langhans and Tjalf-Bjarne Scharnweber</a
 			>
 		</div>
 	</section>
-	<section id="category-section" class="h-screen flex items-center justify-center">
+	<section
+		bind:this={categorySection}
+		class="h-screen flex relative z-50 justify-center items-center p-6"
+	>
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>
 </main>
