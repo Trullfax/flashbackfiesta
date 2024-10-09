@@ -63,35 +63,61 @@
 
 <Toasts />
 
-<div class="grid gap-10 lg:gap-0 lg:grid-cols-2 max-w-[75vw] justify-items-center items-center">
-	<div class="grid grid-cols-3 items-center gap-5 justify-items-center">
-		<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
+<div
+	class="grid md:grid-cols-2 justify-items-center items-center grid-rows-[7vh_12vh_30vh_10vh_5vh] md:grid-rows-[5vh_35vh_14vh_15vh] lg:grid-rows-[1.5rem_14rem_5rem_4rem] -translate-y-[2rem]"
+>
+	<p
+		class="font-contrail text-white text-2xl lg:text-4xl -rotate-[5deg] -translate-x-[4rem] md:-translate-x-[7.25rem] lg:-translate-x-[4.75rem] translate-y-[1rem]"
+	>
+		you're playing...
+	</p>
+
+	<div
+		class="h-[9rem] scale-[70%] lg:scale-[100%] flex items-center md:-translate-x-[3.75rem] lg:-translate-x-[0em]"
+	>
+		<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
+	</div>
+
+	<div
+		class="grid grid-cols-3 items-center justify-items-center -translate-x-[0.1rem] md:col-start-1 md:row-span-4 md:row-start-1"
+	>
+		<!-- TODO: change this, when refactoring game page -->
+		<div class="scale-[120%] md:scale-[80%]">
+			<ButtonArrow color="#ff847c" rotation={-80} on:click={prevAvatar} />
+		</div>
 		<div class="relative">
-			<img src={currentAvatar} alt="Avatar" class="md:ml-5 scale-150 drop-shadow-bold md:pr-5" />
+			<img
+				src={currentAvatar}
+				alt="Avatar"
+				class="max-w-[9rem] lg:max-w-[13rem] rotate-[1deg] drop-shadow-bold"
+			/>
 			<button
 				on:click={shuffleAvatars}
-				class="hover:rotate-[100deg] transition-all rounded-full absolute md:-bottom-[3.5rem] md:-right-[3.5rem] -right-[3rem] bg-red h-12 w-12 md:h-[4rem] md:w-[4rem] flex justify-center items-center drop-shadow-bold"
+				class="rounded-full absolute -right-[1.5rem] -bottom-[1.5rem] h-[3rem] lg:h-[4rem] w-[3rem] lg:w-[4rem] flex justify-center items-center drop-shadow-bold bg-red"
 			>
-				<Dice height={20} width={20} />
+				<div class="hover:rotate-[100deg] transition-all lg:scale-[130%]">
+					<Dice height={20} width={20} />
+				</div>
 			</button>
 		</div>
-		<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
-	</div>
-	<div class="max-w-max grid justify-items-start">
-		<p class="font-contrail text-white text-xl sm:text-3xl -rotate-[5deg] max-w-max mt-10 -mb-7 sm:-mb-5 lg:mt-0 md:mb-0 ">you're playing...</p>
-		<Title title={category.name ?? ''} subtitle="create your player" flip={false} />
-		<label for="playername">
-			<input
-				type="text"
-				bind:value={playerName}
-				name="playername"
-				autocomplete="off"
-				placeholder="how should we call you?"
-				class="font-contrail w-[250px] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none"
-			/>
-		</label>
-		<div class="mt-5 -ml-4 max-w-max">
-			<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handlePlayerSelection} />
+		<!-- TODO: change this, when refactoring game page -->
+		<div class="scale-[120%] md:scale-[80%]">
+			<ButtonArrow color="#ff847c" rotation={82} on:click={nextAvatar} />
 		</div>
+	</div>
+
+	<label for="playername">
+		<input
+			type="text"
+			bind:value={playerName}
+			name="playername"
+			autocomplete="off"
+			placeholder="how should we call you?"
+			class="font-contrail w-[15rem] md:w-[24rem] p-2 drop-shadow-bold relative z-10 focus-visible:outline-none -translate-x-[0.25rem]"
+		/>
+	</label>
+
+	<div class="md:-translate-x-[7.25rem]">
+		<ButtonSmall text="I'M READY" accent_color="#ff847c" on:click={handlePlayerSelection} />
 	</div>
 </div>

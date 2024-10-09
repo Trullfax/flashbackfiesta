@@ -163,7 +163,7 @@
 		<img
 			src={ziczac}
 			alt="background decoration"
-			class="absolute rotate-[150deg] min-h-[20vh] md:min-h-[26vh] max-h-[20vh] md:max-h-[26vh] -right-[12vw] md:right-[1vw] top-[12vh] md:top-[20vh]"
+			class="absolute rotate-[150deg] min-h-[20vh] md:min-h-[26vh] max-h-[20vh] md:max-h-[26vh] -right-[12vw] md:right-[1vw] -top-[0vh] md:top-[20vh]"
 		/>
 		<img
 			src={categoryPicturePath}

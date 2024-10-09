@@ -9,11 +9,14 @@
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
-	import SetupBackground from '$lib/components/SetupBackground.svelte';
+	import Background from '$lib/components/Background.svelte';
 
 	let pageTitle = 'Create your player · Flashbackfiesta';
 
 	export let data: PageData;
+
+	let playerLobbySection: HTMLElement;
+	let playerSelectionSection: HTMLElement;
 
 	const { gameId } = $page.params;
 
@@ -38,9 +41,9 @@
 		}
 
 		if (myPlayer) {
-			document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
+			playerLobbySection?.scrollIntoView({ behavior: 'smooth' });
 		} else {
-			document.getElementById('playerSelection-section')?.scrollIntoView({ behavior: 'smooth' });
+			playerSelectionSection?.scrollIntoView({ behavior: 'smooth' });
 		}
 
 		if (myPlayer) {
@@ -165,7 +168,7 @@
 			await joinPresence(myPlayer, data.game); // Join presence when player is created
 		}
 
-		document.getElementById('playerLobby-section')?.scrollIntoView({ behavior: 'smooth' });
+		playerLobbySection?.scrollIntoView({ behavior: 'smooth' });
 		pageTitle = 'Invite your friends · Flashbackfiesta';
 
 		isCreatingPlayer = false;
@@ -204,13 +207,21 @@
 <Toasts />
 
 <main class="overflow-hidden relative">
-	<SetupBackground />
-	<section id="playerSelection-section" class="h-screen flex items-center justify-center">
+	<div class="-translate-y-[200vh]">
+		<Background />
+	</div>
+	<section
+		bind:this={playerSelectionSection}
+		class="h-screen relative flex items-center justify-center p-6"
+	>
 		{#if !myPlayer}
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 		{/if}
 	</section>
-	<section id="playerLobby-section" class="h-screen flex items-center justify-center">
+	<section
+		bind:this={playerLobbySection}
+		class="h-screen relative flex items-center justify-center p-6"
+	>
 		<PlayerLobby
 			playerArray={data.players}
 			isCreator={isCreatorCheck()}

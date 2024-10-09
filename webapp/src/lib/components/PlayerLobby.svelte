@@ -6,6 +6,9 @@
 	import LoadingBar from './LoadingBar.svelte';
 
 	export let playerArray: Partial<Player>[] = [];
+
+	console.log(playerArray);
+
 	export let isCreator: boolean;
 	export let settingUp: boolean;
 
@@ -41,76 +44,96 @@
 	}
 </script>
 
-<div class="grid justify-items-center items-center gap-6 grid-rows-4">
-	<div class="flex flex-col items-center gap-4 row-span-3 max-w-full">
+<div
+	class="grid justify-items-center items-center grid-rows-[12vh_35vh_10vh_8vh] md:grid-rows-[12vh_42vh_17vh_17vh] lg:grid-rows-[8rem_15rem_4rem_7rem]"
+>
+	<div class="h-[9rem] scale-[70%] lg:scale-[100%] flex items-center">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />
-		<div
-			class="h-[12rem] sm:h-[10rem] p-5 gap-7 sm:gap-5 -translate-y-[1.5rem] grid"
-			style={`grid-template-columns: repeat(${playerArray.length}, 1fr);`}
-		>
-			{#if playerArray && playerArray.length > 0}
+	</div>
+
+	<div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 translate-y-[1rem]">
+		{#if playerArray && playerArray.length > 0}
+			{#if playerArray[0].is_creator}
+				<div
+					class="flex flex-col items-center gap-3
+							{settingUp ? 'animate-bounce' : ''}"
+				>
+					<img
+						src={playerArray[0].avatar_path}
+						alt="Avatar of Player {playerArray[0].name}"
+						class="drop-shadow-title -rotate-[3.5deg] max-w-[6.5rem] lg:max-w-[7.5rem] max-h-[6.5rem] lg:max-h-[7.5rem]"
+					/>
+					<p
+						class="font-contrail text-center text-white text-clip overflow-hidden break-words text-md lg:text-xl"
+					>
+						{playerArray[0].name}
+					</p>
+				</div>
+			{/if}
+			<div class="flex flex-row gap-8">
 				{#each { length: playerArray.length } as _, index}
-					<div class="flex flex-col items-center gap-3 sm:gap-5">
+					{#if !playerArray[index].is_creator}
 						<div
-							class="bg-grey drop-shadow-title
-							{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'} 
-							{playerArray[index].is_creator ? 'max-w-[6.5rem] max-h-[6.5rem]' : 'max-w-[5rem] max-h-[5rem]'}
+							class="flex flex-col items-center gap-3
 								{settingUp ? 'animate-bounce' : ''}"
 						>
 							<img
 								src={playerArray[index].avatar_path}
 								alt="Avatar of Player {playerArray[index].name}"
+								class="drop-shadow-title max-w-[5rem] lg:max-w-[6rem] max-h-[5rem] lg:max-h-[6rem]
+								{index % 2 === 0 ? '-rotate-[3.5deg]' : 'rotate-[2.5deg]'}"
 							/>
+							<p
+								class="font-contrail text-center text-white text-clip overflow-hidden break-words text-sm lg:text-lg"
+							>
+								{playerArray[index].name}
+							</p>
 						</div>
-						<div>
-							{#if playerArray[index]}
-								<p
-									class="sm:w-[8rem] font-contrail text-center text-white text-clip overflow-hidden break-words {index ===
-									0
-										? 'text-[1rem]'
-										: 'text-[.75rem]'}"
-								>
-									{playerArray[index].name}
-								</p>
-							{/if}
-						</div>
-					</div>
+					{/if}
 				{/each}
-			{:else}
-				<h3 class="font-contrail text-white col-span-full">no players found!</h3>
-			{/if}
-		</div>
-		<label for="gamelink">
-			<div class="flex flex-row gap-4">
-				<input
-					type="text"
-					value={currentUrl}
-					name="gamelink"
-					class="font-contrail text-[.7rem] sm:text-sm w-[15rem] sm:w-[20rem] p-1 sm:p-2 drop-shadow-bold z-10 focus-visible:outline-none"
-					readonly
-				/>
-				<div class="group">
-					<button
-						class="w-[2.5rem] h-[2.5rem] drop-shadow-bold bg-white flex justify-center items-center group-hover:bg-purple transition-all"
-						on:click={copyToClipboard}
-						><Copy strokeWidth={3.5} class="group-hover:text-white transition-all" />
-					</button>
-				</div>
 			</div>
-		</label>
+		{:else}
+			<h3 class="font-contrail text-white col-span-full">no players found!</h3>
+		{/if}
 	</div>
+
+	<label for="gamelink">
+		<div class="flex flex-row gap-4">
+			<input
+				type="text"
+				value={currentUrl}
+				name="gamelink"
+				class="font-contrail text-md w-[15rem] md:w-[24rem] p-2 drop-shadow-bold z-10 focus-visible:outline-none"
+				readonly
+			/>
+			<div class="group">
+				<button
+					class="w-[2.5rem] h-[2.5rem] drop-shadow-bold bg-white flex justify-center items-center group-hover:bg-purple transition-all"
+					on:click={copyToClipboard}
+					><Copy strokeWidth={3.5} class="group-hover:text-white transition-all" />
+				</button>
+			</div>
+		</div>
+	</label>
+
 	<div class="flex row-span-1">
 		{#if settingUp}
 			<div class="flex flex-col items-center gap-5 mt-5">
-				<span class="cardshuffle"></span>
-				<p class="text-white font-contrail text-lg mt-4">setting up game...</p>
+				<div class="scale-[80%] lg:scale-[100%]">
+					<span class="cardshuffle translate-y-[1rem]"></span>
+				</div>
+				<p class="text-white font-contrail text-lg mt-4 lg:mt-8">setting up game...</p>
 			</div>
 		{:else}
 			<div>
 				{#if isCreator}
-					<ButtonBig text="LET'S PLAY" on:click />
+					<div class="scale-[80%] lg:scale-[100%]">
+						<ButtonBig text="LET'S PLAY" on:click />
+					</div>
 				{:else}
-					<LoadingBar />
+					<div class="scale-[80%] lg:scale-[100%]">
+						<LoadingBar />
+					</div>
 					<p class="text-white font-contrail text-lg mt-4">
 						waiting for the host to start the fiesta...
 					</p>
