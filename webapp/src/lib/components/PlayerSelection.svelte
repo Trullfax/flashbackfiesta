@@ -64,7 +64,7 @@
 <Toasts />
 
 <div
-	class="grid md:grid-cols-2 justify-items-center items-center grid-rows-[7vh_12vh_30vh_10vh_5vh] md:grid-rows-[5vh_35vh_14vh_15vh] lg:grid-rows-[1.5rem_14rem_5rem_4rem] -translate-y-[2rem]"
+	class="grid md:grid-cols-2 justify-items-center items-center grid-rows-[7vh_12vh_30vh_10vh_5vh] md:grid-rows-[1rem_10rem_4rem_4rem] lg:grid-rows-[1.5rem_14rem_5rem_4rem] lg:-translate-y-[2rem]"
 >
 	<p
 		class="font-contrail text-white text-2xl lg:text-4xl -rotate-[5deg] -translate-x-[4rem] md:-translate-x-[7.25rem] lg:-translate-x-[4.75rem] translate-y-[1rem]"

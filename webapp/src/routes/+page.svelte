@@ -71,7 +71,7 @@
 	</section>
 	<section
 		bind:this={categorySection}
-		class="h-screen flex relative z-50 items-center justify-center p-6"
+		class="h-screen flex relative z-50 justify-center items-center p-6"
 	>
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>

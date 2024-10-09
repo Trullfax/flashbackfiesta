@@ -24,18 +24,20 @@
 
 <Toasts />
 
-<div class="grid justify-items-center md:w-[60vw] md:-translate-y-[5vh]">
-	<div class="justify-self-start scale-[70%] md:scale-[100%]">
+<div
+	class="grid grid-rows-[10vh_40vh_7vh] md:grid-rows-[5rem_16rem_4rem] lg:grid-rows-[8rem_24rem_4rem] justify-items-center items-center lg:w-[50vw] lg:-translate-y-[4vh]"
+>
+	<div class="justify-self-start scale-[70%] lg:scale-[100%]">
 		<Title title="CATEGORY" subtitle="choose a category" flip={true} />
 	</div>
 
-	<div class="h-[17rem] flex flex-row gap-4 md:gap-7">
+	<div class="flex flex-row gap-6 md:translate-y-[0.75rem] lg:translate-y-0">
 		{#if categories && categories.length > 0}
 			{#each categories as category}
-				<div class="grid justify-items-center gap-6">
+				<div class="grid justify-items-center gap-6 md:gap-3 lg:gap-6">
 					<button
 						on:click={() => selectCategory(category)}
-						class="w-[8rem] md:w-[10rem] drop-shadow-bold"
+						class="w-[8rem] lg:w-[10rem] drop-shadow-bold"
 					>
 						<img
 							src={category.picture_path}
@@ -59,7 +61,7 @@
 			<h3 class="font-contrail text-white col-span-full">no categories found!</h3>
 		{/if}
 	</div>
-	<div class="mt-12 md:mt-8">
+	<div>
 		<ButtonSmall
 			text="LET'S PLAY"
 			accent_color="var(--ff-green)"
