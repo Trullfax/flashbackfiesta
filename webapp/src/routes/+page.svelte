@@ -64,7 +64,7 @@
 	<Background />
 	<section
 		bind:this={startSection}
-		class="h-screen relative z-50 flex items-center justify-center p-6"
+		class="h-dvh relative z-50 flex items-center justify-center p-6"
 	>
 		<Start on:click={scrollToCategorySelection} />
 		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple">
@@ -75,7 +75,7 @@
 	</section>
 	<section
 		bind:this={categorySection}
-		class="h-screen flex relative z-50 justify-center items-center p-6"
+		class="h-dvh flex relative z-50 justify-center items-center p-6"
 	>
 		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
 	</section>

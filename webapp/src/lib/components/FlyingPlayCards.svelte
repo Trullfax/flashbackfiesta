@@ -2,7 +2,7 @@
 	export let category: Category;
 </script>
 
-<div class="absolute h-screen w-screen overflow-hidden">
+<div class="absolute h-dvh w-screen overflow-hidden">
 	<div class="fixed md:absolute rotate-45 top-1/2 -left-10 md:-left-20 top-50 z-10">
 		<img
 			src={category.picture_path}
