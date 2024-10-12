@@ -276,7 +276,7 @@
 <Toasts />
 
 <main
-	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative w-screen overflow-hidden"
+	class="md:max-h-dvh h-dvh grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative w-screen overflow-hidden"
 >
 	{#if myPlayer}
 		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
