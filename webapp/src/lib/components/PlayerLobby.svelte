@@ -7,8 +7,6 @@
 
 	export let playerArray: Partial<Player>[] = [];
 
-	console.log(playerArray);
-
 	export let isCreator: boolean;
 	export let settingUp: boolean;
 
