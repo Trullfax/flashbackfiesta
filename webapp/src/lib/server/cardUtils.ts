@@ -1,7 +1,7 @@
 import { createCard } from '$lib/server/databaseBackend';
 import { getCardsByGameId } from '$lib/database';
 
-export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
+export async function generateCardsFromWikidata(sparqlQuery: string, categoryType: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
     try {
         const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
 
@@ -54,12 +54,22 @@ export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: 
             }
 
             if (!duplicateYear && !duplicateName) {
-                const imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, queryLink, fetch);
+                let imageUrl;
+                switch (categoryType) {
+                    case 'movies':
+                        imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, categoryType, fetch);
+                    case 'tv':
+                        imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, categoryType, fetch);
+                    case 'music':
+                        imageUrl = await fetchSpotifyImage(wikidataItem.itemLabel.value, wikidataItem.year.value, wikidataItem.creatorLabel.value, fetch);
+                    default:
+                        imageUrl = {success: false, url: '', error: 'category for image not found!'};
+                }
 
                 if (!imageUrl.success) {
                     console.error(`Error fetching image: ${imageUrl.error}`);
                     continue;
-                } 
+                }
 
                 card.picture_url = imageUrl.url ?? '';
 
@@ -82,10 +92,11 @@ export async function generateCardsFromWikidata(sparqlQuery: string, queryLink: 
     }
 }
 
-async function fetchTMDBImage(title: string, year: string, queryLink: string, fetch: typeof globalThis.fetch) {
+async function fetchTMDBImage(title: string, year: string, categoryType: string, fetch: typeof globalThis.fetch) {
     try {
-        const TMDB_API_KEY = process.env.TMDB_SECRET_API_KEY;
-        const searchUrl = `${queryLink}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
+        const queryLink = (categoryType == 'movies' ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/search/tv');
+        const tmdbApiKey = process.env.TMDB_SECRET_API_KEY;
+        const searchUrl = `${queryLink}?api_key=${tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
 
         const response = await fetch(searchUrl);
 
@@ -114,3 +125,43 @@ async function fetchTMDBImage(title: string, year: string, queryLink: string, fe
         return { success: false, error: (err as Error).message };
     }
 }
+
+async function fetchSpotifyImage(title: string, year: string, artist: string, fetch: typeof globalThis.fetch) {
+    try {
+        const queryLink = 'https://api.spotify.com/v1/search?type=track';
+        const spotifyAccessToken = process.env.SPOTIFY_SECRET_API_KEY;
+        const searchUrl = `${queryLink}&q=track:${encodeURIComponent(title)}%20artist:${encodeURIComponent(artist)}%20year:${year}&limit=1`;
+
+        const response = await fetch(searchUrl, {
+            headers: {
+                Authorization: `Bearer ${spotifyAccessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data from Spotify');
+        }
+
+        const data = await response.json();
+
+        if (data.tracks && data.tracks.items.length > 0) {
+            const track = data.tracks.items[0];
+            // Check if the release date matches the year and the artist name matches
+            if (
+                track.album.release_date &&
+                track.album.release_date.startsWith(year) &&
+                track.artists.some((a: { name: string }) => a.name.toLowerCase() === artist.toLowerCase())
+            ) {
+                if (track.album.images && track.album.images.length > 0) {
+                    return { success: true, url: track.album.images[0].url, error: null }; // Return the largest available image
+                }
+            }
+        }
+
+        throw new Error('No image found.');
+    } catch (err) {
+        return { success: false, error: (err as Error).message };
+    }
+}
+
