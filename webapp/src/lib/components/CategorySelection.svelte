@@ -37,7 +37,7 @@
 				<div class="grid justify-items-center gap-6 md:gap-3 lg:gap-6">
 					<button
 						on:click={() => selectCategory(category)}
-						class="w-[8rem] lg:w-[10rem] drop-shadow-bold"
+						class="w-[6.5rem] lg:w-[10rem] drop-shadow-bold"
 					>
 						<img
 							src={category.picture_path}
@@ -50,8 +50,8 @@
 					<p
 						class="font-contrail text-white drop-shadow-[3px_2px_0_#1d1e1d] transition-all {selectedCategory.name ===
 						category.name
-							? 'text-3xl'
-							: 'text-2xl'}"
+							? 'text-2xl lg:text-3xl'
+							: 'text-xl lg:text-2xl'}"
 					>
 						{category.name}
 					</p>
