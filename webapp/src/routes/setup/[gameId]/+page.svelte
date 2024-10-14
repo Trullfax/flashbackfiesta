@@ -212,7 +212,7 @@
 	</div>
 	<section
 		bind:this={playerSelectionSection}
-		class="h-screen relative flex items-center justify-center p-6"
+		class="h-dvh relative flex items-center justify-center p-6"
 	>
 		{#if !myPlayer}
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
@@ -220,7 +220,7 @@
 	</section>
 	<section
 		bind:this={playerLobbySection}
-		class="h-screen relative flex items-center justify-center p-6"
+		class="h-dvh relative flex items-center justify-center p-6"
 	>
 		<PlayerLobby
 			playerArray={data.players}

@@ -6,7 +6,7 @@
 	export let winner_self: boolean = false;
 </script>
 
-<div class="h-screen w-screen bg-black bg-opacity-25 absolute z-30">
+<div class="h-dvh w-screen bg-black bg-opacity-25 absolute z-30">
 	<div class="flex items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 		<div class="flex flex-col items-center">
 			{#if winner !== null}

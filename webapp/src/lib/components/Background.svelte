@@ -50,7 +50,7 @@
 
 <div class="absolute w-screen top-0">
 	<!-- SECTION 1: START -->
-	<section class="relative h-screen">
+	<section class="relative h-dvh">
 		<div>
 			<div
 				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold rotate-[150deg] -top-[6vh] md:-top-[3vh] -left-[9vw] md:left-[10vw]"
@@ -105,7 +105,7 @@
 	</section>
 
 	<!-- SECTION 2: CATEGORY SELECTION -->
-	<section class="relative h-screen flex items-center justify-center">
+	<section class="relative h-dvh flex items-center justify-center">
 		<div
 			class="w-full h-[135vh] z-10 bg-[url('$lib/assets/background/red-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[5vh] md:-translate-y-[0vh]"
 		/>
@@ -149,7 +149,7 @@
 	</section>
 
 	<!-- SECTION 3: CHARACTER SELECTION -->
-	<section class="relative h-screen">
+	<section class="relative h-dvh">
 		<img
 			src={dottedTriangle}
 			alt="background decoration"
@@ -183,7 +183,7 @@
 	</section>
 
 	<!-- SECTION 4: LOBBY -->
-	<section class="relative h-screen flex items-center justify-center">
+	<section class="relative h-dvh flex items-center justify-center">
 		<div
 			class="w-full h-[120vh] z-10 bg-[url('$lib/assets/background/blue-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[7vh]"
 		/>
