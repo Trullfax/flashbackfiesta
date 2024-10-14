@@ -67,7 +67,7 @@ async function handlePlayerOffline(leftPresences: Presence[]) {
 		return players;
 	});
 
-	const time: number = game.status === 'not_started' ? 5000 : 15000;
+	const time: number = game.status === 'not_started' ? 15000 : 15000;
 
 	// Delay handling player offline to allow for page transitions/rejoins
 	presenceTimeouts.update((timeouts) => {

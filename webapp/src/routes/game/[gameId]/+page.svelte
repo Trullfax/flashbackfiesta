@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
@@ -29,6 +30,7 @@
 	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
 	let showConfetti: boolean = false;
+	let cardIsCorrect: boolean = false;
 
 	// Reactive block to handle assigned player and opponents
 	$: {
@@ -101,6 +103,13 @@
 				{ event: 'DELETE', schema: 'public', filter: `game_id=eq.${gameId}`, table: 'Player' }, // ATTENTION: filter: 'id=eq.${gameId}' for event: DELETE not supported by Supabase
 				handlePlayerDeletes
 			)
+			.on('broadcast', { event: 'showAnswer' }, (broadcast) => {
+				if (broadcast.payload.cardIsCorrect) {
+					addToast({ message: `${broadcast.payload.playerName} was correct!`, type: 'success' });
+				} else {
+					addToast({ message: `${broadcast.payload.playerName} was wrong!`, type: 'error' });
+				}
+			})
 			.subscribe();
 
 		return () => {
@@ -135,6 +144,22 @@
 		if (newCard.played) {
 			data.cards = data.cards.filter((card) => card.id !== newCard.id);
 			data.tableCards = [...data.tableCards, newCard];
+
+			tick().then(() => {
+				const cardElement = document.getElementById(String(newCard.id));
+
+				if (cardElement) {
+					setTimeout(() => {
+						cardElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+					}, 100);
+					setTimeout(() => {
+						(cardElement as HTMLElement).style.opacity = '.3';
+					}, 700);
+					setTimeout(() => {
+						(cardElement as HTMLElement).style.opacity = '1';
+					}, 1500);
+				}
+			});
 		} else {
 			data.cards = [...data.cards, newCard];
 		}
@@ -202,10 +227,18 @@
 				}
 				if (status === 'success') {
 					if (correct) {
-						addToast({ message: 'Correct!', type: 'success' });
+						cardIsCorrect = true;
 					} else {
-						addToast({ message: 'Incorrect! You lost this round!', type: 'error' });
+						cardIsCorrect = false;
 					}
+					await supabase.channel(gameId).send({
+						type: 'broadcast',
+						event: 'showAnswer',
+						payload: {
+							cardIsCorrect: cardIsCorrect,
+							playerName: myPlayer?.name || 'Unknown Player'
+						}
+					});
 					if (winner) {
 						addToast({ message: `The winner of this game is ${winner.name}`, type: 'success' });
 					}
@@ -243,7 +276,7 @@
 <Toasts />
 
 <main
-	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
+	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative w-screen overflow-hidden"
 >
 	{#if myPlayer}
 		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
@@ -292,7 +325,10 @@
 			{/if}
 		</div>
 
-		<div class="col-span-full h-full md:h-auto grid relative z-10 overflow-y-scroll">
+		<div
+			class="col-span-full h-full w-screen justify-items-center md:h-auto grid relative z-10 overflow-y-scroll"
+			style="scrollbar-width: none;"
+		>
 			<CardTable
 				player={myPlayer}
 				game={data.game}
