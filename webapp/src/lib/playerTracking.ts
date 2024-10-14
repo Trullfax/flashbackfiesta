@@ -17,7 +17,6 @@ export async function joinPresence(player: Player, game: Game) {
 		String(currentPresenceChannel.subTopic) !== String(`presence:${game.id}`)
 	) {
 		handlePlayerOnline(player);
-		console.log('old channel');
 	} else {
 		// Create the presence channel
 		currentPresenceChannel = supabase
@@ -36,8 +35,6 @@ export async function joinPresence(player: Player, game: Game) {
 
 		// Join the presence channel with the player ID
 		await currentPresenceChannel.track({ player: player, game: game });
-
-		console.log('new channel');
 	}
 }
 

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
 	import { addToast } from '$lib/stores/toastStore';
 	import { onMount } from 'svelte';
 	import Start from '$lib/components/Start.svelte';
@@ -14,7 +13,15 @@
 
 	export let data: PageData;
 
-	onMount(() => {
+	let barba: any;
+
+	onMount(async () => {
+		if (typeof window !== 'undefined') {
+			// Dynamically import barba only in the browser context
+			const { default: barbaLib } = await import('@barba/core');
+			barba = barbaLib;
+		}
+
 		startSection?.scrollIntoView({ behavior: 'smooth' });
 	});
 
@@ -48,7 +55,7 @@
 
 		localStorage.setItem('creatorCode', creatorCode);
 
-		goto('/setup/' + gameId);
+		barba.go('/setup/' + gameId);
 	}
 </script>
 
@@ -60,23 +67,25 @@
 	/>
 </svelte:head>
 
-<main class="relative overflow-hidden">
-	<Background />
-	<section
-		bind:this={startSection}
-		class="h-dvh relative z-50 flex items-center justify-center p-6"
-	>
-		<Start on:click={scrollToCategorySelection} />
-		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple">
-			<a class="font-contrail text-[.7rem] sm:text-l text-white" href="/imprint"
-				>made with ♥ by Anna-Lena Langhans and Tjalf-Bjarne Scharnweber</a
-			>
-		</div>
-	</section>
-	<section
-		bind:this={categorySection}
-		class="h-dvh flex relative z-50 justify-center items-center p-6"
-	>
-		<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
-	</section>
+<main data-barba="wrapper" class="relative overflow-hidden">
+	<div data-barba="container" data-barba-namespace="home">
+		<Background />
+		<section
+			bind:this={startSection}
+			class="h-dvh relative z-50 flex items-center justify-center p-6"
+		>
+			<Start on:click={scrollToCategorySelection} />
+			<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple">
+				<a class="font-contrail text-[.7rem] sm:text-l text-white" href="/imprint"
+					>made with ♥ by Anna-Lena Langhans and Tjalf-Bjarne Scharnweber</a
+				>
+			</div>
+		</section>
+		<section
+			bind:this={categorySection}
+			class="h-dvh flex relative z-50 justify-center items-center p-6"
+		>
+			<CategorySelection categories={data.categories} on:submit={handleCategorySubmit} />
+		</section>
+	</div>
 </main>

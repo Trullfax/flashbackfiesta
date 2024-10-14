@@ -27,7 +27,15 @@
 	let isStarting: boolean = false;
 	let isCreatingPlayer = false;
 
-	onMount(() => {
+	let barba: any;
+
+	onMount(async () => {
+		if (typeof window !== 'undefined') {
+			// Dynamically import barba only in the browser context
+			const { default: barbaLib } = await import('@barba/core');
+			barba = barbaLib;
+		}
+
 		if (typeof window !== 'undefined') {
 			storedPlayerId = localStorage.getItem('playerId');
 
@@ -206,27 +214,29 @@
 
 <Toasts />
 
-<main class="overflow-hidden relative">
-	<div class="-translate-y-[200vh]">
-		<Background />
+<main data-barba="wrapper" class="overflow-hidden relative">
+	<div data-barba="container" data-barba-namespace="setup">
+		<div class="-translate-y-[200dvh]">
+			<Background />
+		</div>
+		<section
+			bind:this={playerSelectionSection}
+			class="h-dvh relative flex items-center justify-center p-6"
+		>
+			{#if !myPlayer}
+				<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
+			{/if}
+		</section>
+		<section
+			bind:this={playerLobbySection}
+			class="h-dvh relative flex items-center justify-center p-6"
+		>
+			<PlayerLobby
+				playerArray={data.players}
+				isCreator={isCreatorCheck()}
+				{settingUp}
+				on:click={startGame}
+			/>
+		</section>
 	</div>
-	<section
-		bind:this={playerSelectionSection}
-		class="h-dvh relative flex items-center justify-center p-6"
-	>
-		{#if !myPlayer}
-			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
-		{/if}
-	</section>
-	<section
-		bind:this={playerLobbySection}
-		class="h-dvh relative flex items-center justify-center p-6"
-	>
-		<PlayerLobby
-			playerArray={data.players}
-			isCreator={isCreatorCheck()}
-			{settingUp}
-			on:click={startGame}
-		/>
-	</section>
 </main>
