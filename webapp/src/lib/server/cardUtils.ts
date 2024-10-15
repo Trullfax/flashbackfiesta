@@ -55,19 +55,17 @@ export async function generateCardsFromWikidata(sparqlQuery: string, categoryTyp
 
             if (!duplicateYear && !duplicateName) {
                 let imageUrl;
-                switch (categoryType) {
-                    case 'movies':
-                        imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, categoryType, fetch);
-                    case 'tv':
-                        imageUrl = await fetchTMDBImage(wikidataItem.itemLabel.value, wikidataItem.year.value, categoryType, fetch);
-                    case 'music':
-                        imageUrl = await fetchSpotifyImage(wikidataItem.itemLabel.value, wikidataItem.year.value, wikidataItem.creatorLabel.value, fetch);
-                    default:
-                        imageUrl = {success: false, url: '', error: 'category for image not found!'};
+
+                if (categoryType === 'movies' || categoryType === 'tv') {
+                    imageUrl = await fetchTMDBImage(card.name, String(card.year), categoryType, fetch);
+                } else if (categoryType === 'music') {
+                    imageUrl = await fetchSpotifyImage(card.name, String(card.year), card.creator.split(',')[0].trim(), fetch);
+                } else {
+                    throw new Error('Invalid category type');
                 }
 
                 if (!imageUrl.success) {
-                    console.error(`Error fetching image: ${imageUrl.error}`);
+                    console.error(`Error fetching image for ${card.name}: ${imageUrl.error}`);
                     continue;
                 }
 
@@ -129,7 +127,7 @@ async function fetchTMDBImage(title: string, year: string, categoryType: string,
 async function fetchSpotifyImage(title: string, year: string, artist: string, fetch: typeof globalThis.fetch) {
     try {
         const queryLink = 'https://api.spotify.com/v1/search?type=track';
-        const spotifyAccessToken = process.env.SPOTIFY_SECRET_API_KEY;
+        const spotifyAccessToken = await getSpotifyAccessToken(process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET);
         const searchUrl = `${queryLink}&q=track:${encodeURIComponent(title)}%20artist:${encodeURIComponent(artist)}%20year:${year}&limit=1`;
 
         const response = await fetch(searchUrl, {
@@ -154,14 +152,35 @@ async function fetchSpotifyImage(title: string, year: string, artist: string, fe
                 track.artists.some((a: { name: string }) => a.name.toLowerCase() === artist.toLowerCase())
             ) {
                 if (track.album.images && track.album.images.length > 0) {
-                    return { success: true, url: track.album.images[0].url, error: null }; // Return the largest available image
+                    return { success: true, url: track.album.images[0].url, error: null };
                 }
             }
         }
 
-        throw new Error('No image found.');
+        throw new Error('No image for the specific search query found.');
     } catch (err) {
         return { success: false, error: (err as Error).message };
     }
+}
+
+async function getSpotifyAccessToken(clientId: string | undefined, clientSecret: string | undefined) {
+    const authUrl = 'https://accounts.spotify.com/api/token';
+    const encodedAuth = btoa(`${clientId}:${clientSecret}`);
+
+    const response = await fetch(authUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${encodedAuth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'grant_type=client_credentials',
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to get Spotify access token');
+    }
+
+    const data = await response.json();
+    return data.access_token;
 }
 

@@ -1,13 +1,3 @@
-// https://www.theaudiodb.com/free_music_api
-// Most of the basic calls will work using the test API key of "2". 
-// Rate Limit
-// Maximum 2 calls per second on all API methods
-
-// OR
-
-// https://developer.spotify.com/documentation/web-api/tutorials/getting-started
-
-
 import type { RequestHandler } from './$types';
 import { json } from "@sveltejs/kit";
 import { generateCardsFromWikidata } from '$lib/server/cardUtils';
@@ -22,7 +12,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             throw new Error('Failed to generate SPARQL query');
         }
 
-        const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, 'music', gameId, categoryId, fetch);
+        const categoryName = 'music';
+
+        const { success, addedCards, error } = await generateCardsFromWikidata(sparqlQuery, categoryName, gameId, categoryId, fetch);
 
         if (!success) {
             throw new Error(error || 'An unknown error occurred while generating cards');
@@ -48,7 +40,7 @@ function generateMusicQuery(numberOfCards: number, difficulty: string): string {
     }
 
     return `
-        SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creators) ?itemLabel ?random
+        SELECT DISTINCT ?item (MIN(YEAR(?year)) AS ?year) (GROUP_CONCAT(DISTINCT ?creatorLabel; separator=", ") AS ?creator) ?itemLabel ?random
         WHERE {
         ?item wdt:P31 wd:Q7366;
                 wdt:P577 ?year;

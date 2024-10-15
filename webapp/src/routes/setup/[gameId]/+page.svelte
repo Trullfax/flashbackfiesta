@@ -154,7 +154,7 @@
 		const { status, player, error } = await response.json();
 
 		if (!response.ok || status === 'error') {
-			addToast({ message: error || 'An unknown error occurred', type: 'error' });
+			addToast({ message: error || 'An unknown error occurred while creating the player', type: 'error' });
 			return;
 		}
 
@@ -189,8 +189,10 @@
 
 		const { status, error } = await response.json();
 
+		console.log('status: ' + status + '\n error:' + error);
+
 		if (!response.ok || status === 'error') {
-			addToast({ message: error || 'An unknown error occurred', type: 'error' });
+			addToast({ message: error || 'An unknown error occurred while starting the game', type: 'error' });
 			settingUp = false;
 			isStarting = false;
 			return;

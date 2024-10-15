@@ -190,7 +190,7 @@
 			selectedCard = myCardSelection;
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
-			addToast({ message: (err as Error).message || 'An unknown error occurred', type: 'error' });
+			addToast({ message: (err as Error).message || 'An unknown error occurred while submitting the card', type: 'error' });
 			return;
 		}
 	}
@@ -223,7 +223,7 @@
 				const { status, correct, winner, error } = await response.json();
 
 				if (!response.ok || status === 'error') {
-					throw new Error(error || 'An unknown error occurred');
+					throw new Error(error || 'An unknown error occurred while placing the card');
 				}
 				if (status === 'success') {
 					if (correct) {
