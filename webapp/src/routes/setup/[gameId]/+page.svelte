@@ -207,7 +207,7 @@
 <Toasts />
 
 <main class="overflow-hidden relative">
-	<div class="-translate-y-[200vh]">
+	<div class="-translate-y-[200dvh]">
 		<Background />
 	</div>
 	<section
