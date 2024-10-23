@@ -1,6 +1,7 @@
 import { supabase } from '$lib/supabaseClient';
 import { presenceChannel, onlinePlayers, presenceTimeouts } from '$lib/stores/playerTrackingStore';
 import { get } from 'svelte/store'; // Used to get the current value of a store
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface Presence {
 	game: Game;
@@ -9,9 +10,11 @@ interface Presence {
 }
 
 export async function joinPresence(player: Player, game: Game) {
-	let currentPresenceChannel = get(presenceChannel);
-
-	if (currentPresenceChannel !== null) {
+	let currentPresenceChannel: RealtimeChannel | null = get(presenceChannel);
+	if (
+		currentPresenceChannel !== null &&
+		String(currentPresenceChannel.subTopic) !== String(`presence:${game.id}`)
+	) {
 		handlePlayerOnline(player);
 	} else {
 		// Create the presence channel
