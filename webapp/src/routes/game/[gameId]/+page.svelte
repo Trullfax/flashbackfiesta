@@ -276,7 +276,7 @@
 <Toasts />
 
 <main
-	class="md:max-h-dvh h-dvh grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative w-screen overflow-hidden"
+	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
 >
 	{#if myPlayer}
 		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
@@ -326,7 +326,7 @@
 		</div>
 
 		<div
-			class="col-span-full h-full w-screen justify-items-center md:h-auto grid relative z-10 overflow-y-scroll"
+			class="col-span-full h-full md:h-auto grid relative z-10 overflow-y-scroll"
 			style="scrollbar-width: none;"
 		>
 			<CardTable
