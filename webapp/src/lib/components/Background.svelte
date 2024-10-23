@@ -87,7 +87,7 @@
 			<img
 				src={blueBow}
 				alt="background decoration"
-				class="absolute z-20 min-h-[15vh] md:min-h-[30vh] max-h-[15vh] md:max-h-[30vh] bottom-[5vh] md:-bottom-[4vh] -left-[8vw] md:left-[3vw]"
+				class="absolute rotate-35 z-20 min-h-[15vh] md:min-h-[30vh] max-h-[15vh] md:max-h-[30vh] bottom-[5vh] md:-bottom-[4vh] -left-[8vw] md:left-[3vw]"
 			/>
 			<div
 				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold -rotate-[15deg] bottom-[2vh] md:bottom-[7vh] -right-[10vw] md:right-[5vw]"
