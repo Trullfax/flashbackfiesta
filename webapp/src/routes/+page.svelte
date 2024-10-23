@@ -6,6 +6,7 @@
 	import Start from '$lib/components/Start.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
 	import Background from '$lib/components/Background.svelte';
+	import InformationButton from '$lib/components/informationButton.svelte';
 
 	let pageTitle = 'Start your fiesta · Flashbackfiesta';
 
@@ -62,16 +63,13 @@
 
 <main class="relative overflow-hidden">
 	<Background />
+	<InformationButton />
+
 	<section
 		bind:this={startSection}
 		class="h-dvh relative z-50 flex items-center justify-center p-6"
 	>
 		<Start on:click={scrollToCategorySelection} />
-		<div class="absolute bottom-0 flex justify-center items-center h-5 w-screen p-4 bg-purple">
-			<a class="font-contrail text-[.7rem] sm:text-l text-white" href="/imprint"
-				>made with ♥ by Anna-Lena Langhans and Tjalf-Bjarne Scharnweber</a
-			>
-		</div>
 	</section>
 	<section
 		bind:this={categorySection}
