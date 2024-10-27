@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { X } from 'lucide-svelte';
+	import logo from '$lib/assets/logo.svg';
+	import ButtonSmall from '$lib/components/ButtonSmall.svelte';
 </script>
 
 <svelte:head>
@@ -11,15 +12,18 @@
 	/>
 </svelte:head>
 
-<main class="imprint w-[100vw] overflow-scroll flex items-start justify-center">
-	<section class="w-[80vw] max-w-[800px] font-contrail text-white mt-10">
-		<div class="flex justify-between">
-			<h1 class="font-contrail text-yellow drop-shadow-subtitle">Flashback Fiesta</h1>
-			<button class="block mb-10" on:click={() => goto('/')}
-				><X size={48} color="var(--ff-red)" strokeWidth={3} /></button
-			>
+<main class="relative w-[100vw] overflow-scroll flex flex-col items-center">
+	<section
+		class="imprint w-[80vw] max-w-[800px] font-contrail text-white flex flex-col items-start"
+	>
+		<div class="flex flex-col items-center mb-10 mt-10 self-center">
+			<a href="/">
+				<img class="h-[10rem] max-w-[19rem]" src={logo} alt="Flashback Fiesta" />
+			</a>
+			<ButtonSmall text="BACK TO START" on:click={() => goto('/')} />
 		</div>
 
+		<h1 class="font-contrail text-yellow drop-shadow-subtitle">Imprint</h1>
 		<h2>Licensing Information</h2>
 		<h3>Code License</h3>
 		<p>
@@ -61,6 +65,9 @@
 			<a href="https://mitcheljager.github.io/svelte-confetti/">Svelte Confetti</a>.
 		</p>
 	</section>
+	<div class="bg-purple p-5 w-screen flex flex-row gap-8 justify-center items-center">
+		<a href="/privacy" class="font-contrail text-white text-lg">PRIVACY</a>
+	</div>
 </main>
 
 <style>
