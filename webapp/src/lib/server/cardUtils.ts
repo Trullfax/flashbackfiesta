@@ -31,40 +31,6 @@ export async function fetchTMDBImage(title: string, year: string, queryLink: str
     }
 }
 
-export async function fetchSpotifyImage(title: string, year: string, creators: string[], fetch: typeof globalThis.fetch) {
-    try {
-        const spotifyAccessToken = await getSpotifyAccessToken();
-        const searchUrl = `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(title)}&type=track&market=DE&limit=10&offset=0`;
-
-        const response = await fetch(searchUrl, {
-            headers: {
-                Authorization: `Bearer ${spotifyAccessToken}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch data from Spotify');
-        }
-
-        const data = await response.json();
-
-        if (data.tracks && data.tracks.items.length > 0) {
-            const track = data.tracks.items[0];
-
-            if (creators.some((creator) => track.artists.some((a: { name: string }) => a.name.toLowerCase() === creator.toLowerCase()))) {
-                if (track.album.images && track.album.images.length > 0) {
-                    return { success: true, url: track.album.images[0].url, error: null };
-                }
-            }
-        }
-
-        throw new Error('No image for the specific search query found.');
-    } catch (err) {
-        return { success: false, error: (err as Error).message };
-    }
-}
-
 export async function getSpotifyAccessToken() {
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
