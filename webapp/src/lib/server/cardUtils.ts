@@ -1,98 +1,5 @@
-import { createCard } from '$lib/server/databaseBackend';
-import { getCardsByGameId } from '$lib/database';
-
-export async function generateCardsFromWikidata(sparqlQuery: string, categoryType: string, gameId: string, categoryId: string, fetch: typeof globalThis.fetch) {
+export async function fetchTMDBImage(title: string, year: string, queryLink: string, fetch: typeof globalThis.fetch) {
     try {
-        const wikidataUrl = `https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}&format=json`;
-
-        const wikidataRes = await fetch(wikidataUrl, {
-            headers: {
-                'User-Agent': 'flashbackfiesta.app (https://flashbackfiesta.app)',
-            }
-        });
-
-        const responseText = await wikidataRes.text();
-        const wikidata = JSON.parse(responseText).results.bindings;
-
-        if (!wikidata || wikidata.length === 0) {
-            throw new Error('Failed to fetch data from Wikidata');
-        }
-
-        // Fetch the existing cards from your database
-        const { success: cardsRetrievedSuccess, data: cardsRetrievedData, error: cardsRetrievedError } = await getCardsByGameId(gameId);
-
-        if (!cardsRetrievedSuccess) {
-            throw new Error(cardsRetrievedError || 'Failed to retrieve existing cards');
-        }
-
-        let addedCards = 0;
-        const existingCards: Card[] = cardsRetrievedData || [];
-
-        for (const wikidataItem of wikidata) {
-            let duplicateYear = false;
-            let duplicateName = false;
-
-            const card: Card = {
-                id: '',
-                name: wikidataItem.itemLabel.value,
-                year: wikidataItem.year.value,
-                creator: wikidataItem.creator.value,
-                picture_url: '',
-                category_id: categoryId,
-                game_id: gameId,
-            };
-
-            if (existingCards && existingCards.length != 0) {
-                for (const existingCard of existingCards) {
-                    if (Number(existingCard.year) === Number(card.year)) {
-                        duplicateYear = true;
-                    }
-                    if (String(existingCard.name) === String(card.name)) {
-                        duplicateName = true;
-                    }
-                }
-            }
-
-            if (!duplicateYear && !duplicateName) {
-                let imageUrl;
-
-                if (categoryType === 'movies' || categoryType === 'tv') {
-                    imageUrl = await fetchTMDBImage(card.name, String(card.year), categoryType, fetch);
-                } else if (categoryType === 'music') {
-                    imageUrl = await fetchSpotifyImage(card.name, String(card.year), card.creator.split(',')[0].trim(), fetch);
-                } else {
-                    throw new Error('Invalid category type');
-                }
-
-                if (!imageUrl.success) {
-                    console.error(`Error fetching image for ${card.name}: ${imageUrl.error}`);
-                    continue;
-                }
-
-                card.picture_url = imageUrl.url ?? '';
-
-                const { success, card: cardInDb, error: createCardError } = await createCard(card);
-
-                if (!success || !cardInDb) {
-                    throw new Error(createCardError || `Failed to create card for ${card.name}`);
-                }
-
-                existingCards.push(cardInDb as Card);
-                addedCards++;
-            } else {
-                continue;
-            }
-        }
-
-        return { success: true, addedCards, error: null };
-    } catch (err) {
-        return { success: false, addedCards: 0, error: `Failed to generate cards: ${(err as Error).message}` };
-    }
-}
-
-async function fetchTMDBImage(title: string, year: string, categoryType: string, fetch: typeof globalThis.fetch) {
-    try {
-        const queryLink = (categoryType == 'movies' ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/search/tv');
         const tmdbApiKey = process.env.TMDB_SECRET_API_KEY;
         const searchUrl = `${queryLink}?api_key=${tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
 
@@ -124,11 +31,10 @@ async function fetchTMDBImage(title: string, year: string, categoryType: string,
     }
 }
 
-async function fetchSpotifyImage(title: string, year: string, artist: string, fetch: typeof globalThis.fetch) {
+export async function fetchSpotifyImage(title: string, year: string, creators: string[], fetch: typeof globalThis.fetch) {
     try {
-        const queryLink = 'https://api.spotify.com/v1/search?type=track';
-        const spotifyAccessToken = await getSpotifyAccessToken(process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET);
-        const searchUrl = `${queryLink}&q=track:${encodeURIComponent(title)}%20artist:${encodeURIComponent(artist)}%20year:${year}&limit=1`;
+        const spotifyAccessToken = await getSpotifyAccessToken();
+        const searchUrl = `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(title)}&type=track&market=DE&limit=10&offset=0`;
 
         const response = await fetch(searchUrl, {
             headers: {
@@ -145,12 +51,8 @@ async function fetchSpotifyImage(title: string, year: string, artist: string, fe
 
         if (data.tracks && data.tracks.items.length > 0) {
             const track = data.tracks.items[0];
-            // Check if the release date matches the year and the artist name matches
-            if (
-                track.album.release_date &&
-                track.album.release_date.startsWith(year) &&
-                track.artists.some((a: { name: string }) => a.name.toLowerCase() === artist.toLowerCase())
-            ) {
+
+            if (creators.some((creator) => track.artists.some((a: { name: string }) => a.name.toLowerCase() === creator.toLowerCase()))) {
                 if (track.album.images && track.album.images.length > 0) {
                     return { success: true, url: track.album.images[0].url, error: null };
                 }
@@ -163,7 +65,9 @@ async function fetchSpotifyImage(title: string, year: string, artist: string, fe
     }
 }
 
-async function getSpotifyAccessToken(clientId: string | undefined, clientSecret: string | undefined) {
+export async function getSpotifyAccessToken() {
+    const clientId = process.env.SPOTIFY_CLIENT_ID;
+    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
     const authUrl = 'https://accounts.spotify.com/api/token';
     const encodedAuth = btoa(`${clientId}:${clientSecret}`);
 
