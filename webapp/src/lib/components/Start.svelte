@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="grid justify-center justify-items-center grid-rows-[18vh_10vh] md:grid-rows-[8.5rem_8rem] lg:grid-rows-[16rem_13rem] gap-2"
+	class="grid justify-center justify-items-center grid-rows-[18dvh_10dvh] md:grid-rows-[8.5rem_8rem] lg:grid-rows-[16rem_13rem] gap-2"
 >
 	<img class="max-w-[19rem] lg:max-w-[30rem]" src={logo} alt="Flashback Fiesta" />
 	<div class="scale-[80%] lg:scale-[100%]">
