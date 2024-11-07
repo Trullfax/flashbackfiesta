@@ -7,8 +7,6 @@
 
 	export let playerArray: Partial<Player>[] = [];
 
-	console.log(playerArray);
-
 	export let isCreator: boolean;
 	export let settingUp: boolean;
 
@@ -45,7 +43,7 @@
 </script>
 
 <div
-	class="grid justify-items-center items-center grid-rows-[12vh_35vh_10vh_8vh] md:grid-rows-[5rem_10rem_4rem_6rem] lg:grid-rows-[8rem_15rem_4rem_7rem]"
+	class="grid justify-items-center items-center grid-rows-[12dvh_35dvh_10dvh_8dvh] md:grid-rows-[5rem_10rem_4rem_6rem] lg:grid-rows-[8rem_15rem_4rem_7rem]"
 >
 	<div class="h-[9rem] scale-[70%] lg:scale-[100%] flex items-center">
 		<Title title="YOUR FIESTA" subtitle="invite your friends" flip={true} />

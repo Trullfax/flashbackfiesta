@@ -37,7 +37,7 @@
 				<img
 					src={TutorialGraphic}
 					alt="Tutorial graphic"
-					class="max-h-[25dvh] md:max-h-[45vh] lg:max-h-[35vh] mt-6 md:mt-0 lg:mt-6 mb-6 md:mb-0 lg:mb-6 md:col-start-2 lg:col-start-1 md:row-span-3 lg:row-span-1 md:self-center"
+					class="max-h-[25dvh] md:max-h-[45dvh] lg:max-h-[35dvh] mt-6 md:mt-0 lg:mt-6 mb-6 md:mb-0 lg:mb-6 md:col-start-2 lg:col-start-1 md:row-span-3 lg:row-span-1 md:self-center"
 				/>
 				<p>
 					Now for the fun part! It's time to place all the cards from your hand in the correct
