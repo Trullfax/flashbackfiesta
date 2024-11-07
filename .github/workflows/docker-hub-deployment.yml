@@ -5,6 +5,9 @@ on: [workflow_dispatch]
 jobs:
   publish_image:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_ID: "${{ secrets.DOCKER_HUB_USERNAME }}/flashbackfiesta-webapp:${{ github.sha }}"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -15,17 +18,16 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          IMAGE_ID="${{ secrets.DOCKER_HUB_USERNAME }}/flashbackfiesta-webapp:${{ github.sha }}"
           docker buildx build ./webapp/ \
             --build-arg VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }} \
             --build-arg VITE_SUPABASE_KEY=${{ secrets.VITE_SUPABASE_KEY }} \
             --build-arg SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} \
             --build-arg TMDB_SECRET_API_KEY=${{ secrets.TMDB_SECRET_API_KEY }} \
-            -t $IMAGE_ID
+            -t ${{ env.IMAGE_ID }}
 
       - name: Push Docker Image to Registry
         run: |
-          docker push $IMAGE_ID
+          docker push ${{ env.IMAGE_ID }}
 
       - name: Set up SSH key
         run: |
@@ -39,7 +41,7 @@ jobs:
         run: |
           set -e
           ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} << EOF
-            docker pull $IMAGE_ID
+            docker pull ${{ env.IMAGE_ID }}
             docker stop flashbackfiesta-webapp || true
             docker rm flashbackfiesta-webapp || true
             docker run -d --name flashbackfiesta-webapp \
@@ -47,5 +49,6 @@ jobs:
               -e VITE_SUPABASE_KEY=${{ secrets.VITE_SUPABASE_KEY }} \
               -e SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} \
               -e TMDB_SECRET_API_KEY=${{ secrets.TMDB_SECRET_API_KEY }} \
-              -p 3000:3000 $IMAGE_ID
+              -p 3000:3000 ${{ env.IMAGE_ID }}
           EOF
+
