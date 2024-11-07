@@ -1,43 +1,43 @@
-name: SvelteKit Web App
+# name: SvelteKit Web App
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Set up SSH key
-        run: |
-          set -e
-          mkdir -p ~/.ssh
-          echo "${{ secrets.FLASHBACKFIESTA_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
+#       - name: Set up SSH key
+#         run: |
+#           set -e
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.FLASHBACKFIESTA_SSH_KEY }}" > ~/.ssh/id_ed25519
+#           chmod 600 ~/.ssh/id_ed25519
+#           ssh-keyscan -p 22 -t ed25519 ${{ secrets.FLASHBACKFIESTA_HOST }} >> ~/.ssh/known_hosts
 
-      - name: SSH Authentication
-        run: |
-          set -e
-          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'echo "SSH Authentication successful"'
+#       - name: SSH Authentication
+#         run: |
+#           set -e
+#           ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} 'echo "SSH Authentication successful"'
 
-      - name: Deploy Webapp
-        run: |
-          set -e
-          rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./webapp/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:${{ secrets.FLASHBACKFIESTA_APP_PATH }}
+#       - name: Deploy Webapp
+#         run: |
+#           set -e
+#           rsync -azP -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./webapp/ ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }}:${{ secrets.FLASHBACKFIESTA_APP_PATH }}
 
-      - name: Run Docker Compose for the Web App
-        run: |
-          set -e
-          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} \
-          'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.deploy.yml up --build -d'
+#       - name: Run Docker Compose for the Web App
+#         run: |
+#           set -e
+#           ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} \
+#           'docker compose -f ${{ secrets.FLASHBACKFIESTA_APP_PATH }}/docker-compose.deploy.yml up --build -d'
 
-      - name: Run Docker Compose for the Supabase Services
-        run: |
-          set -e
-          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} \
-          'docker compose -f ${{ secrets.FLASHBACKFIESTA_SUPABASE_PATH }}/docker/docker-compose.yml up --build -d'
+#       - name: Run Docker Compose for the Supabase Services
+#         run: |
+#           set -e
+#           ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} \
+#           'docker compose -f ${{ secrets.FLASHBACKFIESTA_SUPABASE_PATH }}/docker/docker-compose.yml up --build -d'

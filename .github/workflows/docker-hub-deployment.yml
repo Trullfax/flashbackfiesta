@@ -1,6 +1,9 @@
 name: Build and Publish image to Docker Hub
 
-on: [workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   publish_image:
@@ -51,4 +54,3 @@ jobs:
               -e TMDB_SECRET_API_KEY=${{ secrets.TMDB_SECRET_API_KEY }} \
               -p 3000:3000 ${{ env.IMAGE_ID }}
           EOF
-
