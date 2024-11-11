@@ -95,11 +95,11 @@ export async function deleteGame(gameId: string) {
 	}
 }
 
-export async function setPlayerActive(playerId: string, isActive: boolean) {
+export async function setPlayerIsOnline(playerId: string, isOnline: boolean) {
 	try {
 		const { error: activeError } = await supabase
 			.from('Player')
-			.update({ is_active: isActive })
+			.update({ is_online: isOnline })
 			.match({ id: playerId });
 
 		if (activeError) {
