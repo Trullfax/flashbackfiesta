@@ -1,7 +1,7 @@
 import { supabase } from '$lib/server/supabaseBackendClient';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { deleteGame } from '$lib/server/databaseBackend';
+import { deleteGame, setPlayerIsOnline } from '$lib/server/databaseBackend';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -47,17 +47,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		if (game.status !== 'not_started') {
-			if (playerArray.length <= 1) {
-				// Delete the game (this will doesnt work if the player is the only player, but it will stay here for now)
-				const { success, error } = await deleteGame(game.id);
-
-				if (!success) {
-					throw error;
-				}
-			}
-
 			if (String(game.whose_turn_id) === String(player.id)) {
 				// Set a new player as the player on turn
+				// TODO: implement is_online check
 				const { success: nextPlayerSuccess, error: nextPlayerError } = await setNextPlayerTurn(
 					playerArray as Player[],
 					player,
@@ -68,15 +60,18 @@ export const POST: RequestHandler = async ({ request }) => {
 					throw nextPlayerError;
 				}
 
-				// Remove the player from the game
-				const { success: deletionSuccess, error: deletionError } = await deletePlayer(player.id);
+				// set the player as offline
+				const { success: offlineSuccess, error: offlineError } = await setPlayerIsOnline(
+					player.id,
+					false
+				);
 
-				if (!deletionSuccess) {
-					throw deletionError;
+				if (!offlineSuccess) {
+					throw offlineError;
 				}
 			} else {
-				// Remove the player from the game
-				const { success, error } = await deletePlayer(player.id);
+				// set the player as offline
+				const { success, error } = await setPlayerIsOnline(player.id, false);
 
 				if (!success) {
 					throw error;

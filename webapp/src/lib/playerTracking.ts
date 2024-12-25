@@ -1,6 +1,6 @@
 import { supabase } from '$lib/supabaseClient';
 import { presenceChannel, onlinePlayers, presenceTimeouts } from '$lib/stores/playerTrackingStore';
-import { get } from 'svelte/store'; // Used to get the current value of a store
+import { get } from 'svelte/store';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface Presence {
@@ -11,37 +11,63 @@ interface Presence {
 
 export async function joinPresence(player: Player, game: Game) {
 	let currentPresenceChannel: RealtimeChannel | null = get(presenceChannel);
-	if (
-		currentPresenceChannel !== null &&
-		String(currentPresenceChannel.subTopic) !== String(`presence:${game.id}`)
-	) {
-		handlePlayerOnline(player);
-	} else {
-		// Create the presence channel
-		currentPresenceChannel = supabase
-			.channel(`presence:${game.id}`)
-			.on('presence', { event: 'sync' }, () => {})
-			.on('presence', { event: 'join' }, ({ newPresences }) =>
-				handlePlayerOnline(newPresences[0].player)
-			)
-			.on('presence', { event: 'leave' }, ({ leftPresences }) =>
-				handlePlayerOffline(leftPresences as Presence[])
-			)
-			.subscribe();
 
-		// Update the store with the new presence channel
-		presenceChannel.set(currentPresenceChannel);
+	// Create the presence channel
+	currentPresenceChannel = supabase
+		.channel(`presence:${game.id}`)
+		.on('presence', { event: 'sync' }, () => getPlayerStatus(game.id))
+		.on('presence', { event: 'join' }, ({ newPresences }) =>
+			handlePlayerOnline(newPresences[0].player)
+		)
+		.on('presence', { event: 'leave' }, ({ leftPresences }) =>
+			handlePlayerOffline(leftPresences as Presence[])
+		)
+		.subscribe();
 
-		// Join the presence channel with the player ID
-		await currentPresenceChannel.track({ player: player, game: game });
+	// Update the store with the new presence channel
+	presenceChannel.set(currentPresenceChannel);
+
+	// Join the presence channel with the player ID
+	await currentPresenceChannel.track({ player: player, game: game });
+}
+
+// write player status to store
+async function getPlayerStatus(gameId: string) {
+	const presenceState = get(presenceChannel)?.presenceState();
+
+	const { data, error } = await supabase
+		.from('Player')
+		.select('id, is_online')
+		.match({ game_id: gameId });
+
+	if (!error && presenceState) {
+		console.log(presenceState);
+		//TODO: check for consistancy between the presenceState and db
+
+		for (const player of data) {
+			onlinePlayers.update((players) => {
+				players[player.id] = player.is_online;
+				return players;
+			});
+		}
 	}
 }
 
-function handlePlayerOnline(player: Player) {
-	onlinePlayers.update((players) => {
-		players[player.id] = true; // Mark the player as online
-		return players;
+async function handlePlayerOnline(player: Player) {
+	// set the Player as online
+	const response = await fetch('/api/player-active', {
+		method: 'POST',
+		body: JSON.stringify({ playerId: player.id, isActive: true }),
+		headers: {
+			'Content-Type': 'application/json'
+		}
 	});
+
+	const { status, error } = await response.json();
+
+	if (!response.ok || status === 'error') {
+		console.error('Failed to update player (isActive):', error || 'Unknown error');
+	}
 
 	// Clear the timeout for this player if it exists
 	presenceTimeouts.update((timeouts) => {
@@ -57,22 +83,11 @@ async function handlePlayerOffline(leftPresences: Presence[]) {
 	const player = leftPresences[0].player;
 	const game = leftPresences[0].game;
 
-	// Mark the player as offline right away
-	onlinePlayers.update((players) => {
-		players[player.id] = false; // Mark the player as offline
-		return players;
-	});
-
-	const time: number = game.status === 'not_started' ? 15000 : 15000;
+	const time: number = game.status === 'not_started' ? 15000 : 5000;
 
 	// Delay handling player offline to allow for page transitions/rejoins
 	presenceTimeouts.update((timeouts) => {
 		timeouts[player.id] = setTimeout(async () => {
-			// Re-check the player's online status at the time of timeout
-			if (get(onlinePlayers)[player.id]) {
-				return; // Player rejoined, no need to timeout
-			}
-
 			const response = await fetch('/api/player-timeout', {
 				method: 'POST',
 				body: JSON.stringify({ player, gameId: game.id }),

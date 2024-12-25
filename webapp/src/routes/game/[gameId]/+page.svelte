@@ -42,7 +42,7 @@
 					throw new Error(`Player with ID ${storedPlayerId} not found`);
 				}
 
-				opponents = data.players.filter((player) => player.id !== storedPlayerId);
+				opponents = data.players.filter((player) => player.id !== storedPlayerId && player.is_online);
 				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {}
@@ -314,13 +314,13 @@
 		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
-					<div class={playerClasses[i]}>
-						<PlayerDeck
-							{player}
-							turn={data.game.whose_turn_id === player.id}
-							category={data.category}
-						/>
-					</div>
+						<div class={playerClasses[i]}>
+							<PlayerDeck
+								{player}
+								turn={data.game.whose_turn_id === player.id}
+								category={data.category}
+							/>
+						</div>
 				{/each}
 			{/if}
 		</div>
