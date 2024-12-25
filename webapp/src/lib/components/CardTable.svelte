@@ -66,9 +66,9 @@
 			<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 		</div>
 		<ul
-			class="flex flex-col md:grid pr-10 pl-10 items-center min-h-min h-full md:h-auto max-w-full flex-nowrap overflow-x-hidden transition-all"
+			class="flex flex-col md:grid pr-10 pl-10 items-center min-h-min h-full md:h-auto max-w-full flex-nowrap md:overflow-hidden transition-all"
 			bind:this={cardListContainer}
-			style={`grid-template-columns: repeat(${cards.length}, 1fr);`}
+			style={`grid-template-columns: repeat(${cards.length}, 1fr); scrollbar-width: none;`}
 		>
 			{#each cards as card, i}
 				<li
