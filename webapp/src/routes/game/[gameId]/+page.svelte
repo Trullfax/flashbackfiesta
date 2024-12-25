@@ -310,7 +310,7 @@
 		{/if}
 
 		<div
-			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
+			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center justify-items-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
 		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
@@ -339,7 +339,7 @@
 			/>
 		</div>
 
-		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-game-background bg-cover">
+		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-cover">
 			{#if myPlayer}
 				<PlayerSelfDeck
 					{myPlayer}
