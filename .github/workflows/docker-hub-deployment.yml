@@ -43,7 +43,6 @@ jobs:
       - name: Deploy to Server
         run: |
           set -e
-          docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" -p "${{ secrets.DOCKER_HUB_TOKEN }}"
           ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.FLASHBACKFIESTA_USERNAME }}@${{ secrets.FLASHBACKFIESTA_HOST }} << EOF
             docker pull ${{ env.IMAGE_ID }}
             docker stop flashbackfiesta-webapp || true
