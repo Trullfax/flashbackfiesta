@@ -41,8 +41,7 @@ async function getPlayerStatus(gameId: string) {
 		.match({ game_id: gameId });
 
 	if (!error && presenceState) {
-		console.log(presenceState);
-		//TODO: check for consistancy between the presenceState and db
+		//MAY BE A TODO: check for consistancy between the presenceState and db
 
 		for (const player of data) {
 			onlinePlayers.update((players) => {
