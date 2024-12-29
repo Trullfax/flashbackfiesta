@@ -1,7 +1,7 @@
 import { supabase } from '$lib/server/supabaseBackendClient';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { deleteGame, setPlayerIsOnline } from '$lib/server/databaseBackend';
+import { deleteGame, setPlayerIsOnline, setNextPlayerTurn } from '$lib/server/databaseBackend';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -26,8 +26,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			winner_id: data?.winner_id
 		} as Game;
 
-		const playerArray: Player[] = data.Player as Player[];
-
 		if (game.status === 'not_started') {
 			if (player.is_creator) {
 				// Delete the game
@@ -49,9 +47,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (game.status !== 'not_started') {
 			if (String(game.whose_turn_id) === String(player.id)) {
 				// Set a new player as the player on turn
-				// TODO: implement is_online check
 				const { success: nextPlayerSuccess, error: nextPlayerError } = await setNextPlayerTurn(
-					playerArray as Player[],
 					player,
 					game.id
 				);
@@ -91,32 +87,6 @@ async function deletePlayer(playerId: string) {
 
 		if (error) {
 			throw new Error('Failed to delete player: ' + error.message);
-		}
-
-		return { success: true, error: null };
-	} catch (err) {
-		return { success: false, error: err };
-	}
-}
-
-async function setNextPlayerTurn(players: Player[], player: Player, gameId: string) {
-	try {
-		const playerIndex = players.findIndex((p) => p.id === player.id);
-
-		if (playerIndex === -1) {
-			throw new Error('Player not found');
-		}
-
-		const nextPlayerIndex = playerIndex + 1 >= players.length ? 0 : playerIndex + 1;
-
-		// update game with next player                            ###rollback!!!
-		const { error: nextPlayerError } = await supabase
-			.from('Game')
-			.update({ whose_turn_id: players[nextPlayerIndex].id })
-			.match({ id: gameId });
-
-		if (nextPlayerError) {
-			throw new Error(nextPlayerError.message);
 		}
 
 		return { success: true, error: null };

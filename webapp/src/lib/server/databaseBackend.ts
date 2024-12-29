@@ -111,3 +111,39 @@ export async function setPlayerIsOnline(playerId: string, isOnline: boolean) {
 		return { success: false, error: err };
 	}
 }
+
+export async function setNextPlayerTurn(player: Player, gameId: string) {
+	try {
+		const { data, error } = await supabase.from('Player').select('*').eq('game_id', gameId);
+
+		if (error || !data) {
+			throw new Error('Failed to get players: ' + error.message || 'No data found');
+		}
+
+		const players = data.sort((a, b) => a.id.localeCompare(b.id));
+
+		const onlinePlayers = players.filter((p) => p.is_online === true);
+
+		const playerIndex = onlinePlayers.findIndex((p) => p.id === player.id);
+
+		if (playerIndex === -1) {
+			throw new Error('Player not found');
+		}
+
+		const nextPlayerIndex = playerIndex + 1 >= onlinePlayers.length ? 0 : playerIndex + 1;
+
+		// update game with next player                            ###rollback!!!
+		const { error: nextPlayerError } = await supabase
+			.from('Game')
+			.update({ whose_turn_id: onlinePlayers[nextPlayerIndex].id })
+			.match({ id: gameId });
+
+		if (nextPlayerError) {
+			throw new Error(nextPlayerError.message);
+		}
+
+		return { success: true, error: null };
+	} catch (err) {
+		return { success: false, error: err };
+	}
+}
