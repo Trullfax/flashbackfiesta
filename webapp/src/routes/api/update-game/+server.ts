@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { supabase } from '$lib/server/supabaseBackendClient';
-import { generateCards, updateCardOwner } from '$lib/server/databaseBackend';
+import { generateCards, updateCardOwner, setNextPlayerTurn } from '$lib/server/databaseBackend';
 import { getCardsByGameId } from '$lib/database';
 
 const minCardsInDeck: number = 15;
@@ -122,31 +122,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		}
 
 		// set next player on whose_turn_id
-		const { data: players, error: playersError } = await supabase
-			.from('Player')
-			.select('id')
-			.eq('game_id', game.id);
+		const { success: nextPlayerSuccess, error: nextPlayerError } = await setNextPlayerTurn(
+			player,
+			game.id
+		);
 
-		if (playersError || !players) {
-			throw new Error(playersError.message || 'No data found');
-		}
-
-		const playerIndex = players.findIndex((p) => p.id === player.id);
-
-		if (playerIndex === -1) {
-			throw new Error('Player not found');
-		}
-
-		const nextPlayerIndex = playerIndex + 1 >= players.length ? 0 : playerIndex + 1;
-
-		// update game with next player                            ###rollback!!!
-		const { error: nextPlayerError } = await supabase
-			.from('Game')
-			.update({ whose_turn_id: players[nextPlayerIndex].id })
-			.match({ id: game.id });
-
-		if (nextPlayerError) {
-			throw new Error(nextPlayerError.message);
+		if (!nextPlayerSuccess) {
+			throw nextPlayerError;
 		}
 
 		// check if more cards are needed
