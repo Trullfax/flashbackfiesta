@@ -5,7 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
+	import { myPlayer, currentGame, joinPresence } from '$lib/stores/playerTracking.store';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
@@ -20,7 +20,6 @@
 
 	const { gameId } = $page.params;
 
-	let myPlayer: Player | null = null;
 	let storedPlayerId: string | null = null;
 
 	let settingUp: boolean = false;
@@ -28,26 +27,24 @@
 	let isCreatingPlayer = false;
 
 	onMount(() => {
+		$currentGame = data.game;
+
 		if (typeof window !== 'undefined') {
 			storedPlayerId = localStorage.getItem('playerId');
 
 			for (const player of data.players) {
 				if (player.id === storedPlayerId) {
-					myPlayer = player;
+					$myPlayer = player;
 					pageTitle = 'Invite your friends · Flashbackfiesta';
 					break;
 				}
 			}
 		}
 
-		if (myPlayer) {
+		if ($myPlayer) {
 			playerLobbySection?.scrollIntoView({ behavior: 'smooth' });
 		} else {
 			playerSelectionSection?.scrollIntoView({ behavior: 'smooth' });
-		}
-
-		if (myPlayer) {
-			joinPresence(myPlayer, data.game);
 		}
 
 		const channels = supabase
@@ -75,7 +72,6 @@
 			.subscribe();
 
 		return () => {
-			unsubscribePresence();
 			channels.unsubscribe();
 		};
 	});
@@ -137,7 +133,7 @@
 	}
 
 	async function createPlayerAndScrollToPlayerLobby(playerName: string, selectedAvatar: string) {
-		if (isCreatingPlayer || myPlayer) return;
+		if (isCreatingPlayer || $myPlayer) return;
 
 		isCreatingPlayer = true;
 
@@ -162,10 +158,10 @@
 			localStorage.setItem('playerId', player.id);
 		}
 
-		myPlayer = player;
+		$myPlayer = player;
 
-		if (myPlayer) {
-			await joinPresence(myPlayer, data.game); // Join presence when player is created
+		if ($myPlayer && $currentGame) {
+			await joinPresence($currentGame); // Join presence when player is created
 		}
 
 		playerLobbySection?.scrollIntoView({ behavior: 'smooth' });
@@ -214,7 +210,7 @@
 		bind:this={playerSelectionSection}
 		class="h-dvh relative flex items-center justify-center p-6"
 	>
-		{#if !myPlayer}
+		{#if !$myPlayer}
 			<PlayerSelection on:submit={handlePlayerSubmit} category={data.category} />
 		{/if}
 	</section>

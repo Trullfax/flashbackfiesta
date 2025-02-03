@@ -7,7 +7,7 @@
 	import { addToast } from '$lib/stores/toastStore';
 	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
+	import { myPlayer, currentGame } from '$lib/stores/playerTracking.store';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
@@ -25,7 +25,6 @@
 	let channels: RealtimeChannel | null = null;
 
 	let storedPlayerId: string | null = null;
-	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
@@ -36,9 +35,9 @@
 	$: {
 		try {
 			if (storedPlayerId && data.players) {
-				myPlayer = data.players.find((player) => player.id === storedPlayerId) || null;
+				$myPlayer = data.players.find((player) => player.id === storedPlayerId) || null;
 
-				if (!myPlayer) {
+				if (!$myPlayer) {
 					throw new Error(`Player with ID ${storedPlayerId} not found`);
 				}
 
@@ -51,6 +50,8 @@
 	const { gameId } = $page.params;
 
 	onMount(() => {
+		$currentGame = data.game;
+
 		try {
 			if (typeof window !== 'undefined') {
 				storedPlayerId = localStorage.getItem('playerId');
@@ -67,7 +68,7 @@
 
 				for (const player of data.players) {
 					if (player.id === storedPlayerId) {
-						myPlayer = player;
+						$myPlayer = player;
 						break;
 					}
 				}
@@ -75,10 +76,6 @@
 		} catch (err) {
 			console.warn('Error:', (err as Error).message);
 			goto('/error');
-		}
-
-		if (myPlayer) {
-			joinPresence(myPlayer, data.game);
 		}
 
 		channels = supabase
@@ -113,7 +110,6 @@
 			.subscribe();
 
 		return () => {
-			unsubscribePresence;
 			channels?.unsubscribe();
 		};
 	});
@@ -198,7 +194,7 @@
 	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
 			if (!data.game.winner_id) {
-				if (data.game.whose_turn_id !== myPlayer?.id) {
+				if (data.game.whose_turn_id !== $myPlayer?.id) {
 					addToast({ message: 'It is not your turn!', type: 'error' });
 					return;
 				}
@@ -236,7 +232,7 @@
 						event: 'showAnswer',
 						payload: {
 							cardIsCorrect: cardIsCorrect,
-							playerName: myPlayer?.name || 'Unknown Player'
+							playerName: $myPlayer?.name || 'Unknown Player'
 						}
 					});
 					if (winner) {
@@ -278,8 +274,8 @@
 <main
 	class="md:max-h-dvh h-dvh grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
 >
-	{#if myPlayer}
-		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+	{#if $myPlayer}
+		{#if data.game.whose_turn_id !== $myPlayer?.id && !data.game.winner_id}
 			<div
 				class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0"
 			>
@@ -330,7 +326,7 @@
 			style="scrollbar-width: none;"
 		>
 			<CardTable
-				player={myPlayer}
+				player={$myPlayer}
 				game={data.game}
 				category={data.category}
 				cards={data.tableCards.sort((a, b) => a.year - b.year)}
@@ -340,12 +336,12 @@
 		</div>
 
 		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-cover">
-			{#if myPlayer}
+			{#if $myPlayer}
 				<PlayerSelfDeck
-					{myPlayer}
-					turn={data.game.whose_turn_id === myPlayer.id}
+					myPlayer={$myPlayer}
+					turn={data.game.whose_turn_id === $myPlayer.id}
 					category={data.category}
-					cards={data.cards.filter((card) => myPlayer && card.player_id === myPlayer.id)}
+					cards={data.cards.filter((card) => $myPlayer && card.player_id === $myPlayer.id)}
 					on:submitcard={handleCardSubmit}
 				/>
 			{/if}
@@ -353,13 +349,13 @@
 
 		<FlyingPlayCards category={data.category} />
 
-		<EmojiClick {myPlayer} {gameId} />
+		<EmojiClick myPlayer={$myPlayer} {gameId} />
 
-		{#if data.game.winner_id && myPlayer}
+		{#if data.game.winner_id && $myPlayer}
 			<GameEndScreen
 				category={data.category}
 				winner={data.players.find((player) => player.id === data.game.winner_id)}
-				winner_self={data.game.winner_id === myPlayer.id}
+				winner_self={data.game.winner_id === $myPlayer.id}
 				on:click={handleBackToStart}
 			/>
 		{/if}

@@ -1,7 +1,13 @@
+import { writable } from 'svelte/store';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '$lib/supabaseClient';
-import { presenceChannel, onlinePlayers, presenceTimeouts } from '$lib/stores/playerTrackingStore';
 import { get } from 'svelte/store';
-import type { RealtimeChannel } from '@supabase/supabase-js';
+
+export const currentGame = writable<Game | null>(null);
+export const myPlayer = writable<Player | null>(null);
+export const presenceChannel = writable<RealtimeChannel | null>(null);
+export const onlinePlayers = writable<Record<string, boolean>>({});
+export const presenceTimeouts = writable<Record<string, NodeJS.Timeout | null>>({});
 
 interface Presence {
 	game: Game;
@@ -9,7 +15,7 @@ interface Presence {
 	presence_ref: string;
 }
 
-export async function joinPresence(player: Player, game: Game) {
+export async function joinPresence(game: Game) {
 	let currentPresenceChannel: RealtimeChannel | null = get(presenceChannel);
 
 	// Create the presence channel
@@ -28,7 +34,7 @@ export async function joinPresence(player: Player, game: Game) {
 	presenceChannel.set(currentPresenceChannel);
 
 	// Join the presence channel with the player ID
-	await currentPresenceChannel.track({ player: player, game: game });
+	await currentPresenceChannel.track({ player: get(myPlayer), game: game });
 }
 
 // write player status to store
@@ -112,6 +118,8 @@ export function unsubscribePresence() {
 	const currentPresenceChannel = get(presenceChannel);
 	currentPresenceChannel?.unsubscribe();
 
+	currentGame.set(null);
+	myPlayer.set(null);
 	presenceChannel.set(null);
 	onlinePlayers.set({});
 	presenceTimeouts.set({});
