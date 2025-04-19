@@ -1,16 +1,12 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { deleteGame } from '$lib/server/databaseBackend';
+import { setPlayerIsOnline } from '$lib/server/databaseBackend';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { gameId } = await request.json();
+		const { playerId, isActive } = await request.json();
 
-		if (!gameId) {
-			throw new Error('gameId is invalid');
-		}
-
-		const { success, error } = await deleteGame(gameId);
+		const { success, error } = await setPlayerIsOnline(playerId, isActive);
 
 		if (!success) {
 			throw error;

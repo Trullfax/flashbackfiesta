@@ -13,9 +13,9 @@ declare global {
 
 	interface Game {
 		id: string;
-		status?: Database["public"]["Enums"]["status"];
+		status?: Database['public']['Enums']['status'];
 		max_card_count: number;
-		difficulty: Database["public"]["Enums"]["difficulty"];
+		difficulty: Database['public']['Enums']['difficulty'];
 		category_id: string;
 		whose_turn_id?: string;
 		creator_code: string;
@@ -32,8 +32,8 @@ declare global {
 
 	interface Card {
 		id: string;
-        name: string;
-        year: number;
+		name: string;
+		year: number;
 		creator: string;
 		picture_url: string;
 		category_id: string;
@@ -50,6 +50,7 @@ declare global {
 		avatar_path: string;
 		game_id: string;
 		is_creator: boolean;
+		is_online: boolean;
 	}
 }
 export {};

@@ -33,7 +33,7 @@ export async function generateCardsFromWikidata(
 		} = await getCardsByGameId(gameId);
 
 		if (!cardsRetrievedSuccess) {
-			throw new Error(cardsRetrievedError || 'Failed to retrieve existing cards');
+			throw cardsRetrievedError || 'Failed to retrieve existing cards';
 		}
 
 		let addedCards = 0;
@@ -82,7 +82,7 @@ export async function generateCardsFromWikidata(
 				const { success, card: cardInDb, error: createCardError } = await createCard(card);
 
 				if (!success || !cardInDb) {
-					throw new Error(createCardError || `Failed to create card for ${card.name}`);
+					throw createCardError || `Failed to create card for ${card.name}`;
 				}
 
 				existingCards.push(cardInDb as Card);
