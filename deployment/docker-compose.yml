@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: ${DOCKER_IMAGE_NAME}-frontend
+    image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}-frontend:main
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+      VITE_SUPABASE_KEY: ${VITE_SUPABASE_KEY}
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      TMDB_SECRET_API_KEY: ${TMDB_SECRET_API_KEY}
+    ports:
+      - "3000:3000"
