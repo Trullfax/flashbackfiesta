@@ -1,5 +1,6 @@
-import { createCard } from '$lib/server/databaseBackend';
+import { env } from '$env/dynamic/private';
 import { getCardsByGameId } from '$lib/database';
+import { createCard } from '$lib/server/databaseBackend';
 
 export async function generateCardsFromWikidata(
 	sparqlQuery: string,
@@ -108,8 +109,7 @@ async function fetchTMDBImage(
 	fetch: typeof globalThis.fetch
 ) {
 	try {
-		const TMDB_API_KEY = process.env.TMDB_SECRET_API_KEY;
-		const searchUrl = `${queryLink}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
+		const searchUrl = `${queryLink}?api_key=${env.TMDB_SECRET_API_KEY}&query=${encodeURIComponent(title)}&year=${year}`;
 
 		const response = await fetch(searchUrl);
 
