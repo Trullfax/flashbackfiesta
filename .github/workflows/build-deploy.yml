@@ -69,5 +69,5 @@ jobs:
           script: |
             docker stop flashbackfiesta-frontend || true
             docker rm flashbackfiesta-frontend || true
-            docker compose -f ${{ secrets.DOCKER_COMPOSE_FRONTEND_PATH }} up -d
+            docker compose -f ${{ secrets.DOCKER_COMPOSE_FRONTEND_PATH }} up --build -d
             docker compose -f ${{ secrets.DOCKER_COMPOSE_SUPABASE_PATH }} up --build -d
