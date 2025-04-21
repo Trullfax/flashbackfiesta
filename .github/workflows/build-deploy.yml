@@ -87,6 +87,5 @@ jobs:
           username: ${{ secrets.FLASHBACKFIESTA_USERNAME }}
           key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
           script: |
-            docker compose rm -s flashbackfiesta-frontend || true
             docker compose -f ${{ secrets.FRONTEND_DIR_PATH }}/docker-compose.yml up -d
             docker compose -f ${{ secrets.SUPABASE_DIR_PATH }}/docker-compose.yml up --build -d
