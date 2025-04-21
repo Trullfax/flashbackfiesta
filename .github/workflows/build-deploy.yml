@@ -56,7 +56,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      #
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Updating the docker-compose.yml file
+      # https://github.com/marketplace/actions/scp-files
+      - name: Update docker-compose.yml
+        id: update-docker-compose
+        if: github.event_name != 'pull_request'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.FLASHBACKFIESTA_HOST }}
+          username: ${{ secrets.FLASHBACKFIESTA_USERNAME }}
+          key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
+          source: ./deployment/*
+          target: ${{ secrets.FRONTEND_DIR_PATH }}
+
+      # Restarting the Docker containers
       # https://github.com/marketplace/actions/ssh-remote-commands
       - name: Restart Docker containers via SSH
         id: restart-docker-containers
@@ -67,7 +83,6 @@ jobs:
           username: ${{ secrets.FLASHBACKFIESTA_USERNAME }}
           key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
           script: |
-            docker stop flashbackfiesta-frontend || true
-            docker rm flashbackfiesta-frontend || true
-            docker compose -f ${{ secrets.DOCKER_COMPOSE_FRONTEND_PATH }} up --build -d
-            docker compose -f ${{ secrets.DOCKER_COMPOSE_SUPABASE_PATH }} up --build -d
+            docker compose rm -s flashbackfiesta-frontend || true
+            docker compose -f ${{ secrets.FRONTEND_DIR_PATH }}/docker-compose.yml up -d
+            docker compose -f ${{ secrets.SUPABASE_DIR_PATH }}/docker-compose.yml up --build -d
