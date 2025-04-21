@@ -71,6 +71,7 @@ jobs:
           key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
           source: ./deployment/*
           target: ${{ secrets.FRONTEND_DIR_PATH }}
+          strip_components: 1
 
       # Restarting the Docker containers
       # https://github.com/marketplace/actions/ssh-remote-commands
