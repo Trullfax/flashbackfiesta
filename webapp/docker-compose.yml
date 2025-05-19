@@ -5,12 +5,13 @@ services:
     container_name: frontend
     image: node:20-alpine
     ports:
-      - "3000:3000"
+      - "3000:3000"   # App port
+      - "9229:9229"   # Debugging port for Node.js
     volumes:
       - .:/app
       - node_modules:/app/node_modules
     working_dir: /app
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    command: sh -c "npm install && node --inspect=0.0.0.0:9229 ./node_modules/.bin/vite --host 0.0.0.0"
     env_file:
       - .env
 

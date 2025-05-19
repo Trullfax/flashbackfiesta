@@ -1,22 +1,21 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { tick } from 'svelte';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { supabase } from '$lib/supabaseClient';
-	import { addToast } from '$lib/stores/toastStore';
-	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { myPlayer, currentGame } from '$lib/stores/playerTracking.store';
+	import { page } from '$app/stores';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
-	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
-	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
-	import LoadingBar from '$lib/components/LoadingBar.svelte';
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
+	import LoadingBar from '$lib/components/LoadingBar.svelte';
+	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
+	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
+	import { currentGame, myPlayer } from '$lib/stores/playerTracking.store';
+	import { addToast } from '$lib/stores/toastStore';
+	import { supabase } from '$lib/supabaseClient';
 	import type { RealtimeChannel } from '@supabase/supabase-js';
+	import { onMount, tick } from 'svelte';
+	import { Confetti } from 'svelte-confetti';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -41,7 +40,9 @@
 					throw new Error(`Player with ID ${storedPlayerId} not found`);
 				}
 
-				opponents = data.players.filter((player) => player.id !== storedPlayerId && player.is_online);
+				opponents = data.players.filter(
+					(player) => player.id !== storedPlayerId && player.is_online
+				);
 				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {}
@@ -186,7 +187,10 @@
 			selectedCard = myCardSelection;
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
-			addToast({ message: (err as Error).message || 'An unknown error occurred', type: 'error' });
+			addToast({
+				message: (err as Error).message || 'An unknown error occurred while submitting the card',
+				type: 'error'
+			});
 			return;
 		}
 	}
@@ -219,7 +223,7 @@
 				const { status, correct, winner, error } = await response.json();
 
 				if (!response.ok || status === 'error') {
-					throw new Error(error || 'An unknown error occurred');
+					throw new Error(error || 'An unknown error occurred while placing the card');
 				}
 				if (status === 'success') {
 					if (correct) {
@@ -310,13 +314,13 @@
 		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
-						<div class={playerClasses[i]}>
-							<PlayerDeck
-								{player}
-								turn={data.game.whose_turn_id === player.id}
-								category={data.category}
-							/>
-						</div>
+					<div class={playerClasses[i]}>
+						<PlayerDeck
+							{player}
+							turn={data.game.whose_turn_id === player.id}
+							category={data.category}
+						/>
+					</div>
 				{/each}
 			{/if}
 		</div>
