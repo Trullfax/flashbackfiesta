@@ -1,3 +1,5 @@
+import { env } from '$env/dynamic/private';
+
 export async function fetchTMDBImage(
 	title: string,
 	year: string,
@@ -5,7 +7,7 @@ export async function fetchTMDBImage(
 	fetch: typeof globalThis.fetch
 ) {
 	try {
-		const tmdbApiKey = process.env.TMDB_SECRET_API_KEY;
+		const tmdbApiKey = env.TMDB_SECRET_API_KEY;
 		const searchUrl = `${queryLink}?api_key=${tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
 
 		const response = await fetch(searchUrl);
@@ -66,32 +68,58 @@ export async function fetchSpotifyImage(
 		}
 
 		const data = await response.json();
+		let imageUrl: string | undefined;
 
 		if (data.tracks && data.tracks.items.length > 0) {
-			const track = data.tracks.items[0];
-
-			if (
-				creators.some((creator) =>
-					track.artists.some(
-						(a: { name: string }) => a.name.toLowerCase() === creator.toLowerCase()
+			for (const track of data.tracks.items) {
+				if (
+					creators.some((creator) =>
+						track.artists.some(
+							(a: { name: string }) => a.name.toLowerCase() === creator.toLowerCase()
+						)
 					)
-				)
-			) {
-				if (track.album.images && track.album.images.length > 0) {
-					return { success: true, url: track.album.images[0].url, error: null };
+				) {
+					if (track.album.images && track.album.images.length > 0) {
+						imageUrl = track.album.images[0].url;
+						break;
+					}
 				}
 			}
 		}
 
-		throw new Error('No image for the specific search query found.');
+		if (imageUrl) {
+			return { success: true, url: imageUrl, error: null };
+		} else {
+			// console.log('WD_Title', title);
+			// console.log('WD_Year', year);
+			// console.log('WD_Creators', creators);
+			// console.log(
+			// 	'------------- FOUND TRACKS - START -----------------------------------------------------'
+			// );
+
+			// for (const track of data.tracks.items) {
+			// 	console.log('SP_Track', track.name);
+			// 	console.log(
+			// 		'SP_ARTISTS',
+			// 		track.artists.map((a: { name: string }) => a.name)
+			// 	);
+			// 	console.log('SP_ALBUM_IMAGE', track.album.images[0]?.url);
+			// }
+
+			// console.log(
+			// 	'------------- FOUND TRACKS - END -------------------------------------------------------'
+			// );
+
+			throw new Error('No image for the specific search query found.');
+		}
 	} catch (err) {
 		return { success: false, error: (err as Error).message };
 	}
 }
 
 export async function getSpotifyAccessToken() {
-	const clientId = process.env.SPOTIFY_CLIENT_ID;
-	const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+	const clientId = env.SPOTIFY_CLIENT_ID;
+	const clientSecret = env.SPOTIFY_CLIENT_SECRET;
 	const authUrl = 'https://accounts.spotify.com/api/token';
 	const encodedAuth = btoa(`${clientId}:${clientSecret}`);
 
