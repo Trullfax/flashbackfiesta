@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  app:
+  frontend:
+    container_name: frontend
     image: node:20-alpine
     ports:
       - "3000:3000"   # App port

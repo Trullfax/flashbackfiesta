@@ -1,22 +1,21 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { tick } from 'svelte';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { supabase } from '$lib/supabaseClient';
-	import { addToast } from '$lib/stores/toastStore';
-	import { Confetti } from 'svelte-confetti';
 	import { goto } from '$app/navigation';
-	import { joinPresence, unsubscribePresence } from '$lib/playerTracking';
+	import { page } from '$app/stores';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import CardTable from '$lib/components/CardTable.svelte';
-	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
-	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
-	import LoadingBar from '$lib/components/LoadingBar.svelte';
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
+	import LoadingBar from '$lib/components/LoadingBar.svelte';
+	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
+	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
+	import { currentGame, myPlayer } from '$lib/stores/playerTracking.store';
+	import { addToast } from '$lib/stores/toastStore';
+	import { supabase } from '$lib/supabaseClient';
 	import type { RealtimeChannel } from '@supabase/supabase-js';
+	import { onMount, tick } from 'svelte';
+	import { Confetti } from 'svelte-confetti';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -25,7 +24,6 @@
 	let channels: RealtimeChannel | null = null;
 
 	let storedPlayerId: string | null = null;
-	let myPlayer: Player | null = null;
 	let opponents: Player[] = [];
 	let waitingFor: Player | null = null;
 	let selectedCard: Card | null = null;
@@ -36,13 +34,15 @@
 	$: {
 		try {
 			if (storedPlayerId && data.players) {
-				myPlayer = data.players.find((player) => player.id === storedPlayerId) || null;
+				$myPlayer = data.players.find((player) => player.id === storedPlayerId) || null;
 
-				if (!myPlayer) {
+				if (!$myPlayer) {
 					throw new Error(`Player with ID ${storedPlayerId} not found`);
 				}
 
-				opponents = data.players.filter((player) => player.id !== storedPlayerId);
+				opponents = data.players.filter(
+					(player) => player.id !== storedPlayerId && player.is_online
+				);
 				waitingFor = opponents.find((player) => player.id === data.game.whose_turn_id) || null;
 			}
 		} catch (err) {}
@@ -51,6 +51,8 @@
 	const { gameId } = $page.params;
 
 	onMount(() => {
+		$currentGame = data.game;
+
 		try {
 			if (typeof window !== 'undefined') {
 				storedPlayerId = localStorage.getItem('playerId');
@@ -67,7 +69,7 @@
 
 				for (const player of data.players) {
 					if (player.id === storedPlayerId) {
-						myPlayer = player;
+						$myPlayer = player;
 						break;
 					}
 				}
@@ -75,10 +77,6 @@
 		} catch (err) {
 			console.warn('Error:', (err as Error).message);
 			goto('/error');
-		}
-
-		if (myPlayer) {
-			joinPresence(myPlayer, data.game);
 		}
 
 		channels = supabase
@@ -113,7 +111,6 @@
 			.subscribe();
 
 		return () => {
-			unsubscribePresence;
 			channels?.unsubscribe();
 		};
 	});
@@ -190,7 +187,10 @@
 			selectedCard = myCardSelection;
 		} catch (err) {
 			console.error('Error:', (err as Error).message);
-			addToast({ message: (err as Error).message || 'An unknown error occurred while submitting the card', type: 'error' });
+			addToast({
+				message: (err as Error).message || 'An unknown error occurred while submitting the card',
+				type: 'error'
+			});
 			return;
 		}
 	}
@@ -198,7 +198,7 @@
 	async function handleCardPlacement(event: CustomEvent<{ index: number; myCardSelection: Card }>) {
 		try {
 			if (!data.game.winner_id) {
-				if (data.game.whose_turn_id !== myPlayer?.id) {
+				if (data.game.whose_turn_id !== $myPlayer?.id) {
 					addToast({ message: 'It is not your turn!', type: 'error' });
 					return;
 				}
@@ -236,7 +236,7 @@
 						event: 'showAnswer',
 						payload: {
 							cardIsCorrect: cardIsCorrect,
-							playerName: myPlayer?.name || 'Unknown Player'
+							playerName: $myPlayer?.name || 'Unknown Player'
 						}
 					});
 					if (winner) {
@@ -276,10 +276,10 @@
 <Toasts />
 
 <main
-	class="md:max-h-screen h-screen grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center justify-items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
+	class="md:max-h-dvh h-dvh grid grid-rows-[auto_1fr_auto] md:grid-rows-3 items-center gap-5 bg-game-background bg-repeat-y bg-cover relative max-w-screen overflow-x-hidden"
 >
-	{#if myPlayer}
-		{#if data.game.whose_turn_id !== myPlayer?.id && !data.game.winner_id}
+	{#if $myPlayer}
+		{#if data.game.whose_turn_id !== $myPlayer?.id && !data.game.winner_id}
 			<div
 				class="w-[12rem] z-20 absolute bottom-1/3 left-1/2 -translate-x-1/2 bg-purple md:bg-opacity-0 drop-shadow-bold md:drop-shadow-none p-5 md:p-0"
 			>
@@ -310,7 +310,7 @@
 		{/if}
 
 		<div
-			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
+			class="grid grid-cols-6 gap-4 col-span-full pt-5 w-[100vw] md:w-[75vw] self-start sm:justify-self-center justify-items-center sticky md:relative top-0 z-20 md:bg-none bg-game-background bg-cover"
 		>
 			{#if opponents.length > 0}
 				{#each opponents as player, i}
@@ -330,7 +330,7 @@
 			style="scrollbar-width: none;"
 		>
 			<CardTable
-				player={myPlayer}
+				player={$myPlayer}
 				game={data.game}
 				category={data.category}
 				cards={data.tableCards.sort((a, b) => a.year - b.year)}
@@ -339,13 +339,13 @@
 			/>
 		</div>
 
-		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-game-background bg-cover">
-			{#if myPlayer}
+		<div class="col-span-full z-20 relative bottom-0 md:bg-none bg-cover">
+			{#if $myPlayer}
 				<PlayerSelfDeck
-					{myPlayer}
-					turn={data.game.whose_turn_id === myPlayer.id}
+					myPlayer={$myPlayer}
+					turn={data.game.whose_turn_id === $myPlayer.id}
 					category={data.category}
-					cards={data.cards.filter((card) => myPlayer && card.player_id === myPlayer.id)}
+					cards={data.cards.filter((card) => $myPlayer && card.player_id === $myPlayer.id)}
 					on:submitcard={handleCardSubmit}
 				/>
 			{/if}
@@ -353,13 +353,13 @@
 
 		<FlyingPlayCards category={data.category} />
 
-		<EmojiClick {myPlayer} {gameId} />
+		<EmojiClick myPlayer={$myPlayer} {gameId} />
 
-		{#if data.game.winner_id && myPlayer}
+		{#if data.game.winner_id && $myPlayer}
 			<GameEndScreen
 				category={data.category}
 				winner={data.players.find((player) => player.id === data.game.winner_id)}
-				winner_self={data.game.winner_id === myPlayer.id}
+				winner_self={data.game.winner_id === $myPlayer.id}
 				on:click={handleBackToStart}
 			/>
 		{/if}

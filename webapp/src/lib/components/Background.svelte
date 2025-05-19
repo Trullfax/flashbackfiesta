@@ -53,7 +53,7 @@
 	<section class="relative h-dvh">
 		<div>
 			<div
-				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold rotate-[150deg] -top-[6vh] md:-top-[3vh] -left-[9vw] md:left-[10vw]"
+				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold rotate-[150deg] -top-[6dvh] md:-top-[3dvh] -left-[9vw] md:left-[10vw]"
 			>
 				<CardFront
 					title={cards[0].name ?? ''}
@@ -67,30 +67,30 @@
 			<img
 				src={whiteTriangleZicZac_Triangle}
 				alt="background decoration"
-				class="absolute z-0 h-[120vh] md:h-[190vh] -left-[7rem] md:left-0"
+				class="absolute z-0 h-[120dvh] md:h-[190dvh] -left-[7rem] md:left-0"
 			/>
 			<img
 				src={whiteTriangleZicZac_ZicZac}
 				alt="background decoration"
-				class="absolute z-20 h-[120vh] md:h-[190vh] -left-[7rem] md:left-0"
+				class="absolute z-20 h-[120dvh] md:h-[190dvh] -left-[7rem] md:left-0"
 			/>
 			<img
 				src={whiteTriangleStroke}
 				alt="background decoration"
-				class="invisible md:visible absolute min-h-[10vh] max-h-[10vh] right-[30vw]"
+				class="invisible md:visible absolute min-h-[10dvh] max-h-[10dvh] right-[30vw]"
 			/>
 			<img
 				src={blueSquare}
 				alt="background decoration"
-				class="absolute min-h-[15vh] md:min-h-[25vh] max-h-[15vh] md:max-h-[25vh] -right-[17vw] md:right-[5vw]"
+				class="absolute min-h-[15dvh] md:min-h-[25dvh] max-h-[15dvh] md:max-h-[25dvh] -right-[17vw] md:right-[5vw]"
 			/>
 			<img
 				src={blueBow}
 				alt="background decoration"
-				class="absolute z-20 min-h-[15vh] md:min-h-[30vh] max-h-[15vh] md:max-h-[30vh] bottom-[5vh] md:-bottom-[4vh] -left-[8vw] md:left-[3vw]"
+				class="absolute rotate-35 z-20 min-h-[15dvh] md:min-h-[30dvh] max-h-[15dvh] md:max-h-[30dvh] bottom-[5dvh] md:-bottom-[4dvh] -left-[8vw] md:left-[3vw]"
 			/>
 			<div
-				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold -rotate-[15deg] bottom-[2vh] md:bottom-[7vh] -right-[10vw] md:right-[5vw]"
+				class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold -rotate-[15deg] bottom-[2dvh] md:bottom-[7dvh] -right-[10vw] md:right-[5vw]"
 			>
 				<CardFront
 					title={cards[1].name ?? ''}
@@ -107,35 +107,35 @@
 	<!-- SECTION 2: CATEGORY SELECTION -->
 	<section class="relative h-dvh flex items-center justify-center">
 		<div
-			class="w-full h-[135vh] z-10 bg-[url('$lib/assets/background/red-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[5vh] md:-translate-y-[0vh]"
+			class="w-full h-[135dvh] z-10 bg-[url('$lib/assets/background/red-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[5dvh] md:-translate-y-[0dvh]"
 		/>
 		<img
 			src={yellowTriangle}
 			alt="background decoration"
-			class="absolute h-[50vh] md:h-[100vh] right-0 -top-[30vh] md:-top-[55vh] z-20"
+			class="absolute h-[50dvh] md:h-[100dvh] right-0 -top-[30dvh] md:-top-[55dvh] z-20"
 		/>
 		<img
 			src={gameBgTriangle}
 			alt="background decoration"
-			class="absolute h-[70vh] md:h-[100vh] right-0 -bottom-[40vh] md:-bottom-[60vh]"
+			class="absolute h-[70dvh] md:h-[100dvh] right-0 -bottom-[40dvh] md:-bottom-[60dvh]"
 		/>
 		<img
 			src={line}
 			alt="background decoration"
-			class="absolute z-30 min-h-[20vh] md:min-h-[30vh] max-h-[20vh] md:max-h-[30vh] top-[2vh] md:-top-[8vh] -right-[5vw] md:right-[16.25vw]"
+			class="absolute z-30 min-h-[20dvh] md:min-h-[30dvh] max-h-[20dvh] md:max-h-[30dvh] top-[2dvh] md:-top-[8dvh] -right-[5vw] md:right-[16.25vw]"
 		/>
 		<img
 			src={ziczac}
 			alt="background decoration"
-			class="absolute z-40 min-h-[20vh] md:min-h-[30vh] max-h-[20vh] md:max-h-[30vh] -left-[13vw] md:left-[16.5vw] -bottom-[8vh] md:-bottom-[5vh]"
+			class="absolute z-40 min-h-[20dvh] md:min-h-[30dvh] max-h-[20dvh] md:max-h-[30dvh] -left-[13vw] md:left-[16.5vw] -bottom-[8dvh] md:-bottom-[5dvh]"
 		/>
 		<img
 			src={purpleLine}
 			alt="background decoration"
-			class="invisible md:visible absolute z-10 min-h-[8vh] md:min-h-[10vh] max-h-[8vh] md:max-h-[10vh] -right-[5vw] md:-right-[0vw] bottom-[0vh] md:bottom-[21vh]"
+			class="invisible md:visible absolute z-10 min-h-[8dvh] md:min-h-[10dvh] max-h-[8dvh] md:max-h-[10dvh] -right-[5vw] md:-right-[0vw] bottom-[0dvh] md:bottom-[21dvh]"
 		/>
 		<div
-			class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold rotate-[10deg] bottom-[8vh] md:bottom-[15vh] -left-[12vw] md:-left-[0vw]"
+			class="absolute z-30 scale-[65%] md:scale-[100%] drop-shadow-bold rotate-[10deg] bottom-[8dvh] md:bottom-[15dvh] -left-[12vw] md:-left-[0vw]"
 		>
 			<CardFront
 				title={cards[3].name ?? ''}
@@ -153,57 +153,57 @@
 		<img
 			src={dottedTriangle}
 			alt="background decoration"
-			class="absolute h-[80vh] md:h-[110vh] -bottom-[50vh] md:-bottom-[30vh]"
+			class="absolute h-[80dvh] md:h-[110dvh] -bottom-[50dvh] md:-bottom-[30dvh]"
 		/>
 		<img
 			src={playBtn}
 			alt="background decoration"
-			class="absolute min-h-[3.5vh] md:min-h-[5.5vh] max-h-[3.5vh] md:max-h-[5.5vh] right-[27vw] md:right-[11vw] top-[5vh]"
+			class="absolute min-h-[3.5dvh] md:min-h-[5.5dvh] max-h-[3.5dvh] md:max-h-[5.5dvh] right-[27vw] md:right-[11vw] top-[5dvh]"
 		/>
 		<img
 			src={ziczac}
 			alt="background decoration"
-			class="absolute rotate-[150deg] min-h-[20vh] md:min-h-[26vh] max-h-[20vh] md:max-h-[26vh] -right-[12vw] md:right-[1vw] -top-[0vh] md:top-[20vh]"
+			class="absolute rotate-[150deg] min-h-[20dvh] md:min-h-[26dvh] max-h-[20dvh] md:max-h-[26dvh] -right-[12vw] md:right-[1vw] -top-[0dvh] md:top-[20dvh]"
 		/>
 		<img
 			src={categoryPicturePath}
 			alt="background decoration"
-			class="absolute -rotate-[15deg] drop-shadow-subtitle md:drop-shadow-bold min-h-[16.5vh] md:min-h-[32vh] max-h-[16.5vh] md:max-h-[32vh] bottom-[15vh] md:bottom-[45vh] -left-[12vw] md:left-[0vw]"
+			class="absolute -rotate-[15deg] drop-shadow-subtitle md:drop-shadow-bold min-h-[16.5dvh] md:min-h-[32dvh] max-h-[16.5dvh] md:max-h-[32dvh] bottom-[15dvh] md:bottom-[45dvh] -left-[12vw] md:left-[0vw]"
 		/>
 		<img
 			src={yellowCylinder}
 			alt="background decoration"
-			class="absolute z-20 min-h-[20vh] md:min-h-[50vh] max-h-[20vh] md:max-h-[50vh] right-[0vw] bottom-[2vh]"
+			class="absolute z-20 min-h-[20dvh] md:min-h-[50dvh] max-h-[20dvh] md:max-h-[50dvh] right-[0vw] bottom-[2dvh]"
 		/>
 		<img
 			src={whiteTriangleShadow}
 			alt="background decoration"
-			class="invisible md:visible z-20 absolute min-h-[20vh] max-h-[20vh] right-1/2 -bottom-[8vh]"
+			class="invisible md:visible z-20 absolute min-h-[20dvh] max-h-[20dvh] right-1/2 -bottom-[8dvh]"
 		/>
 	</section>
 
 	<!-- SECTION 4: LOBBY -->
 	<section class="relative h-dvh flex items-center justify-center">
 		<div
-			class="w-full h-[120vh] z-10 bg-[url('$lib/assets/background/blue-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[7vh]"
+			class="w-full h-[120dvh] z-10 bg-[url('$lib/assets/background/blue-triangle.svg')] bg-center bg-cover overflow-visible bg-no-repeat -translate-y-[7dvh]"
 		/>
 		<img
 			src={redBlackLines}
 			alt="background decoration"
-			class="absolute h-[70vh] -left-[7rem] md:left-0 -bottom-[18vh] md:-bottom-[5vh] z-0"
+			class="absolute h-[70dvh] -left-[7rem] md:left-0 -bottom-[18dvh] md:-bottom-[5dvh] z-0"
 		/>
 		<img
 			src={cube}
 			alt="background decoration"
-			class="absolute z-20 min-h-[15vh] md:min-h-[35vh] max-h-[15vh] md:max-h-[35vh] -left-[3vw] md:-left-[0vw] top-[5vh] md:top-[8vh]"
+			class="absolute z-20 min-h-[15dvh] md:min-h-[35dvh] max-h-[15dvh] md:max-h-[35dvh] -left-[3vw] md:-left-[0vw] top-[5dvh] md:top-[8dvh]"
 		/>
 		<img
 			src={line}
 			alt="background decoration"
-			class="absolute z-30 min-h-[15vh] md:min-h-[30vh] max-h-[15vh] md:max-h-[30vh] top-[2vh] md:top-[4vh] -right-[5vw] md:right-[6vw]"
+			class="absolute z-30 min-h-[15dvh] md:min-h-[30dvh] max-h-[15dvh] md:max-h-[30dvh] top-[2dvh] md:top-[4dvh] -right-[5vw] md:right-[6vw]"
 		/>
 		<div
-			class="absolute z-40 drop-shadow-bold rotate-[15deg] scale-[65%] md:scale-[100%] top-[3vh] md:top-[13vh] -right-[19vw] md:right-[2vw]"
+			class="absolute z-40 drop-shadow-bold rotate-[15deg] scale-[65%] md:scale-[100%] top-[3dvh] md:top-[13dvh] -right-[19vw] md:right-[2vw]"
 		>
 			<CardFront
 				title={cards[2].name ?? ''}
@@ -217,7 +217,7 @@
 		<img
 			src={greenBow}
 			alt="background decoration"
-			class="absolute z-20 min-h-[15vh] md:min-h-[30vh] max-h-[15vh] md:max-h-[30vh] bottom-[2vh] md:bottom-[0vh] -left-[2vw] md:left-[5vw]"
+			class="absolute z-20 min-h-[15dvh] md:min-h-[30dvh] max-h-[15dvh] md:max-h-[30dvh] bottom-[2dvh] md:bottom-[0dvh] -left-[2vw] md:left-[5vw]"
 		/>
 	</section>
 </div>

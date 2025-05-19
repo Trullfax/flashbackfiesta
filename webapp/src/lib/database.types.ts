@@ -181,6 +181,7 @@ export type Database = {
           game_id: string
           id: string
           is_creator: boolean
+          is_online: boolean
           is_ready: boolean
           name: string
         }
@@ -190,6 +191,7 @@ export type Database = {
           game_id: string
           id?: string
           is_creator?: boolean
+          is_online?: boolean
           is_ready?: boolean
           name: string
         }
@@ -199,6 +201,7 @@ export type Database = {
           game_id?: string
           id?: string
           is_creator?: boolean
+          is_online?: boolean
           is_ready?: boolean
           name?: string
         }
