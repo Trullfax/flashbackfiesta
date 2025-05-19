@@ -6,6 +6,7 @@
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
+	import InformationButton from '$lib/components/informationButton.svelte';
 	import LoadingBar from '$lib/components/LoadingBar.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
@@ -353,7 +354,12 @@
 
 		<FlyingPlayCards category={data.category} />
 
-		<EmojiClick myPlayer={$myPlayer} {gameId} />
+		<div
+			class="absolute bottom-5 right-5 md:bottom-10 md:right-10 z-50 flex flex-col gap-3 lg:gap-6 md:flex-row"
+		>
+			<EmojiClick myPlayer={$myPlayer} {gameId} className="lg:scale-125" />
+			<InformationButton variant="small" className="lg:scale-125" />
+		</div>
 
 		{#if data.game.winner_id && $myPlayer}
 			<GameEndScreen

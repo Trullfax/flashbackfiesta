@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import Toasts from '$lib/components/alert/Toasts.svelte';
+	import Background from '$lib/components/Background.svelte';
+	import InformationButton from '$lib/components/informationButton.svelte';
+	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
+	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
+	import { currentGame, joinPresence, myPlayer } from '$lib/stores/playerTracking.store';
 	import { addToast } from '$lib/stores/toastStore';
 	import { supabase } from '$lib/supabaseClient';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { myPlayer, currentGame, joinPresence } from '$lib/stores/playerTracking.store';
-	import Toasts from '$lib/components/alert/Toasts.svelte';
-	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
-	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
-	import Background from '$lib/components/Background.svelte';
+	import type { PageData } from './$types';
 
 	let pageTitle = 'Create your player · Flashbackfiesta';
 
@@ -150,7 +151,10 @@
 		const { status, player, error } = await response.json();
 
 		if (!response.ok || status === 'error') {
-			addToast({ message: error || 'An unknown error occurred while creating the player', type: 'error' });
+			addToast({
+				message: error || 'An unknown error occurred while creating the player',
+				type: 'error'
+			});
 			return;
 		}
 
@@ -188,7 +192,10 @@
 		console.log('status: ' + status + '\n error:' + error);
 
 		if (!response.ok || status === 'error') {
-			addToast({ message: error || 'An unknown error occurred while starting the game', type: 'error' });
+			addToast({
+				message: error || 'An unknown error occurred while starting the game',
+				type: 'error'
+			});
 			settingUp = false;
 			isStarting = false;
 			return;
@@ -205,6 +212,9 @@
 <Toasts />
 
 <main class="overflow-hidden relative">
+	<InformationButton
+		className="fixed z-[100] bottom-[1.25rem] md:bottom-[2rem] lg:bottom-[4rem] left-[1.25rem] md:left-[2rem] lg:left-[4rem]"
+	/>
 	<div class="-translate-y-[200dvh]">
 		<Background />
 	</div>

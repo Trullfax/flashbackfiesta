@@ -1,7 +1,6 @@
 <script lang="ts">
-	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import CardFront from '$lib/components/CardFront.svelte';
-	import ButtonArrow from '$lib/components/ButtonArrow.svelte';
+	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	export let myPlayer: Player;
@@ -35,7 +34,9 @@
 	}
 </script>
 
-<section class="grid md:grid-cols-[1fr_2fr] items-center justify-items-center relative w-[100vw] md:w-full">
+<section
+	class="grid md:grid-cols-[1fr_2fr] items-center justify-items-center relative w-[100vw] md:w-full"
+>
 	<div
 		class="block md:hidden z-10 size-10 absolute bottom-5 left-5 drop-shadow-title {turn
 			? 'animate-pulse'
@@ -48,15 +49,15 @@
 	</div>
 
 	<!-- Carousel Buttons -->
-	<div class="md:hidden absolute -left-5 z-10 p-2 scale-50">
+	<!-- <div class="md:hidden absolute -left-5 z-10 p-2 scale-50">
 		<ButtonArrow on:click={scrollLeft} color={category.hex_color} rotation={-90} />
 	</div>
 	<div class="md:hidden absolute -right-5 z-10 p-2 scale-50">
 		<ButtonArrow on:click={scrollRight} color={category.hex_color} rotation={90} />
-	</div>
+	</div> -->
 
 	<ul
-		class="flex gap-3 max-w-[80vw] md:max-w-max overflow-x-auto overflow-y-visible md:overflow-x-visible md:pt-0 md:pb-0 pt-10 pb-10 scroll-smooth"
+		class="flex gap-3 max-w-full overflow-x-auto overflow-y-visible md:overflow-x-visible p-10 scroll-smooth"
 		bind:this={carouselContainer}
 	>
 		{#each cards as card}
