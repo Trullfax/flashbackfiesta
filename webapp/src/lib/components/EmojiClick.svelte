@@ -5,6 +5,8 @@
 
 	export let myPlayer: Player | null = null;
 	export let gameId: string;
+	export let className: string = '';
+
 	let showEmoji: boolean = false;
 	let clickedEmojiPlayerName: String | null = null;
 
@@ -42,7 +44,7 @@
 	}
 </script>
 
-<div class="emoji-button fixed bottom-5 right-5 md:bottom-10 md:right-10 z-50">
+<div class="emoji-button {className}">
 	<button
 		class="w-12 h-12 text-[2rem] flex justify-center items-center bg-purple drop-shadow-subtitle rounded-full"
 		on:click={handleEmojiClick}
@@ -52,7 +54,7 @@
 </div>
 {#if showEmoji}
 	<div
-		class="flex items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+		class="flex items-center fixed top-0 justify-center pointer-events-none left-0 z-50 w-full h-[100dvh]"
 		transition:fade={{ duration: 400 }}
 	>
 		<p class="player-name text-[2rem] font-contrail pr-5 text-center">

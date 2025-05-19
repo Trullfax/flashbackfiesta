@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
+	import Background from '$lib/components/Background.svelte';
+	import CategorySelection from '$lib/components/CategorySelection.svelte';
+	import InformationButton from '$lib/components/informationButton.svelte';
+	import Start from '$lib/components/Start.svelte';
 	import { addToast } from '$lib/stores/toastStore';
 	import { onMount } from 'svelte';
-	import Start from '$lib/components/Start.svelte';
-	import CategorySelection from '$lib/components/CategorySelection.svelte';
-	import Background from '$lib/components/Background.svelte';
-	import InformationButton from '$lib/components/informationButton.svelte';
+	import type { PageData } from './$types';
 
 	let pageTitle = 'Start your fiesta · Flashbackfiesta';
 
@@ -63,8 +63,9 @@
 
 <main class="relative overflow-hidden">
 	<Background />
-	<InformationButton />
-
+	<InformationButton
+		className="fixed z-[100] bottom-[1.25rem] md:bottom-[2rem] lg:bottom-[4rem] left-[1.25rem] md:left-[2rem] lg:left-[4rem]"
+	/>
 	<section
 		bind:this={startSection}
 		class="h-dvh relative z-50 flex items-center justify-center p-6"

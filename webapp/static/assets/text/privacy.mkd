@@ -1,0 +1,59 @@
+# Privacy Policy - Flashback Fiesta
+
+**Effective Date:** October 22, 2024
+
+## 1. Controller
+
+I am responsible for data processing related to Flashback Fiesta:
+
+Tjalf-Bjarne Scharnweber  
+Eichenweg 8  
+23568, Lübeck  
+Germany
+
+Contact
+Email: tjalf.bsch21@icloud.com
+
+## 2. Collection and Storage of Personal Data, as well as the Type and Purpose of Their Use
+
+When you play Flashback Fiesta, we collect a name that you choose to create an avatar. This name is solely used for in-game display purposes, such as player identification. We do not store this name outside of the game session. While we strive to protect your information, please note that no system is completely secure. However, we take reasonable steps to ensure the safety of the game environment.
+
+When you visit or play Flashback Fiesta, information is automatically sent from your device to the server hosting the game. This information is temporarily stored in so-called server log files by Hetzner Online GmbH. The following information may be collected:
+
+- IP address of the requesting computer
+- Date and time of access
+- Name and URL of the accessed file (within the game)
+- Website from which the access originated (referrer URL, if applicable)
+- Browser used and, if applicable, your computers operating system
+
+This data is technically necessary to correctly deliver the content of the game and ensure system security. The data is not evaluated for personal purposes or shared with third parties beyond what is described in this policy.
+
+## 3. Cookies
+
+This website does not use cookies. Similarly, Flashback Fiesta does not utilize any tracking tools or collect additional information when you play our game.
+
+## 4. Hosting and Server Log Files
+
+Flashback Fiesta is hosted by Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, Germany. As with all websites hosted on Hetzner servers, technical access data (e.g., IP address, time of access, browser type) may be automatically stored in so-called server log files by Hetzner. This storage is necessary for security reasons and to ensure the stable operation of the website/game environment.
+
+For more information on data processing by Hetzner, please refer to their privacy policy: [https://www.hetzner.com/legal/privacy-policy](https://www.hetzner.com/legal/privacy-policy). Please note that we have limited control over Hetzner's data handling practices beyond ensuring they provide a secure hosting environment.
+
+## 5. Disclosure of Data
+
+No personal data is shared with third parties. The name you provide is only used for in-game display purposes and is not stored or shared outside the game session.
+
+## 6. Data Subject Rights
+
+As a user, you have the following rights under the General Data Protection Regulation (GDPR):
+
+- **Access to your stored data (Art. 15 GDPR)**
+- **Correction of inaccurate data (Art. 16 GDPR)**
+- **Deletion of your data (Art. 17 GDPR)**
+- **Restriction of processing (Art. 18 GDPR)**
+- **Objection to processing (Art. 21 GDPR)**
+
+To exercise these rights, you can contact me using the contact details provided above. Please understand that the scope of these rights is limited due to the temporary nature of data collection.
+
+## 7. Updates and Changes to this Privacy Policy
+
+This privacy policy is effective as of October 22, 2024. I reserve the right to update it if necessary. Any changes will be posted on this page with the updated effective date. We encourage you to review this policy periodically.

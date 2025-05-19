@@ -1,21 +1,26 @@
 <script lang="ts">
-	import { Github, Users, Info, X } from 'lucide-svelte';
 	import TutorialGraphic from '$lib/assets/elements/TutorialGraphic.svg';
+	import { Info, Users, X } from 'lucide-svelte';
+
+	export let className: string = '';
+	export let variant: 'default' | 'small' = 'default';
 
 	let expand: Boolean = false;
 </script>
 
 {#if !expand}
 	<button
-		class="fixed z-[100] bottom-[2rem] md:bottom-[2rem] lg:bottom-[4rem] left-[2rem] md:left-[2rem] lg:left-[4rem] p-3 rounded-full bg-purple drop-shadow-subtitle lg:scale-125"
+		class="p-3 rounded-full bg-purple drop-shadow-subtitle {className} {variant === 'default'
+			? 'p-3'
+			: 'size-12 p-[0.585rem]'}"
 		on:click={() => (expand = true)}
 	>
-		<Info class="text-white" size={35} />
+		<Info class="text-white" size={variant === 'default' ? 35 : 30} />
 	</button>
 {/if}
 {#if expand}
 	<div
-		class="fixed z-[90] w-full h-[100dvh] backdrop-blur-lg transition-all flex flex-col justify-between items-center"
+		class="fixed top-0 left-0 z-[90] w-full h-[100dvh] backdrop-blur-lg transition-all flex flex-col justify-between items-center"
 	>
 		<button
 			class="self-end mt-[2rem] md:mt-[2rem] lg:mt-[4rem] mr-[2rem] md:mr-[2rem] lg:mr-[4rem] drop-shadow-subtitle z-10 lg:scale-125"
