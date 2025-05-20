@@ -27,7 +27,15 @@ This project incorporates data from Wikidata, which is licensed under the CC0 1.
 
 This project uses data and images from The Movie Database (TMDb) API for movies and TV shows. Please note that this application is not endorsed or certified by TMDb. The use of TMDb content complies with their API Terms of Use for non-commercial applications. You can find TMDb’s licensing terms and guidelines for proper usage on their [official website](https://www.themoviedb.org/).
 
-### Libraries
+### Spotify Web API
+
+This project uses data and images from the Spotify Web API for music information. Please note that this application is not endorsed or certified by Spotify. The use of Spotify content complies with their [Developer Terms](https://developer.spotify.com/terms) for non-commercial applications. You can find Spotify’s licensing terms and guidelines for proper usage on their official website.
+
+### Data Integration Process
+
+For each category (movies, TV shows, and music), this application initially fetches a batch of data items from Wikidata. Due to limitations in Wikidata's image provision, the images displayed for these items are sourced as follows:  for movies and TV shows, images are retrieved from The Movie Database (TMDb) using the data provided by Wikidata; for music, images are retrieved from the Spotify Web API using the data provided by Wikidata. Therefore, while the initial data structure originates from Wikidata, visual assets are supplemented from TMDb and Spotify.
+
+## Libraries
 
 This project utilizes the following libraries, each licensed as described below:
 
