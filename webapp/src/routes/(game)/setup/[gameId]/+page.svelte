@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/alert/Toasts.svelte';
 	import Background from '$lib/components/Background.svelte';
-	import InformationButton from '$lib/components/informationButton.svelte';
+	import InformationButton from '$lib/components/InformationButton.svelte';
 	import PlayerLobby from '$lib/components/PlayerLobby.svelte';
 	import PlayerSelection from '$lib/components/PlayerSelection.svelte';
 	import { currentGame, joinPresence, myPlayer } from '$lib/stores/playerTracking.store';

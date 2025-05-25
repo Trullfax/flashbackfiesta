@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Background from '$lib/components/Background.svelte';
 	import CategorySelection from '$lib/components/CategorySelection.svelte';
-	import InformationButton from '$lib/components/informationButton.svelte';
+	import InformationButton from '$lib/components/InformationButton.svelte';
 	import Start from '$lib/components/Start.svelte';
 	import { addToast } from '$lib/stores/toastStore';
 	import { onMount } from 'svelte';

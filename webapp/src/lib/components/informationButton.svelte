@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TutorialGraphic from '$lib/assets/elements/TutorialGraphic.svg';
 	import { Info, Users, X } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
 
 	export let className: string = '';
 	export let variant: 'default' | 'small' = 'default';
@@ -20,6 +21,7 @@
 {/if}
 {#if expand}
 	<div
+		transition:fade={{ duration: 100 }}
 		class="fixed top-0 left-0 z-[90] w-full h-[100dvh] backdrop-blur-lg transition-all flex flex-col justify-between items-center"
 	>
 		<button
