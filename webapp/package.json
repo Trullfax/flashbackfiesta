@@ -43,6 +43,7 @@
 		"@supabase/supabase-js": "^2.45.0",
 		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.435.0",
-		"markdown-it": "^14.1.0"
+		"markdown-it": "^14.1.0",
+		"motion": "^12.12.1"
 	}
 }

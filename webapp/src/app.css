@@ -48,10 +48,12 @@
 	grid-column: span 6 / span 6;
 	justify-self: center;
 }
+
 .col-span-2-opponent {
 	grid-column: span 3 / span 3;
 	justify-self: center;
 }
+
 .col-span-3-opponent {
 	grid-column: span 2 / span 2;
 	justify-self: center;
@@ -65,32 +67,39 @@
 .article {
 	margin-bottom: 2rem;
 }
+
 .article > h1 {
 	font-size: 3rem;
 	line-height: 3rem;
 	margin-bottom: 2rem;
 	@apply font-contrail text-yellow drop-shadow-subtitle;
 }
+
 .article > h2 {
 	font-size: 2rem;
 	margin-bottom: 1rem;
 	line-height: normal;
 }
+
 .article > h3 {
 	font-size: 1.5rem;
 	margin-bottom: 1rem;
 }
+
 .article > h4 {
 	font-size: 1.25rem;
 	margin-bottom: 0.5rem;
 }
+
 .article a {
 	color: var(--ff-yellow);
 	text-decoration: underline;
 }
+
 .article > p {
 	margin-bottom: 2rem;
 }
+
 .article > ul {
 	list-style-type: disc;
 	list-style-position: inside;

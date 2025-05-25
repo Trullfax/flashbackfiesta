@@ -6,7 +6,7 @@
 	import EmojiClick from '$lib/components/EmojiClick.svelte';
 	import FlyingPlayCards from '$lib/components/FlyingPlayCards.svelte';
 	import GameEndScreen from '$lib/components/GameEndScreen.svelte';
-	import InformationButton from '$lib/components/informationButton.svelte';
+	import InformationButton from '$lib/components/InformationButton.svelte';
 	import LoadingBar from '$lib/components/LoadingBar.svelte';
 	import PlayerDeck from '$lib/components/PlayerDeck.svelte';
 	import PlayerSelfDeck from '$lib/components/PlayerSelfDeck.svelte';
