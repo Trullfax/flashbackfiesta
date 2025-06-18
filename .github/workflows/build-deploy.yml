@@ -70,6 +70,7 @@ jobs:
           host: ${{ secrets.FLASHBACKFIESTA_HOST }}
           username: ${{ secrets.FLASHBACKFIESTA_USERNAME }}
           key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
+          passphrase: ${{ secrets.FLASHBACKFIESTA_SSH_PASSPHRASE }}
           source: ./deployment/*
           target: ${{ secrets.FRONTEND_DIR_PATH }}
           strip_components: 1
@@ -84,6 +85,7 @@ jobs:
           host: ${{ secrets.FLASHBACKFIESTA_HOST }}
           username: ${{ secrets.FLASHBACKFIESTA_USERNAME }}
           key: ${{ secrets.FLASHBACKFIESTA_SSH_KEY }}
+          passphrase: ${{ secrets.FLASHBACKFIESTA_SSH_PASSPHRASE }}
           script: |
             docker compose -f ${{ secrets.FRONTEND_DIR_PATH }}/docker-compose.yml up -d
             docker compose -f ${{ secrets.SUPABASE_DIR_PATH }}/docker-compose.yml up --build -d
