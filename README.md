@@ -1,4 +1,4 @@
-<img width="1920" height="625" alt="Flashback Fiesta Startpage" src="https://github.com/user-attachments/assets/ee8f08e6-ad81-488e-a5c6-318eab578084" />
+<img width="1920" height="625" alt="Flashback Fiesta Startpage (1)" src="https://github.com/user-attachments/assets/2fa46fd1-d2d0-4227-accc-cdc9ab13eedd" />
 
 
 This web application adapts the analog card game "Timeline."  The goal of the game is to arrange the cards in your hand in the correct chronological order. Cards are divided into categories: Movies, Music, and TV Shows. If a card is placed incorrectly, a new card must be drawn. The game ends when one person successfully plays all their cards.
