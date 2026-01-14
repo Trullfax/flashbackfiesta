@@ -11,6 +11,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
+		"cron": "vite-node src/lib/scripts/cron.ts",
 		"sync-database-structure": "npx supabase db diff -f initial_structure --db-url $(grep SUPABASE_DB_URL .env | cut -d '=' -f2) && npx supabase db reset && npm run sync-database-types",
 		"sync-database-data": "npx supabase db dump --data-only -f supabase/seed.sql --db-url $(grep SUPABASE_DB_URL .env | cut -d '=' -f2) && npx supabase db reset",
 		"sync-database-types": "supabase gen types typescript --local > src/lib/database.types.ts"
@@ -44,6 +45,8 @@
 		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.435.0",
 		"markdown-it": "^14.1.0",
-		"motion": "^12.12.1"
+		"motion": "^12.12.1",
+		"node-cron": "^4.2.1",
+		"vite-node": "^5.2.0"
 	}
 }
