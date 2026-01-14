@@ -11,12 +11,12 @@ services:
     ports:
       - "3000:3000"
 
-  # cron:
-  #   container_name: cron
-  #   image: ghcr.io/trullfax/flashbackfiesta-frontend:main
-  #   pull_policy: always
-  #   platform: linux/amd64 #for platform error on Apple M1 chips
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   entrypoint: npx
-  #   command: vite-node src/lib/scripts/cron.ts
+  cron:
+    container_name: cron
+    image: ghcr.io/trullfax/flashbackfiesta-frontend:main
+    pull_policy: always
+    platform: linux/amd64 #for platform error on Apple M1 chips
+    restart: unless-stopped
+    env_file: .env
+    entrypoint: npx
+    command: vite-node src/lib/scripts/cron.ts
