@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import ButtonBig from '$lib/components/ButtonBig.svelte';
 	import Title from '$lib/components/Title.svelte';
-	import { Copy } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { Share } from 'lucide-svelte';
 	import LoadingBar from './LoadingBar.svelte';
 
 	export let playerArray: Partial<Player>[] = [];
@@ -29,16 +29,26 @@
 		}
 	}
 
-	// Function to copy the current URL to the clipboard
-	function copyToClipboard() {
-		navigator.clipboard
-			.writeText(currentUrl)
-			.then(() => {
-				console.log('URL copied to clipboard');
-			})
-			.catch((err) => {
-				console.error('Failed to copy: ', err);
-			});
+	async function shareGameLink() {
+		try {
+			const shareData = {
+				title: 'Join my game of flashback fiesta!',
+				text: '',
+				url: currentUrl
+			};
+
+			console.log('Sharing content...');
+			await navigator.share(shareData);
+			console.log('Content shared successfully!', shareData);
+		} catch (err) {
+			console.error('Error sharing content:', err);
+
+			if ((err as Error).name === 'AbortError') {
+				console.log('Sharing was cancelled by the user');
+			} else {
+				console.error('Error sharing content:', (err as Error).message);
+			}
+		}
 	}
 </script>
 
@@ -107,8 +117,8 @@
 			<div class="group">
 				<button
 					class="w-[2.5rem] h-[2.5rem] drop-shadow-bold bg-white flex justify-center items-center group-hover:bg-purple transition-all"
-					on:click={copyToClipboard}
-					><Copy strokeWidth={3.5} class="group-hover:text-white transition-all" />
+					on:click={shareGameLink}
+					><Share strokeWidth={3.5} class="group-hover:text-white transition-all" />
 				</button>
 			</div>
 		</div>
